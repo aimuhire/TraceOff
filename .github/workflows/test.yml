@@ -20,7 +20,7 @@ jobs:
     timeout-minutes: 20
     env:
       CI: true
-      ADMIN_SECRET: "a".repeat(64)
+      ADMIN_SECRET: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
