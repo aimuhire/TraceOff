@@ -355,10 +355,10 @@ class OfflineCleanerService {
   /// 1) Follow HTTP 3xx Location
   /// 2) If none, and content-type looks HTML, read up to [maxBodyBytes] and check:
   ///    - Refresh: response header
-  ///    - <meta http-equiv="refresh" ...>
-  ///    - <link rel="canonical" href="...">
-  ///    - <meta property="og:url" content="...">
-  /// Returns: { 'finalUrl': String, 'chain': List<String>, 'count': int }
+  ///    - `<meta http-equiv="refresh" ...>`
+  ///    - `<link rel="canonical" href="...">`
+  ///    - `<meta property="og:url" content="...">`
+  /// Returns: `{ 'finalUrl': String, 'chain': List<String>, 'count': int }`
   static Future<Map<String, dynamic>> _followRedirectsGeneric(
     String url, {
     required int maxDepth,

@@ -13,11 +13,11 @@ void main() {
   // Set up test environment
   setUpAll(() async {
     // Initialize dotenv for tests
-    dotenv.testLoad(fileInput: '''
-ENVIRONMENT=test
-API_BASE_URL=http://localhost:3000
-DEBUG_LOGGING=true
-''');
+    await dotenv.load(fileName: ".env");
+    // Override with test values
+    dotenv.env['ENVIRONMENT'] = 'test';
+    dotenv.env['API_BASE_URL'] = 'http://localhost:3000';
+    dotenv.env['DEBUG_LOGGING'] = 'true';
   });
 
   group('HomeScreen Widget Tests', () {

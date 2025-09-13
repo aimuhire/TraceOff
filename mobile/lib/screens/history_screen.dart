@@ -354,7 +354,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     );
   }
 
-  void _handleItemAction(String action, HistoryItem item) {
+  void _handleItemAction(String action, HistoryItem item) async {
     switch (action) {
       case 'copy_original':
         Clipboard.setData(ClipboardData(text: item.originalUrl));
@@ -369,7 +369,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         );
         break;
       case 'share':
-        Share.share(item.cleanedUrl);
+        await SharePlus.instance.share(ShareParams(text: item.cleanedUrl));
         break;
       case 'open':
         _launchUrl(item.cleanedUrl);

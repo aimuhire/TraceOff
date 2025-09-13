@@ -644,7 +644,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildPrimaryResult(result) {
+  Widget _buildPrimaryResult(CleanResult result) {
     return Card(
       color: Theme.of(context).colorScheme.primaryContainer,
       child: Padding(
@@ -1089,17 +1089,17 @@ class _HomeScreenState extends State<HomeScreen> {
     await _launchUrl(url);
   }
 
-  void _shareUrl(String url) {
-    Share.share(url);
+  void _shareUrl(String url) async {
+    await SharePlus.instance.share(ShareParams(text: url));
   }
 
-  void _autoShareAndCopy(String url) {
+  void _autoShareAndCopy(String url) async {
     final settings = context.read<SettingsProvider>();
     if (settings.autoCopyPrimary) {
       Clipboard.setData(ClipboardData(text: url));
     }
     if (settings.autoShareOnSuccess) {
-      Share.share(url);
+      await SharePlus.instance.share(ShareParams(text: url));
     }
     if (mounted && (settings.autoCopyPrimary || settings.autoShareOnSuccess)) {
       ScaffoldMessenger.of(context).showSnackBar(
