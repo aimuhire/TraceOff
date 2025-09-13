@@ -69,6 +69,9 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Setup environment file
+        run: cp server/.env.example mobile/.env
+
       - name: Install Flutter dependencies
         run: |
           cd mobile
@@ -158,6 +161,9 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+
+      - name: Setup environment file
+        run: cp server/.env.example mobile/.env
 
       - name: Install Flutter dependencies
         run: |
