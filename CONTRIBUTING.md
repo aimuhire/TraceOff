@@ -16,7 +16,7 @@ Thank you for your interest in contributing to TraceOff! This document provides 
 1. **Fork and Clone**
 
    ```bash
-   git clone https://github.com/yourusername/traceoff.git
+   git clone https://github.com/aimuhire/traceoff.git
    cd traceoff
    ```
 

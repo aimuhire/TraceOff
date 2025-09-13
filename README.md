@@ -4,9 +4,9 @@
 
 **Share links without trackers**
 
-[![Deploy to Vercel](https://img.shields.io/badge/Deploy%20to-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/traceoff)
-[![Tests](https://github.com/yourusername/traceoff/workflows/Test%20Suite/badge.svg)](https://github.com/yourusername/traceoff/actions)
-[![Deploy](https://github.com/yourusername/traceoff/workflows/Test%20and%20Deploy/badge.svg)](https://github.com/yourusername/traceoff/actions)
+[![Deploy to Vercel](https://img.shields.io/badge/Deploy%20to-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/new/clone?repository-url=https://github.com/aimuhire/traceoff)
+[![Tests](https://github.com/aimuhire/traceoff/workflows/Test%20Suite/badge.svg)](https://github.com/aimuhire/traceoff/actions)
+[![Deploy](https://github.com/aimuhire/traceoff/workflows/Test%20and%20Deploy/badge.svg)](https://github.com/aimuhire/traceoff/actions)
 [![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
 [![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
@@ -63,7 +63,7 @@ A comprehensive link cleaning solution that removes tracking parameters and prov
 #### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/traceoff.git
+git clone https://github.com/aimuhire/traceoff.git
 cd traceoff
 ```
 
@@ -475,9 +475,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ### Getting Help
 
 - 📖 **Documentation**: Check this README and inline code comments
-- 🐛 **Bug Reports**: [Create an issue](https://github.com/yourusername/traceoff/issues)
-- 💡 **Feature Requests**: [Create an issue](https://github.com/yourusername/traceoff/issues)
-- 💬 **Discussions**: [GitHub Discussions](https://github.com/yourusername/traceoff/discussions)
+- 🐛 **Bug Reports**: [Create an issue](https://github.com/aimuhire/traceoff/issues)
+- 💡 **Feature Requests**: [Create an issue](https://github.com/aimuhire/traceoff/issues)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/aimuhire/traceoff/discussions)
 
 ### Community
 

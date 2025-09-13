@@ -7,7 +7,7 @@ This guide will help you set up TraceOff for development and deployment.
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/traceoff.git
+git clone https://github.com/aimuhire/traceoff.git
 cd traceoff
 ```
 
@@ -183,9 +183,9 @@ flutter build web --release
 
 ### Getting Help
 
-- **GitHub Issues**: [Create an issue](https://github.com/yourusername/traceoff/issues)
+- **GitHub Issues**: [Create an issue](https://github.com/aimuhire/traceoff/issues)
 - **Documentation**: Check README.md and CONTRIBUTING.md
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/traceoff/discussions)
+- **Discussions**: [GitHub Discussions](https://github.com/aimuhire/traceoff/discussions)
 
 ## 📚 Additional Resources
 

@@ -286,4 +286,4 @@ ENABLE_DEBUG_ROUTES=true
 
 ---
 
-For more help, check the [Contributing Guide](CONTRIBUTING.md) or [open an issue](https://github.com/yourusername/traceoff/issues).
+For more help, check the [Contributing Guide](CONTRIBUTING.md) or [open an issue](https://github.com/aimuhire/traceoff/issues).
