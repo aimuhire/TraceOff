@@ -1,11 +1,12 @@
 {
   "version": 2,
   "name": "traceoff-server",
-  "functions": {
-    "dist/index.js": {
-      "runtime": "@vercel/node@3.0.7"
+  "builds": [
+    {
+      "src": "dist/index.js",
+      "use": "@vercel/node"
     }
-  },
+  ],
   "routes": [
     { "src": "/api/(.*)", "dest": "dist/index.js" },
     { "src": "/admin/(.*)", "dest": "dist/index.js" },
