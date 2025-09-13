@@ -458,7 +458,7 @@ describe('Integration Tests - Complete Application Flow', () => {
     });
 
     describe('Rate Limiting Integration', () => {
-        test.skip('should apply rate limits across different endpoints', async () => {
+        test('should apply rate limits across different endpoints', async () => {
             console.log('🧪 [TEST] Starting rate limiting test...');
 
             // Test clean endpoint rate limiting
@@ -477,7 +477,7 @@ describe('Integration Tests - Complete Application Flow', () => {
 
             // Test health endpoint (should have higher limit)
             console.log('🧪 [TEST] Testing health endpoint rate limiting...');
-            const healthResponses = [];
+            const healthResponses: number[] = [];
             for (let i = 0; i < 10; i++) {
                 const response = await app.inject({
                     method: 'GET',
