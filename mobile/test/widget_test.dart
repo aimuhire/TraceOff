@@ -13,7 +13,7 @@ void main() {
   // Set up test environment
   setUpAll(() async {
     // Initialize dotenv for tests
-    await dotenv.load(fileName: ".env");
+    await dotenv.load(fileName: '.env');
     // Override with test values
     dotenv.env['ENVIRONMENT'] = 'test';
     dotenv.env['API_BASE_URL'] = 'http://localhost:3000';
