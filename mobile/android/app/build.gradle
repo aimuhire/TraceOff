@@ -30,13 +30,13 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.example.link_cleaner_mobile"
-    compileSdkVersion 35
+    compileSdk 36
     ndkVersion flutter.ndkVersion
 
     defaultConfig {
         applicationId "com.example.link_cleaner_mobile"
-        minSdkVersion 21
-        targetSdkVersion 35
+        minSdkVersion flutter.minSdkVersion
+        targetSdkVersion 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
@@ -66,5 +66,5 @@ android {
 
  
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.24"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:2.1.0"
 }
