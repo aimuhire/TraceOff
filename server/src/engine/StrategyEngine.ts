@@ -22,12 +22,12 @@ export class StrategyEngine {
     async cleanup(): Promise<void> {
         // Wait for any pending operations to complete
         await new Promise(resolve => setImmediate(resolve));
-        
+
         // Clean up redirect resolver
         if (this.redirectResolver && typeof this.redirectResolver.cleanup === 'function') {
             await this.redirectResolver.cleanup();
         }
-        
+
         // Clean up generic strategy
         if (this.genericStrategy && typeof this.genericStrategy.cleanup === 'function') {
             await this.genericStrategy.cleanup();
@@ -369,15 +369,17 @@ export class StrategyEngine {
                         if (domain.toLowerCase() === matcher.pattern.toLowerCase()) return true;
                     }
                     break;
-                case 'wildcard':
+                case 'wildcard': {
                     const pattern = matcher.pattern.replace(/\*/g, '.*');
                     const regex = new RegExp(`^${pattern}$`, matcher.caseSensitive ? '' : 'i');
                     if (regex.test(domain)) return true;
                     break;
-                case 'regex':
+                }
+                case 'regex': {
                     const regexPattern = new RegExp(matcher.pattern, matcher.caseSensitive ? '' : 'i');
                     if (regexPattern.test(domain)) return true;
                     break;
+                }
             }
         }
         return false;

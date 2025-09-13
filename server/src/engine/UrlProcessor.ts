@@ -3,7 +3,7 @@ import { URL } from 'url';
 
 export class UrlProcessor {
     process(url: string, strategy: Strategy): string {
-        let processedUrl = url;
+        const processedUrl = url;
         console.log(`[Processor] START url=${url} strategy=${strategy.id}`);
         const urlObj = new URL(processedUrl);
 

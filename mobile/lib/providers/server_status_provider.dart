@@ -106,14 +106,14 @@ class ServerStatusProvider with ChangeNotifier {
 
   bool _shouldSkipHealthCheck() {
     if (_consecutiveFailures == 0) return false;
-    
+
     final now = DateTime.now();
     if (_lastFailureTime == null) return false;
-    
+
     // Calculate exponential backoff delay: 2^failures seconds, max 300 seconds (5 minutes)
     final delaySeconds = (1 << _consecutiveFailures).clamp(1, 300);
     final timeSinceLastFailure = now.difference(_lastFailureTime!).inSeconds;
-    
+
     return timeSinceLastFailure < delaySeconds;
   }
 
