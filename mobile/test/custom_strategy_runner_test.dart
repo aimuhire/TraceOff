@@ -10,7 +10,7 @@ void main() {
         id: 's1',
         name: 'remove-utm',
         steps: [
-          CleaningStep(
+          const CleaningStep(
             type: CleaningStepType.removeQuery,
             params: {
               'keys': ['utm_source', 'utm_medium', 'fbclid']
@@ -19,7 +19,7 @@ void main() {
         ],
       );
 
-      final input =
+      const input =
           'https://example.com/page?utm_source=x&keep=1&fbclid=abc&v=2';
       final result = await CustomStrategyRunner.run(input, strategy);
       expect(result, isA<CleanResult>());
@@ -31,12 +31,12 @@ void main() {
         id: 's2',
         name: 'strip-params',
         steps: [
-          CleaningStep(type: CleaningStepType.removeQuery, params: {
+          const CleaningStep(type: CleaningStepType.removeQuery, params: {
             'keys': ['utm_source', 'utm_medium', 'hl', 'gl', 'pli']
           })
         ],
       );
-      final input =
+      const input =
           'https://chromewebstore.google.com/detail/jfgmbkmojppmjcploaneponncjieneok?hl=en&pli=1&utm_source=item-share-cb';
       final result = await CustomStrategyRunner.run(input, strategy);
       expect(result.primary.url,
@@ -49,13 +49,14 @@ void main() {
         id: 's3',
         name: 'ig-clean',
         steps: [
-          CleaningStep(type: CleaningStepType.redirect, params: {'times': 2}),
-          CleaningStep(type: CleaningStepType.removeQuery, params: {
+          const CleaningStep(
+              type: CleaningStepType.redirect, params: {'times': 2}),
+          const CleaningStep(type: CleaningStepType.removeQuery, params: {
             'keys': ['igsh']
           }),
         ],
       );
-      final input = 'https://www.instagram.com/share/BASdbDGwpY';
+      const input = 'https://www.instagram.com/share/BASdbDGwpY';
       final result = await CustomStrategyRunner.run(input, strategy);
       // We can only assert that igsh is not present if present; the URL may remain if network blocked.
       expect(result.primary.url.contains('igsh='), isFalse);
@@ -66,7 +67,7 @@ void main() {
         id: 's4',
         name: 'instagram-clean',
         steps: [
-          CleaningStep(type: CleaningStepType.removeQuery, params: {
+          const CleaningStep(type: CleaningStepType.removeQuery, params: {
             'keys': [
               'ig_mid',
               'igsh',
@@ -79,7 +80,7 @@ void main() {
           }),
         ],
       );
-      final input =
+      const input =
           'https://www.instagram.com/p/DOhILIkjjC3?ig_mid=FD6AF636-1E3C-48A3-98DE-F0BCF488F8DB';
       final result = await CustomStrategyRunner.run(input, strategy);
       expect(result.primary.url, 'https://www.instagram.com/p/DOhILIkjjC3');
@@ -90,7 +91,7 @@ void main() {
         id: 's5',
         name: 'instagram-multi-clean',
         steps: [
-          CleaningStep(type: CleaningStepType.removeQuery, params: {
+          const CleaningStep(type: CleaningStepType.removeQuery, params: {
             'keys': [
               'ig_mid',
               'igsh',
@@ -105,7 +106,7 @@ void main() {
           }),
         ],
       );
-      final input =
+      const input =
           'https://www.instagram.com/p/DOhILIkjjC3?ig_mid=FD6AF636-1E3C-48A3-98DE-F0BCF488F8DB&utm_source=share&ref=home&keep=this';
       final result = await CustomStrategyRunner.run(input, strategy);
       expect(result.primary.url,

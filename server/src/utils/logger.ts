@@ -18,7 +18,7 @@ export interface SafeLogData {
 /**
  * Sanitize log data to remove any potentially sensitive information
  */
-export function sanitizeLogData(data: any): SafeLogData {
+export function sanitizeLogData(data: Record<string, unknown>): SafeLogData {
     const safeData: SafeLogData = {};
 
     // Only allow safe fields
@@ -36,7 +36,7 @@ export function sanitizeLogData(data: any): SafeLogData {
 
     for (const [key, value] of Object.entries(data)) {
         if (allowedFields.includes(key) && value !== undefined && value !== null) {
-            (safeData as any)[key] = value;
+            (safeData as Record<string, unknown>)[key] = value;
         }
     }
 
@@ -51,7 +51,7 @@ export function getSafeRequestInfo(request: FastifyRequest) {
         method: request.method,
         userAgent: request.headers['user-agent'] || 'unknown',
         ip: request.ip || 'unknown',
-        requestId: (request as any).id,
+        requestId: (request as unknown as Record<string, unknown>).id as string | undefined,
     };
 }
 
@@ -69,25 +69,35 @@ export const LOG_LEVELS = {
  * Safe logging wrapper that ensures no sensitive data is logged
  */
 export class SafeLogger {
-    private logger: any;
+    private logger: {
+        info: (data: SafeLogData, message: string) => void;
+        warn: (data: SafeLogData, message: string) => void;
+        error: (data: SafeLogData, message: string) => void;
+        debug: (data: SafeLogData, message: string) => void;
+    };
 
-    constructor(logger: any) {
+    constructor(logger: {
+        info: (data: SafeLogData, message: string) => void;
+        warn: (data: SafeLogData, message: string) => void;
+        error: (data: SafeLogData, message: string) => void;
+        debug: (data: SafeLogData, message: string) => void;
+    }) {
         this.logger = logger;
     }
 
-    info(data: any, message: string) {
+    info(data: Record<string, unknown>, message: string) {
         this.logger.info(sanitizeLogData(data), message);
     }
 
-    warn(data: any, message: string) {
+    warn(data: Record<string, unknown>, message: string) {
         this.logger.warn(sanitizeLogData(data), message);
     }
 
-    error(data: any, message: string) {
+    error(data: Record<string, unknown>, message: string) {
         this.logger.error(sanitizeLogData(data), message);
     }
 
-    debug(data: any, message: string) {
+    debug(data: Record<string, unknown>, message: string) {
         this.logger.debug(sanitizeLogData(data), message);
     }
 }
@@ -95,6 +105,11 @@ export class SafeLogger {
 /**
  * Create a safe logger instance
  */
-export function createSafeLogger(logger: any): SafeLogger {
+export function createSafeLogger(logger: {
+    info: (data: SafeLogData, message: string) => void;
+    warn: (data: SafeLogData, message: string) => void;
+    error: (data: SafeLogData, message: string) => void;
+    debug: (data: SafeLogData, message: string) => void;
+}): SafeLogger {
     return new SafeLogger(logger);
 }

@@ -107,7 +107,7 @@ export const RATE_LIMIT_BYPASS = {
     ],
 
     // Check if request should bypass rate limiting
-    shouldBypass(request: any): boolean {
+    shouldBypass(request: { headers: Record<string, string | string[]>; ip?: string }): boolean {
         const ip = getClientIP(request);
         const userAgent = request.headers['user-agent'] || '';
 
@@ -126,7 +126,7 @@ export const RATE_LIMIT_BYPASS = {
 };
 
 // Helper function to get client IP
-function getClientIP(request: any): string {
+function getClientIP(request: { headers: Record<string, string | string[]>; ip?: string }): string {
     const forwarded = request.headers['x-forwarded-for'];
     if (forwarded) {
         const ips = Array.isArray(forwarded) ? forwarded[0] : forwarded;

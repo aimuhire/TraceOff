@@ -1,9 +1,5 @@
 class CleanResult {
-  final CleanedUrl primary;
-  final List<CleanedUrl> alternatives;
-  final CleanMeta meta;
-
-  CleanResult({
+  const CleanResult({
     required this.primary,
     required this.alternatives,
     required this.meta,
@@ -19,6 +15,10 @@ class CleanResult {
     );
   }
 
+  final CleanedUrl primary;
+  final List<CleanedUrl> alternatives;
+  final CleanMeta meta;
+
   Map<String, dynamic> toJson() {
     return {
       'primary': primary.toJson(),
@@ -29,13 +29,7 @@ class CleanResult {
 }
 
 class CleanedUrl {
-  final String url;
-  final double confidence;
-  final List<String> actions;
-  final List<String>? redirectionChain;
-  final String? reason;
-
-  CleanedUrl({
+  const CleanedUrl({
     required this.url,
     required this.confidence,
     required this.actions,
@@ -55,6 +49,12 @@ class CleanedUrl {
     );
   }
 
+  final String url;
+  final double confidence;
+  final List<String> actions;
+  final List<String>? redirectionChain;
+  final String? reason;
+
   Map<String, dynamic> toJson() {
     return {
       'url': url,
@@ -67,13 +67,7 @@ class CleanedUrl {
 }
 
 class CleanMeta {
-  final String domain;
-  final String strategyId;
-  final String strategyVersion;
-  final TimingMetrics timing;
-  final String appliedAt;
-
-  CleanMeta({
+  const CleanMeta({
     required this.domain,
     required this.strategyId,
     required this.strategyVersion,
@@ -91,6 +85,12 @@ class CleanMeta {
     );
   }
 
+  final String domain;
+  final String strategyId;
+  final String strategyVersion;
+  final TimingMetrics timing;
+  final String appliedAt;
+
   Map<String, dynamic> toJson() {
     return {
       'domain': domain,
@@ -103,11 +103,7 @@ class CleanMeta {
 }
 
 class TimingMetrics {
-  final int totalMs;
-  final int redirectMs;
-  final int processingMs;
-
-  TimingMetrics({
+  const TimingMetrics({
     required this.totalMs,
     required this.redirectMs,
     required this.processingMs,
@@ -120,6 +116,10 @@ class TimingMetrics {
       processingMs: json['processingMs'],
     );
   }
+
+  final int totalMs;
+  final int redirectMs;
+  final int processingMs;
 
   Map<String, dynamic> toJson() {
     return {

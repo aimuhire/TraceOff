@@ -4,9 +4,9 @@ import 'package:traceoff_mobile/config/environment.dart';
 import 'package:traceoff_mobile/models/cleaning_strategy.dart';
 
 class SettingsProvider with ChangeNotifier {
-  final SharedPreferences _prefs;
-
   SettingsProvider(this._prefs);
+
+  final SharedPreferences _prefs;
 
   // Settings keys
   static const String _autoCopyKey = 'auto_copy_primary';

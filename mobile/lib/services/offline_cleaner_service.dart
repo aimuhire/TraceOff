@@ -168,12 +168,15 @@ class OfflineCleanerService {
       // 4) Actions
       final actions = <String>[];
       if (redirectCount > 0) actions.add('Followed $redirectCount redirects');
-      if (removedCount > 0)
+      if (removedCount > 0) {
         actions.add('Removed $removedCount tracking parameters');
-      if (removedCount == 0 && totalParams > 0)
+      }
+      if (removedCount == 0 && totalParams > 0) {
         actions.add('No tracking parameters detected');
-      if (totalParams == 0 && redirectCount == 0)
+      }
+      if (totalParams == 0 && redirectCount == 0) {
         actions.add('URL was already clean');
+      }
 
       // 5) Alternatives
       final alternatives = <CleanedUrl>[];
@@ -211,7 +214,7 @@ class OfflineCleanerService {
           domain: domain,
           strategyId: 'offline-generic',
           strategyVersion: '1.2.0',
-          timing: TimingMetrics(
+          timing: const TimingMetrics(
             totalMs: 0,
             redirectMs: 0,
             processingMs: 0,
@@ -329,7 +332,7 @@ class OfflineCleanerService {
         domain: domain,
         strategyId: 'offline-basic',
         strategyVersion: '1.0.0',
-        timing: TimingMetrics(totalMs: 0, redirectMs: 0, processingMs: 0),
+        timing: const TimingMetrics(totalMs: 0, redirectMs: 0, processingMs: 0),
         appliedAt: DateTime.now().toIso8601String(),
       ),
     );
@@ -541,7 +544,7 @@ class OfflineCleanerService {
       return _RespHead(
           statusCode: status, headers: headers, bodySnippet: snippet);
     } catch (_) {
-      return _RespHead(statusCode: 599, headers: const {}, bodySnippet: null);
+      return const _RespHead(statusCode: 599, headers: {}, bodySnippet: null);
     } finally {
       client.close();
     }
@@ -722,13 +725,13 @@ class OfflineCleanerService {
 
 /// Lightweight response head + optional small body snippet for HTML sniff.
 class _RespHead {
-  final int statusCode;
-  final Map<String, String> headers; // lowercased keys
-  final String? bodySnippet; // only when wantBody == true
-
-  _RespHead({
+  const _RespHead({
     required this.statusCode,
     required this.headers,
     required this.bodySnippet,
   });
+
+  final int statusCode;
+  final Map<String, String> headers; // lowercased keys
+  final String? bodySnippet; // only when wantBody == true
 }

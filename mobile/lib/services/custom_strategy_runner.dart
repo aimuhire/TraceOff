@@ -6,7 +6,7 @@ class CustomStrategyRunner {
   static Future<CleanResult> run(String url, CleaningStrategy strategy) async {
     String workingUrl = url;
     final actions = <String>[];
-    List<String> chain = [url];
+    final List<String> chain = [url];
     // Debug prints for troubleshooting
     // ignore: avoid_print
     print(

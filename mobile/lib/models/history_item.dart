@@ -1,17 +1,6 @@
 import 'package:uuid/uuid.dart';
 
 class HistoryItem {
-  final String id;
-  final String originalUrl;
-  final String cleanedUrl;
-  final String domain;
-  final String strategyId;
-  final double confidence;
-  final DateTime createdAt;
-  final bool isFavorite;
-  final String? title;
-  final String? thumbnailUrl;
-
   HistoryItem({
     String? id,
     required this.originalUrl,
@@ -41,6 +30,17 @@ class HistoryItem {
       thumbnailUrl: json['thumbnailUrl'],
     );
   }
+
+  final String id;
+  final String originalUrl;
+  final String cleanedUrl;
+  final String domain;
+  final String strategyId;
+  final double confidence;
+  final DateTime createdAt;
+  final bool isFavorite;
+  final String? title;
+  final String? thumbnailUrl;
 
   Map<String, dynamic> toJson() {
     return {

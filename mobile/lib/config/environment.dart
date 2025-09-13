@@ -19,7 +19,7 @@ class EnvironmentConfig {
   static Future<void> initialize() async {
     if (!_initialized) {
       try {
-        await dotenv.load(fileName: ".env");
+        await dotenv.load(fileName: '.env');
         _initialized = true;
 
         if (enableDebugLogging) {

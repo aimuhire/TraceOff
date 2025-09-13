@@ -53,7 +53,7 @@ export async function strategyRoutes(fastify: FastifyInstance) {
             const endIndex = startIndex + limit;
             const paginatedStrategies = allStrategies.slice(startIndex, endIndex);
 
-            const response: ApiResponse<{ strategies: Strategy[]; pagination: any }> = {
+            const response: ApiResponse<{ strategies: Strategy[]; pagination: { page: number; limit: number; total: number; totalPages: number } }> = {
                 success: true,
                 data: {
                     strategies: paginatedStrategies,

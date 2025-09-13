@@ -99,7 +99,7 @@ export interface StrategyUpdateRequest extends Partial<StrategyRequest> {
     priority?: number | undefined;
 }
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
     success: boolean;
     data?: T | undefined;
     error?: string | undefined;

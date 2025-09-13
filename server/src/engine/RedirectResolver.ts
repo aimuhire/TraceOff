@@ -99,8 +99,9 @@ export class RedirectResolver {
             }
 
             return { chain, finalUrl: currentUrl, success: false, error: 'Maximum redirect depth exceeded' };
-        } catch (e: any) {
-            return { chain, finalUrl: currentUrl, success: false, error: e?.message || 'Unknown error' };
+        } catch (e: unknown) {
+            const errorMessage = e instanceof Error ? e.message : 'Unknown error';
+            return { chain, finalUrl: currentUrl, success: false, error: errorMessage };
         }
     }
 
@@ -110,7 +111,7 @@ export class RedirectResolver {
         url: string,
         ua: UAOption,
         opts: Required<RedirectResolverOptions>,
-    ): Promise<AxiosResponse<any>> {
+    ): Promise<AxiosResponse<unknown>> {
         // We don’t need the body; for GET use a stream to avoid buffering.
         // We also avoid auto redirects to inspect Location manually.
         const headers: Record<string, string> = { Accept: '*/*' };
@@ -144,23 +145,24 @@ export class RedirectResolver {
             }
 
             return resp;
-        } catch (err: any) {
+        } catch (err: unknown) {
             // Return a synthetic response-like object so caller can decide to try other UAs.
+            const errorMessage = err instanceof Error ? err.message : 'Network error';
             return {
                 status: 599,
-                statusText: err?.message || 'Network error',
+                statusText: errorMessage,
                 headers: {},
                 config: {},
                 data: null,
                 request: undefined,
-            } as AxiosResponse<any>;
+            } as AxiosResponse<unknown>;
         }
     }
 }
 
 /* --------------- helpers --------------- */
 
-function isRedirect(resp: AxiosResponse<any>): boolean {
+function isRedirect(resp: AxiosResponse<unknown>): boolean {
     const s = resp.status;
     return s >= 300 && s < 400 && typeof resp.headers?.location === 'string' && resp.headers.location.length > 0;
 }
@@ -169,7 +171,7 @@ function resolveLocation(location: string, base: string): string {
     return new URL(location, base).toString();
 }
 
-function headerInt(v: any): number | null {
+function headerInt(v: unknown): number | null {
     if (v == null) return null;
     const n = parseInt(String(v), 10);
     return Number.isFinite(n) ? n : null;

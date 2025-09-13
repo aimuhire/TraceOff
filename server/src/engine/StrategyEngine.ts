@@ -1,4 +1,4 @@
-import { Strategy, CleanResult, CleanedUrl, TimingMetrics } from '../types';
+import { Strategy, CleanResult, CleanedUrl, TimingMetrics, Matcher } from '../types';
 import { UrlProcessor } from './UrlProcessor';
 import { RedirectResolver } from './RedirectResolver';
 import { GenericStrategy } from './strategies/GenericStrategy';
@@ -239,7 +239,8 @@ export class StrategyEngine {
                 },
             }, url));
         } catch (error) {
-            console.error(`[Engine] Error processing with strategy id=${strategy?.id}: ${String((error as any)?.message || error)}`);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.error(`[Engine] Error processing with strategy id=${strategy?.id}: ${errorMessage}`);
             // On error, attempt the same redirect-based re-evaluation as the fallback
             try {
                 const redirectStart = Date.now();
@@ -359,7 +360,7 @@ export class StrategyEngine {
         return undefined;
     }
 
-    private matchesDomain(domain: string, matchers: any[]): boolean {
+    private matchesDomain(domain: string, matchers: Matcher[]): boolean {
         for (const matcher of matchers) {
             switch (matcher.type) {
                 case 'exact':

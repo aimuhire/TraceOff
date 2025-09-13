@@ -7,10 +7,7 @@ enum CleaningStepType {
 }
 
 class CleaningStep {
-  final CleaningStepType type;
-  final Map<String, dynamic> params;
-
-  CleaningStep({required this.type, Map<String, dynamic>? params})
+  const CleaningStep({required this.type, Map<String, dynamic>? params})
       : params = params ?? const {};
 
   factory CleaningStep.fromJson(Map<String, dynamic> json) {
@@ -23,6 +20,9 @@ class CleaningStep {
     );
   }
 
+  final CleaningStepType type;
+  final Map<String, dynamic> params;
+
   Map<String, dynamic> toJson() => {
         'type': type.toString().split('.').last,
         'params': params,
@@ -30,11 +30,6 @@ class CleaningStep {
 }
 
 class CleaningStrategy {
-  final String id;
-  String name;
-  List<CleaningStep> steps;
-  bool isActive;
-
   CleaningStrategy({
     required this.id,
     required this.name,
@@ -52,6 +47,11 @@ class CleaningStrategy {
       isActive: json['isActive'] ?? false,
     );
   }
+
+  final String id;
+  String name;
+  List<CleaningStep> steps;
+  bool isActive;
 
   Map<String, dynamic> toJson() => {
         'id': id,

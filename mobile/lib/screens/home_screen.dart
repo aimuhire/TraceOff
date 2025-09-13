@@ -13,7 +13,7 @@ import 'package:traceoff_mobile/widgets/server_status_widget.dart';
 import 'package:traceoff_mobile/models/clean_result.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -272,13 +272,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                   decoration: BoxDecoration(
                                     color: Theme.of(context)
                                         .colorScheme
-                                        .surfaceVariant,
+                                        .surfaceContainerHighest,
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
                                       color: Theme.of(context)
                                           .colorScheme
                                           .outline
-                                          .withOpacity(0.2),
+                                          .withValues(alpha: 0.2),
                                     ),
                                   ),
                                   child: Row(
@@ -287,20 +287,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                       // Local Option
                                       GestureDetector(
                                         onTap: () async {
-                                          if (settings.offlineMode)
+                                          if (settings.offlineMode) {
                                             return; // Already local, no need to switch
+                                          }
                                           await settings.setOfflineMode(true);
                                           _updateOfflineMode();
-                                          if (mounted) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              const SnackBar(
-                                                content: Text(
-                                                    'Switched to local cleaning - using device processing'),
-                                                duration: Duration(seconds: 2),
-                                              ),
-                                            );
-                                          }
+                                          if (!context.mounted) return;
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                  'Switched to local cleaning - using device processing'),
+                                              duration: Duration(seconds: 2),
+                                            ),
+                                          );
                                         },
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(
@@ -350,20 +350,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                       // Remote Option
                                       GestureDetector(
                                         onTap: () async {
-                                          if (!settings.offlineMode)
+                                          if (!settings.offlineMode) {
                                             return; // Already remote, no need to switch
+                                          }
                                           await settings.setOfflineMode(false);
                                           _updateOfflineMode();
-                                          if (mounted) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              const SnackBar(
-                                                content: Text(
-                                                    'Switched to remote cleaning - using cloud API'),
-                                                duration: Duration(seconds: 2),
-                                              ),
-                                            );
-                                          }
+                                          if (!context.mounted) return;
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                  'Switched to remote cleaning - using cloud API'),
+                                              duration: Duration(seconds: 2),
+                                            ),
+                                          );
                                         },
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(
@@ -434,7 +434,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           color: Theme.of(context)
                                               .colorScheme
                                               .onSurface
-                                              .withOpacity(0.6),
+                                              .withValues(alpha: 0.6),
                                         ),
                                       ),
                                       const SizedBox(width: 4),
@@ -608,7 +608,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   if ((provider.result!.primary.confidence) < 1.0) ...[
                     const SizedBox(height: 8),
                     Card(
-                      color: Theme.of(context).colorScheme.surfaceVariant,
+                      color:
+                          Theme.of(context).colorScheme.surfaceContainerHighest,
                       child: Padding(
                         padding: const EdgeInsets.all(12),
                         child: Row(
@@ -689,7 +690,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .outline
+                      .withValues(alpha: 0.3),
                 ),
               ),
               child: Column(
@@ -703,7 +707,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: Theme.of(context)
                           .colorScheme
                           .onSurface
-                          .withOpacity(0.7),
+                          .withValues(alpha: 0.7),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -711,8 +715,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () => _openUrl(result.primary.url),
                     onLongPress: () => _copyToClipboard(result.primary.url),
                     borderRadius: BorderRadius.circular(4),
-                    splashColor: Colors.blue.withOpacity(0.1),
-                    highlightColor: Colors.blue.withOpacity(0.05),
+                    splashColor: Colors.blue.withValues(alpha: 0.1),
+                    highlightColor: Colors.blue.withValues(alpha: 0.05),
                     child: Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(
@@ -814,7 +818,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: Theme.of(context)
                               .colorScheme
                               .outline
-                              .withOpacity(0.2),
+                              .withValues(alpha: 0.2),
                         ),
                       ),
                       child: ListTile(
@@ -875,7 +879,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: Theme.of(context)
                           .colorScheme
                           .onPrimaryContainer
-                          .withOpacity(0.7),
+                          .withValues(alpha: 0.7),
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -937,12 +941,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceVariant,
+                    color:
+                        Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color: Theme.of(
                         context,
-                      ).colorScheme.outline.withOpacity(0.3),
+                      ).colorScheme.outline.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Column(
@@ -975,7 +980,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontSize: 12,
                             color: Theme.of(
                               context,
-                            ).colorScheme.onSurfaceVariant.withOpacity(0.7),
+                            )
+                                .colorScheme
+                                .onSurfaceVariant
+                                .withValues(alpha: 0.7),
                           ),
                         ),
                       ],
@@ -984,8 +992,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: () => _openUrl(alt.url),
                         onLongPress: () => _copyToClipboard(alt.url),
                         borderRadius: BorderRadius.circular(4),
-                        splashColor: Colors.blue.withOpacity(0.1),
-                        highlightColor: Colors.blue.withOpacity(0.05),
+                        splashColor: Colors.blue.withValues(alpha: 0.1),
+                        highlightColor: Colors.blue.withValues(alpha: 0.05),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -1028,7 +1036,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),
@@ -1047,7 +1055,10 @@ class _HomeScreenState extends State<HomeScreen> {
               '$label:',
               style: TextStyle(
                 fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.7),
               ),
             ),
           ),

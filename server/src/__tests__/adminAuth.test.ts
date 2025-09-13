@@ -9,14 +9,14 @@ const createMockRequest = (headers: Record<string, string> = {}): any => ({
 
 const createMockReply = (): any => {
     let statusCode = 200;
-    let responseBody: any = null;
+    let responseBody: unknown = null;
 
     return {
         status: (code: number) => {
             statusCode = code;
-            return { send: (body: any) => { responseBody = body; return {}; } };
+            return { send: (body: unknown) => { responseBody = body; return {}; } };
         },
-        send: (body: any) => {
+        send: (body: unknown) => {
             responseBody = body;
             return {};
         },

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TutorialScreen extends StatelessWidget {
-  const TutorialScreen({Key? key}) : super(key: key);
+  const TutorialScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -170,9 +170,9 @@ class TutorialScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: color.withOpacity(0.3)),
+                border: Border.all(color: color.withValues(alpha: 0.3)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -290,7 +290,7 @@ class TutorialScreen extends StatelessWidget {
                   Icon(
                     Icons.arrow_right,
                     size: 16,
-                    color: color.withOpacity(0.7),
+                    color: color.withValues(alpha: 0.7),
                   ),
                   const SizedBox(width: 8),
                   Expanded(

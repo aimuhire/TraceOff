@@ -41,7 +41,7 @@ export class GenericStrategy {
     async cleanup(): Promise<void> {
         // Wait for any pending operations to complete
         await new Promise(resolve => setImmediate(resolve));
-        
+
         // Clean up redirect resolver
         if (this.redirectResolver && typeof this.redirectResolver.cleanup === 'function') {
             await this.redirectResolver.cleanup();
@@ -209,7 +209,8 @@ export class GenericStrategy {
             return result;
         } catch (error) {
             // Return original URL if processing fails
-            console.error(`[Generic] ERROR: ${String((error as any)?.message || error)}`);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.error(`[Generic] ERROR: ${errorMessage}`);
             return {
                 primary: {
                     url,

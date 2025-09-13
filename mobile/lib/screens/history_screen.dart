@@ -8,7 +8,7 @@ import 'package:traceoff_mobile/providers/url_cleaner_provider.dart';
 import 'package:traceoff_mobile/models/history_item.dart';
 
 class HistoryScreen extends StatefulWidget {
-  const HistoryScreen({Key? key}) : super(key: key);
+  const HistoryScreen({super.key});
 
   @override
   State<HistoryScreen> createState() => _HistoryScreenState();
@@ -167,7 +167,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                 size: 64,
                                 color: Theme.of(
                                   context,
-                                ).colorScheme.onSurface.withOpacity(0.3),
+                                ).colorScheme.onSurface.withValues(alpha: 0.3),
                               ),
                               const SizedBox(height: 16),
                               Text(
@@ -178,7 +178,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                   fontSize: 18,
                                   color: Theme.of(
                                     context,
-                                  ).colorScheme.onSurface.withOpacity(0.6),
+                                  )
+                                      .colorScheme
+                                      .onSurface
+                                      .withValues(alpha: 0.6),
                                 ),
                               ),
                               const SizedBox(height: 8),
@@ -189,7 +192,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                 style: TextStyle(
                                   color: Theme.of(
                                     context,
-                                  ).colorScheme.onSurface.withOpacity(0.4),
+                                  )
+                                      .colorScheme
+                                      .onSurface
+                                      .withValues(alpha: 0.4),
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -230,7 +236,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
               'Original: ${item.originalUrl}',
               style: TextStyle(
                 fontSize: 12,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.7),
                 fontFamily: 'monospace',
               ),
               maxLines: 2,
@@ -256,7 +265,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     fontSize: 12,
                     color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withOpacity(0.6),
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
                 const Spacer(),
@@ -266,7 +275,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     fontSize: 12,
                     color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withOpacity(0.6),
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -472,14 +481,18 @@ class _HistoryScreenState extends State<HistoryScreen> {
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri);
       } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Could not launch $url')));
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Could not launch $url')));
+        }
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error launching URL: $e')));
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error launching URL: $e')));
+      }
     }
   }
 }

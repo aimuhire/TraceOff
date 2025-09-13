@@ -36,9 +36,9 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final SharedPreferences prefs;
+  const MyApp({super.key, required this.prefs});
 
-  const MyApp({Key? key, required this.prefs}) : super(key: key);
+  final SharedPreferences prefs;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +62,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen({super.key});
 
   @override
   State<MainScreen> createState() => _MainScreenState();

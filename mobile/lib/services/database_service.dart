@@ -3,10 +3,10 @@ import 'package:path/path.dart';
 import 'package:traceoff_mobile/models/history_item.dart';
 
 class DatabaseService {
-  static final DatabaseService instance = DatabaseService._init();
-  static Database? _database;
+  const DatabaseService._init();
 
-  DatabaseService._init();
+  static const DatabaseService instance = DatabaseService._init();
+  static Database? _database;
 
   Future<Database> get database async {
     if (_database != null) return _database!;

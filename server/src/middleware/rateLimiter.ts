@@ -286,7 +286,7 @@ export class RateLimiterService {
         });
 
         // Store reference for clearing
-        (this as any).mockRateLimiter = mockRateLimiter;
+        (this as Record<string, unknown>).mockRateLimiter = mockRateLimiter;
     }
 
     private getKeyGenerator(type: keyof RateLimitConfig) {
@@ -414,7 +414,7 @@ export class RateLimiterService {
         if (process.env.NODE_ENV !== 'test') {
             throw new Error('Mock rate limiter only available in test mode');
         }
-        return (this as any).mockRateLimiter;
+        return (this as Record<string, unknown>).mockRateLimiter;
     }
 
 
@@ -422,8 +422,9 @@ export class RateLimiterService {
     async clearAll() {
         if (process.env.NODE_ENV === 'test') {
             // Clear mock rate limiter state
-            if ((this as any).mockRateLimiter) {
-                (this as any).mockRateLimiter.clearAll();
+            const mockRateLimiter = (this as Record<string, unknown>).mockRateLimiter as { clearAll: () => void } | undefined;
+            if (mockRateLimiter) {
+                mockRateLimiter.clearAll();
                 console.log('✅ [clearAll] Mock rate limiter cleared');
             }
             return;

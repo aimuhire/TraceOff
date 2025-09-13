@@ -7,7 +7,7 @@ import 'package:traceoff_mobile/providers/history_provider.dart';
 import 'package:traceoff_mobile/models/cleaning_strategy.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({super.key});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -79,7 +79,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           'Process links locally on device instead of using cloud API. When enabled, all cleaning happens on your device for better privacy.'),
                       value: settings.offlineMode,
                       onChanged: (value) => settings.setOfflineMode(value),
-                      activeColor: Colors.blue,
+                      activeThumbColor: Colors.blue,
                       inactiveThumbColor: Colors.green,
                       secondary: Icon(
                         settings.offlineMode ? Icons.storage : Icons.cloud,
@@ -102,9 +102,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       leading: const Icon(Icons.tune),
                       title: const Text('Manage Local Strategies'),
                       subtitle: Text(
-                        'Active: ' +
-                            (settings.activeStrategy?.name ??
-                                'Default offline cleaner'),
+                        'Active: ${settings.activeStrategy?.name ?? 'Default offline cleaner'}',
                       ),
                       trailing: const Icon(Icons.arrow_forward_ios),
                       onTap: () => _showStrategiesDialog(settings),
@@ -165,7 +163,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           fontSize: 12,
                           color: Theme.of(
                             context,
-                          ).colorScheme.onSurface.withOpacity(0.6),
+                          ).colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -175,7 +173,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surfaceVariant,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Column(
@@ -306,7 +306,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     style: TextStyle(
                       color: Theme.of(
                         context,
-                      ).colorScheme.onErrorContainer.withOpacity(0.7),
+                      ).colorScheme.onErrorContainer.withValues(alpha: 0.7),
                     ),
                   ),
                   onTap: () => _showResetDialog(settings),
@@ -346,50 +346,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  void _showThemeDialog(SettingsProvider settings) {
-    showDialog(
+void _showThemeDialog(SettingsProvider settings) {
+    showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Choose Theme'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RadioListTile<ThemeMode>(
-              title: const Text('System Default'),
-              value: ThemeMode.system,
-              groupValue: settings.themeMode,
-              onChanged: (value) {
-                if (value != null) {
-                  settings.setThemeMode(value);
-                  Navigator.of(context).pop();
-                }
-              },
-            ),
-            RadioListTile<ThemeMode>(
-              title: const Text('Light'),
-              value: ThemeMode.light,
-              groupValue: settings.themeMode,
-              onChanged: (value) {
-                if (value != null) {
-                  settings.setThemeMode(value);
-                  Navigator.of(context).pop();
-                }
-              },
-            ),
-            RadioListTile<ThemeMode>(
-              title: const Text('Dark'),
-              value: ThemeMode.dark,
-              groupValue: settings.themeMode,
-              onChanged: (value) {
-                if (value != null) {
-                  settings.setThemeMode(value);
-                  Navigator.of(context).pop();
-                }
-              },
-            ),
-          ],
-        ),
-      ),
+      builder: (dialogCtx) {
+        final ThemeMode current = settings.themeMode;
+
+        Widget option(ThemeMode mode, String label) {
+          final bool selected = current == mode;
+          return ListTile(
+            title: Text(label),
+            trailing: selected ? const Icon(Icons.check) : null,
+            onTap: () {
+              settings.setThemeMode(mode);
+              Navigator.of(dialogCtx).pop(); // use dialog's context
+            },
+          );
+        }
+
+        return AlertDialog(
+          title: const Text('Choose Theme'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              option(ThemeMode.system, 'System Default'),
+              option(ThemeMode.light, 'Light'),
+              option(ThemeMode.dark, 'Dark'),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -553,7 +539,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final id = strategy?.id ?? DateTime.now().millisecondsSinceEpoch.toString();
     final nameController =
         TextEditingController(text: strategy?.name ?? 'My Strategy');
-    List<CleaningStep> steps = List.of(strategy?.steps ?? <CleaningStep>[]);
+
+    final List<CleaningStep> steps =
+        List.of(strategy?.steps ?? <CleaningStep>[]);
 
     await showDialog(
       context: context,
@@ -602,7 +590,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           },
                         ),
                       );
-                    }).toList(),
+                    }),
                     const SizedBox(height: 8),
                     Align(
                       alignment: Alignment.centerLeft,
@@ -622,15 +610,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         onSelected: (value) {
                           setState(() {
                             if (value == 'redirect') {
-                              steps.add(CleaningStep(
+                              steps.add(const CleaningStep(
                                   type: CleaningStepType.redirect,
                                   params: {'times': 1}));
                             } else if (value == 'removeQuery') {
-                              steps.add(CleaningStep(
+                              steps.add(const CleaningStep(
                                   type: CleaningStepType.removeQuery,
                                   params: {'keys': <String>[]}));
                             } else if (value == 'stripFragment') {
-                              steps.add(CleaningStep(
+                              steps.add(const CleaningStep(
                                   type: CleaningStepType.stripFragment));
                             }
                           });
@@ -666,6 +654,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           : nameController.text.trim(),
                       steps: steps);
                   await settings.upsertStrategy(updated);
+                  if (!context.mounted) return;
                   Navigator.of(context).pop();
                 },
                 child: const Text('Save'),
@@ -741,7 +730,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
     if (type == CleaningStepType.stripFragment) {
       // No parameters
-      return CleaningStep(type: CleaningStepType.stripFragment);
+      return const CleaningStep(type: CleaningStepType.stripFragment);
     }
     return null;
   }

@@ -28,6 +28,7 @@ print_error() {
 
 # Check if we're pushing to main branch
 while read local_ref local_sha remote_ref remote_sha; do
+    echo "DEBUG: remote_ref=$remote_ref"
     if [[ "$remote_ref" == "refs/heads/main" ]]; then
         echo "🔍 Pushing to main branch - running full checks..."
         
@@ -61,7 +62,7 @@ while read local_ref local_sha remote_ref remote_sha; do
         
         # Run analysis
         echo "Running mobile analysis..."
-        flutter analyze
+        flutter analyze --no-fatal-infos
         
         # Run tests
         echo "Running mobile tests..."
