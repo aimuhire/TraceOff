@@ -32,7 +32,8 @@
     "clean:mobile": "cd mobile && flutter clean",
     "deploy:vercel": "cd server && vercel --prod",
     "deploy:mobile:android": "cd mobile && flutter build apk --release",
-    "deploy:mobile:web": "cd mobile && flutter build web --release"
+    "deploy:mobile:web": "cd mobile && flutter build web --release",
+    "pre-push": ".githooks/pre-push"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

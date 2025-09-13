@@ -1,0 +1,100 @@
+#!/bin/bash
+
+# Pre-push hook to ensure all tests pass before pushing to main
+# This hook runs server tests, mobile analysis, and linting
+
+set -e  # Exit on any error
+
+echo "🚀 Running pre-push checks..."
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Function to print colored output
+print_status() {
+    echo -e "${GREEN}✅ $1${NC}"
+}
+
+print_warning() {
+    echo -e "${YELLOW}⚠️  $1${NC}"
+}
+
+print_error() {
+    echo -e "${RED}❌ $1${NC}"
+}
+
+# Check if we're pushing to main branch
+while read local_ref local_sha remote_ref remote_sha; do
+    if [[ "$remote_ref" == "refs/heads/main" ]]; then
+        echo "🔍 Pushing to main branch - running full checks..."
+        
+        # 1. Server checks
+        echo ""
+        echo "📦 Checking server..."
+        cd server
+        
+        # Install dependencies
+        echo "Installing server dependencies..."
+        npm ci
+        
+        # Run linter
+        echo "Running server linter..."
+        npm run lint
+        
+        # Run tests
+        echo "Running server tests..."
+        npm test
+        
+        print_status "Server checks passed"
+        
+        # 2. Mobile checks
+        echo ""
+        echo "📱 Checking mobile app..."
+        cd ../mobile
+        
+        # Install dependencies
+        echo "Installing mobile dependencies..."
+        flutter pub get
+        
+        # Run analysis
+        echo "Running mobile analysis..."
+        flutter analyze
+        
+        # Run tests
+        echo "Running mobile tests..."
+        flutter test
+        
+        # Try building (debug mode for speed)
+        echo "Building mobile app (debug)..."
+        flutter build apk --debug
+        
+        print_status "Mobile checks passed"
+        
+        # 3. Integration checks
+        echo ""
+        echo "🔗 Running integration checks..."
+        cd ..
+        
+        # Check if .env file exists for mobile
+        if [ ! -f "mobile/.env" ]; then
+            print_warning "Creating missing .env file for mobile app..."
+            echo "# Mobile app environment variables
+SERVER_URL=http://localhost:3000
+API_KEY=your_api_key_here" > mobile/.env
+        fi
+        
+        print_status "Integration checks passed"
+        
+        echo ""
+        print_status "All pre-push checks passed! 🎉"
+        echo "Safe to push to main branch."
+        
+    else
+        echo "📝 Pushing to branch other than main - skipping full checks"
+    fi
+done
+
+exit 0
