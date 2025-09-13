@@ -34,6 +34,20 @@ export class GenericStrategy {
         this.redirectResolver = new RedirectResolver();
     }
 
+    /**
+     * Clean up any pending async operations
+     * This is useful for test cleanup to prevent console logs after tests complete
+     */
+    async cleanup(): Promise<void> {
+        // Wait for any pending operations to complete
+        await new Promise(resolve => setImmediate(resolve));
+        
+        // Clean up redirect resolver
+        if (this.redirectResolver && typeof this.redirectResolver.cleanup === 'function') {
+            await this.redirectResolver.cleanup();
+        }
+    }
+
     async clean(url: string): Promise<CleanResult> {
         const actions: string[] = [];
         const t0 = Date.now();

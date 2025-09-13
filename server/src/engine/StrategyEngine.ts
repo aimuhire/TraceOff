@@ -15,6 +15,25 @@ export class StrategyEngine {
         this.genericStrategy = new GenericStrategy();
     }
 
+    /**
+     * Clean up any pending async operations
+     * This is useful for test cleanup to prevent console logs after tests complete
+     */
+    async cleanup(): Promise<void> {
+        // Wait for any pending operations to complete
+        await new Promise(resolve => setImmediate(resolve));
+        
+        // Clean up redirect resolver
+        if (this.redirectResolver && typeof this.redirectResolver.cleanup === 'function') {
+            await this.redirectResolver.cleanup();
+        }
+        
+        // Clean up generic strategy
+        if (this.genericStrategy && typeof this.genericStrategy.cleanup === 'function') {
+            await this.genericStrategy.cleanup();
+        }
+    }
+
     private ensureOriginalAlternative(result: CleanResult, originalUrl: string): CleanResult {
         try {
             // Ensure original URL is included in results

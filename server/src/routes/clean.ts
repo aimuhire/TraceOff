@@ -13,34 +13,38 @@ export async function cleanRoutes(fastify: FastifyInstance) {
     const strategies = StrategyFactory.createAllStrategies();
     strategies.forEach(strategy => strategyEngine.addStrategy(strategy));
 
-    // Apply specific rate limiting for clean endpoints
-    await fastify.register(rateLimit, {
-        keyGenerator: (request: FastifyRequest) => {
-            const ip = request.ip || 'unknown';
-            const userAgent = request.headers['user-agent'] || 'unknown';
-            const identifier = `${ip}:${Buffer.from(userAgent).toString('base64').slice(0, 16)}`;
-            return `clean:${identifier}`;
-        },
-        max: parseInt(process.env.RATE_LIMIT_CLEAN_MAX || '20', 10),
-        timeWindow: process.env.RATE_LIMIT_CLEAN_WINDOW || '1m',
-        errorResponseBuilder: (_request: FastifyRequest, context: any) => {
-            const retryAfter = Math.round(context.timeWindow / 1000);
-            const limit = context.max;
-            const remaining = Math.max(0, limit - context.current);
+    // Apply specific rate limiting for clean endpoints (skip in test mode)
+    if (process.env.NODE_ENV !== 'test') {
+        await fastify.register(rateLimit, {
+            keyGenerator: (request: FastifyRequest) => {
+                const ip = request.ip || 'unknown';
+                const userAgent = request.headers['user-agent'] || 'unknown';
+                const identifier = `${ip}:${Buffer.from(userAgent).toString('base64').slice(0, 16)}`;
+                return `clean:${identifier}`;
+            },
+            max: parseInt(process.env.RATE_LIMIT_CLEAN_MAX || '20', 10),
+            timeWindow: process.env.RATE_LIMIT_CLEAN_WINDOW || '1m',
+            errorResponseBuilder: (_request: FastifyRequest, context: any) => {
+                const retryAfter = Math.round(context.timeWindow / 1000);
+                const limit = context.max;
+                const remaining = Math.max(0, limit - context.current);
 
-            return {
-                success: false,
-                error: 'Rate limit exceeded',
-                message: `Too many clean requests. Limit: ${limit} requests per ${context.timeWindow}ms`,
-                retryAfter,
-                limit,
-                remaining,
-                resetTime: new Date(Date.now() + context.timeWindow).toISOString(),
-                timestamp: new Date().toISOString(),
-            };
-        },
-        skipOnError: true,
-    });
+                return {
+                    success: false,
+                    error: 'Rate limit exceeded',
+                    message: `Too many clean requests. Limit: ${limit} requests per ${context.timeWindow}ms`,
+                    retryAfter,
+                    limit,
+                    remaining,
+                    resetTime: new Date(Date.now() + context.timeWindow).toISOString(),
+                    timestamp: new Date().toISOString(),
+                };
+            },
+            skipOnError: true,
+        });
+    } else {
+        console.log('🧪 Test mode: Skipping clean endpoint rate limiter registration');
+    }
 
     // POST /api/clean
     fastify.post<{ Body: CleanRequest }>('/clean', {

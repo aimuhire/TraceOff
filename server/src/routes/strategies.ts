@@ -1,5 +1,5 @@
-import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
-import { Strategy, StrategyRequest, StrategyUpdateRequest, ApiResponse, PaginatedResponse } from '../types';
+import { FastifyInstance } from 'fastify';
+import { Strategy, StrategyRequest, StrategyUpdateRequest, ApiResponse } from '../types';
 import { StrategyEngine } from '../engine/StrategyEngine';
 import { nanoid } from 'nanoid';
 import { createSafeLogger, getSafeRequestInfo } from '../utils/logger';
@@ -27,6 +27,7 @@ export async function strategyRoutes(fastify: FastifyInstance) {
 
     // GET /api/strategies
     fastify.get('/strategies', {
+        preHandler: adminAuth,
         schema: {
             querystring: {
                 type: 'object',
@@ -37,9 +38,9 @@ export async function strategyRoutes(fastify: FastifyInstance) {
                 },
             },
         },
-    }, async (request: FastifyRequest<{ Querystring: { page?: number; limit?: number; enabled?: boolean } }>, reply: FastifyReply) => {
+    }, async (request, reply) => {
         try {
-            const { page = 1, limit = 50, enabled } = request.query;
+            const { page = 1, limit = 50, enabled } = request.query as { page?: number; limit?: number; enabled?: boolean };
             let allStrategies = strategyEngine.getAllStrategies();
 
             // Filter by enabled status if specified
@@ -52,14 +53,16 @@ export async function strategyRoutes(fastify: FastifyInstance) {
             const endIndex = startIndex + limit;
             const paginatedStrategies = allStrategies.slice(startIndex, endIndex);
 
-            const response: PaginatedResponse<Strategy> = {
+            const response: ApiResponse<{ strategies: Strategy[]; pagination: any }> = {
                 success: true,
-                data: paginatedStrategies,
-                pagination: {
-                    page,
-                    limit,
-                    total: allStrategies.length,
-                    totalPages: Math.ceil(allStrategies.length / limit),
+                data: {
+                    strategies: paginatedStrategies,
+                    pagination: {
+                        page,
+                        limit,
+                        total: allStrategies.length,
+                        totalPages: Math.ceil(allStrategies.length / limit),
+                    }
                 },
                 timestamp: new Date().toISOString(),
             };
@@ -78,6 +81,7 @@ export async function strategyRoutes(fastify: FastifyInstance) {
 
     // GET /api/strategies/:id
     fastify.get<{ Params: { id: string } }>('/strategies/:id', {
+        preHandler: adminAuth,
         schema: {
             params: {
                 type: 'object',
@@ -87,9 +91,9 @@ export async function strategyRoutes(fastify: FastifyInstance) {
                 },
             },
         },
-    }, async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+    }, async (request, reply) => {
         try {
-            const { id } = request.params;
+            const { id } = request.params as { id: string };
             const strategy = strategyEngine.getStrategy(id);
 
             if (!strategy) {
@@ -185,9 +189,9 @@ export async function strategyRoutes(fastify: FastifyInstance) {
                 },
             },
         },
-    }, async (request: FastifyRequest<{ Body: StrategyRequest }>, reply: FastifyReply) => {
+    }, async (request, reply) => {
         try {
-            const strategyData = request.body;
+            const strategyData = request.body as StrategyRequest;
             const id = nanoid();
             const now = new Date().toISOString();
 
@@ -302,10 +306,10 @@ export async function strategyRoutes(fastify: FastifyInstance) {
                 },
             },
         },
-    }, async (request: FastifyRequest<{ Params: { id: string }; Body: StrategyUpdateRequest }>, reply: FastifyReply) => {
+    }, async (request, reply) => {
         try {
-            const { id } = request.params;
-            const updateData = request.body;
+            const { id } = request.params as { id: string };
+            const updateData = request.body as StrategyUpdateRequest;
             const existingStrategy = strategyEngine.getStrategy(id);
 
             if (!existingStrategy) {
@@ -356,9 +360,9 @@ export async function strategyRoutes(fastify: FastifyInstance) {
                 },
             },
         },
-    }, async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+    }, async (request, reply) => {
         try {
-            const { id } = request.params;
+            const { id } = request.params as { id: string };
             const strategy = strategyEngine.getStrategy(id);
 
             if (!strategy) {

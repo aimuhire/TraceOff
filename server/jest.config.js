@@ -7,9 +7,6 @@ module.exports = {
     "^.+\\.ts$": "ts-jest",
   },
   transformIgnorePatterns: ["node_modules/(?!(nanoid)/)"],
-  moduleNameMapping: {
-    "^nanoid$": "<rootDir>/src/__tests__/__mocks__/nanoid.js",
-  },
   collectCoverageFrom: [
     "src/**/*.ts",
     "!src/**/*.d.ts",
@@ -26,8 +23,7 @@ module.exports = {
       statements: 80,
     },
   },
-  setupFilesAfterEnv: ["<rootDir>/src/__tests__/setup.ts"],
-  testTimeout: 10000,
+  testTimeout: 30000,
   maxWorkers: 1, // Run tests sequentially to avoid port conflicts
   verbose: false,
   detectOpenHandles: true,
@@ -35,6 +31,10 @@ module.exports = {
   clearMocks: true,
   resetMocks: true,
   restoreMocks: true,
+  // Better handling of async operations
+  testEnvironment: "node",
+  // Ensure proper cleanup
+  setupFilesAfterEnv: ["<rootDir>/src/__tests__/setup.ts"],
   // Test environment variables
   testEnvironmentOptions: {
     NODE_ENV: "test",

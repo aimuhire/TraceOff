@@ -350,7 +350,10 @@ describe('Strategy CRUD Operations with Authentication', () => {
             // Verify strategy is deleted
             const getResponse = await app.inject({
                 method: 'GET',
-                url: `/api/strategies/${createdStrategyId}`
+                url: `/api/strategies/${createdStrategyId}`,
+                headers: {
+                    'Authorization': `Bearer ${validAdminSecret}`
+                }
             });
             expect(getResponse.statusCode).toBe(404);
         });
@@ -430,7 +433,7 @@ describe('Strategy CRUD Operations with Authentication', () => {
             expect(response.statusCode).toBe(401);
             const data = JSON.parse(response.payload);
             expect(data.success).toBe(false);
-            expect(data.error).toBe('Invalid token format');
+            expect(data.error).toBe('Invalid authorization format. Use Bearer token');
         });
 
         test('should handle authorization header with wrong length token', async () => {

@@ -36,7 +36,7 @@ process.on('uncaughtException', (error) => {
 });
 
 // Clean up after each test
-afterEach(() => {
+afterEach(async () => {
     // Clear all timers
     jest.clearAllTimers();
 
@@ -45,6 +45,20 @@ afterEach(() => {
 
     // Reset modules if needed
     jest.resetModules();
+
+    // Wait for any pending promises to resolve
+    await new Promise(resolve => setImmediate(resolve));
+});
+
+// Global cleanup after all tests
+afterAll(async () => {
+    // Wait for any remaining async operations
+    await new Promise(resolve => setImmediate(resolve));
+    
+    // Force garbage collection if available
+    if (global.gc) {
+        global.gc();
+    }
 });
 
 // Test utilities (exported for use in tests)

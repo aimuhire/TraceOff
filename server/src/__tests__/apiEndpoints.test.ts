@@ -72,8 +72,9 @@ describe('API Endpoints', () => {
 
             expect(response.statusCode).toBe(400);
             const data = JSON.parse(response.payload);
-            expect(data.success).toBe(false);
-            expect(data.error).toBe('URL is required');
+            expect(data.statusCode).toBe(400);
+            expect(data.code).toBe('FST_ERR_VALIDATION');
+            expect(data.message).toBe("body must have required property 'url'");
         });
 
         test('should reject invalid URL format', async () => {
@@ -87,8 +88,9 @@ describe('API Endpoints', () => {
 
             expect(response.statusCode).toBe(400);
             const data = JSON.parse(response.payload);
-            expect(data.success).toBe(false);
-            expect(data.error).toBe('Invalid URL format');
+            expect(data.statusCode).toBe(400);
+            expect(data.code).toBe('FST_ERR_VALIDATION');
+            expect(data.message).toContain('format');
         });
 
         test('should handle empty URL', async () => {
@@ -102,8 +104,9 @@ describe('API Endpoints', () => {
 
             expect(response.statusCode).toBe(400);
             const data = JSON.parse(response.payload);
-            expect(data.success).toBe(false);
-            expect(data.error).toBe('URL is required');
+            expect(data.statusCode).toBe(400);
+            expect(data.code).toBe('FST_ERR_VALIDATION');
+            expect(data.message).toContain('format');
         });
 
         test('should accept strategyId parameter', async () => {
@@ -147,8 +150,9 @@ describe('API Endpoints', () => {
 
             expect(response.statusCode).toBe(400);
             const data = JSON.parse(response.payload);
-            expect(data.success).toBe(false);
-            expect(data.error).toBe('URL is required');
+            expect(data.statusCode).toBe(400);
+            expect(data.code).toBe('FST_ERR_VALIDATION');
+            expect(data.message).toBe("body must have required property 'url'");
         });
 
         test('should reject invalid URL format', async () => {
@@ -162,8 +166,9 @@ describe('API Endpoints', () => {
 
             expect(response.statusCode).toBe(400);
             const data = JSON.parse(response.payload);
-            expect(data.success).toBe(false);
-            expect(data.error).toBe('Invalid URL format');
+            expect(data.statusCode).toBe(400);
+            expect(data.code).toBe('FST_ERR_VALIDATION');
+            expect(data.message).toContain('format');
         });
     });
 
@@ -203,42 +208,53 @@ describe('API Endpoints', () => {
         test('should return strategies list', async () => {
             const response = await app.inject({
                 method: 'GET',
-                url: '/api/strategies'
+                url: '/api/strategies',
+                headers: {
+                    'Authorization': `Bearer ${'a'.repeat(64)}`
+                }
             });
 
             expect(response.statusCode).toBe(200);
             const data = JSON.parse(response.payload);
             expect(data.success).toBe(true);
-            expect(data.data).toBeInstanceOf(Array);
-            expect(data.pagination).toHaveProperty('page');
-            expect(data.pagination).toHaveProperty('limit');
-            expect(data.pagination).toHaveProperty('total');
-            expect(data.pagination).toHaveProperty('totalPages');
+            expect(data.data).toHaveProperty('strategies');
+            expect(data.data).toHaveProperty('pagination');
+            expect(Array.isArray(data.data.strategies)).toBe(true);
+            expect(data.data.pagination).toHaveProperty('page');
+            expect(data.data.pagination).toHaveProperty('limit');
+            expect(data.data.pagination).toHaveProperty('total');
+            expect(data.data.pagination).toHaveProperty('totalPages');
         });
 
         test('should support pagination', async () => {
             const response = await app.inject({
                 method: 'GET',
-                url: '/api/strategies?page=1&limit=5'
+                url: '/api/strategies?page=1&limit=5',
+                headers: {
+                    'Authorization': `Bearer ${'a'.repeat(64)}`
+                }
             });
 
             expect(response.statusCode).toBe(200);
             const data = JSON.parse(response.payload);
             expect(data.success).toBe(true);
-            expect(data.pagination.page).toBe(1);
-            expect(data.pagination.limit).toBe(5);
+            expect(data.data.pagination.page).toBe(1);
+            expect(data.data.pagination.limit).toBe(5);
         });
 
         test('should filter by enabled status', async () => {
             const response = await app.inject({
                 method: 'GET',
-                url: '/api/strategies?enabled=true'
+                url: '/api/strategies?enabled=true',
+                headers: {
+                    'Authorization': `Bearer ${'a'.repeat(64)}`
+                }
             });
 
             expect(response.statusCode).toBe(200);
             const data = JSON.parse(response.payload);
             expect(data.success).toBe(true);
-            data.data.forEach((strategy: any) => {
+            data.data.strategies.forEach((strategy: any) => {
                 expect(strategy.enabled).toBe(true);
             });
         });
@@ -249,15 +265,21 @@ describe('API Endpoints', () => {
             // First get the list to find a valid ID
             const listResponse = await app.inject({
                 method: 'GET',
-                url: '/api/strategies'
+                url: '/api/strategies',
+                headers: {
+                    'Authorization': `Bearer ${'a'.repeat(64)}`
+                }
             });
             const listData = JSON.parse(listResponse.payload);
-            const strategyId = listData.data[0]?.id;
+            const strategyId = listData.data.strategies[0]?.id;
 
             if (strategyId) {
                 const response = await app.inject({
                     method: 'GET',
-                    url: `/api/strategies/${strategyId}`
+                    url: `/api/strategies/${strategyId}`,
+                    headers: {
+                        'Authorization': `Bearer ${'a'.repeat(64)}`
+                    }
                 });
 
                 expect(response.statusCode).toBe(200);
@@ -270,7 +292,10 @@ describe('API Endpoints', () => {
         test('should return 404 for non-existent strategy', async () => {
             const response = await app.inject({
                 method: 'GET',
-                url: '/api/strategies/non-existent-id'
+                url: '/api/strategies/non-existent-id',
+                headers: {
+                    'Authorization': `Bearer ${'a'.repeat(64)}`
+                }
             });
 
             expect(response.statusCode).toBe(404);
@@ -288,7 +313,7 @@ describe('API Endpoints', () => {
                 payload: 'invalid json'
             });
 
-            expect(response.statusCode).toBe(400);
+            expect(response.statusCode).toBe(415);
         });
 
         test('should handle missing content-type', async () => {

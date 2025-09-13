@@ -30,6 +30,15 @@ export class RedirectResolver {
         this.opts = { ...DEFAULT_OPTS, ...(options || {}) };
     }
 
+    /**
+     * Clean up any pending async operations
+     * This is useful for test cleanup to prevent console logs after tests complete
+     */
+    async cleanup(): Promise<void> {
+        // Wait for any pending operations to complete
+        await new Promise(resolve => setImmediate(resolve));
+    }
+
     async resolve(url: string, options?: Partial<RedirectResolverOptions>): Promise<RedirectResult> {
         const runtimeOpts = { ...this.opts, ...(options || {}) };
 

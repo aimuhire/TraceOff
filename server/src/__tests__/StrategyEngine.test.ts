@@ -14,6 +14,13 @@ describe('StrategyEngine', () => {
         strategies.forEach(strategy => strategyEngine.addStrategy(strategy));
     });
 
+    afterEach(async () => {
+        // Clean up any pending async operations
+        if (strategyEngine) {
+            await strategyEngine.cleanup();
+        }
+    });
+
     describe('cleanUrl', () => {
         it('should clean a simple URL with tracking parameters', async () => {
             const url = 'https://example.com?utm_source=google&utm_campaign=test&id=123';
