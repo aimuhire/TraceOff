@@ -63,6 +63,8 @@ jobs:
           cache: gradle
       - uses: android-actions/setup-android@v3
       - run: flutter --version
+      - name: Setup environment file
+        run: cp server/.env.example mobile/.env
       - working-directory: mobile
         run: |
           flutter pub get
