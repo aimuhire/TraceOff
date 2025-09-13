@@ -1,0 +1,57 @@
+{
+  "version": 2,
+  "name": "traceoff-server",
+  "builds": [
+    {
+      "src": "dist/index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "dist/index.js"
+    },
+    {
+      "src": "/admin/(.*)",
+      "dest": "dist/index.js"
+    },
+    {
+      "src": "/health",
+      "dest": "dist/index.js"
+    },
+    {
+      "src": "/",
+      "dest": "dist/index.js"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "LOG_LEVEL": "info",
+    "CORS_ORIGIN": "true",
+    "CORS_CREDENTIALS": "true",
+    "RATE_LIMIT_GENERAL_MAX": "100",
+    "RATE_LIMIT_GENERAL_WINDOW": "1m",
+    "RATE_LIMIT_CLEAN_MAX": "20",
+    "RATE_LIMIT_CLEAN_WINDOW": "1m",
+    "RATE_LIMIT_HEALTH_MAX": "1000",
+    "RATE_LIMIT_HEALTH_WINDOW": "1m",
+    "RATE_LIMIT_ADMIN_MAX": "50",
+    "RATE_LIMIT_ADMIN_WINDOW": "1m",
+    "RATE_LIMIT_WHITELIST_IPS": "127.0.0.1,::1",
+    "ENABLE_HTTPS": "true",
+    "EXTERNAL_API_TIMEOUT": "10000",
+    "EXTERNAL_API_RETRY_ATTEMPTS": "3",
+    "MAX_FILE_SIZE": "10485760",
+    "CACHE_TTL": "3600",
+    "ENABLE_CACHE": "true",
+    "ENABLE_METRICS": "true",
+    "ENABLE_SWAGGER": "true",
+    "ENABLE_DEBUG_ROUTES": "false"
+  },
+  "functions": {
+    "dist/index.js": {
+      "maxDuration": 30
+    }
+  }
+}

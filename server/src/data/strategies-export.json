@@ -1,0 +1,1776 @@
+[
+  {
+    "id": "instagram",
+    "name": "Instagram",
+    "version": "1.0.0",
+    "enabled": true,
+    "priority": 100,
+    "matchers": [
+      {
+        "type": "exact",
+        "pattern": "www.instagram.com"
+      },
+      {
+        "type": "exact",
+        "pattern": "instagram.com"
+      },
+      {
+        "type": "wildcard",
+        "pattern": "*.instagram.com"
+      }
+    ],
+    "paramPolicies": [
+      {
+        "name": "igshid",
+        "action": "deny",
+        "reason": "Instagram tracking parameter"
+      },
+      {
+        "name": "igsh",
+        "action": "deny",
+        "reason": "Instagram tracking parameter"
+      },
+      {
+        "name": "ig_mid",
+        "action": "deny",
+        "reason": "Instagram message ID tracking"
+      },
+      {
+        "name": "si",
+        "action": "deny",
+        "reason": "Instagram session parameter"
+      },
+      {
+        "name": "utm_*",
+        "action": "deny",
+        "reason": "UTM tracking parameters"
+      },
+      {
+        "name": "fbclid",
+        "action": "deny",
+        "reason": "Facebook click ID"
+      },
+      {
+        "name": "gclid",
+        "action": "deny",
+        "reason": "Google click ID"
+      },
+      {
+        "name": "ref",
+        "action": "deny",
+        "reason": "Referral parameter"
+      },
+      {
+        "name": "source",
+        "action": "deny",
+        "reason": "Source tracking"
+      },
+      {
+        "name": "campaign",
+        "action": "deny",
+        "reason": "Campaign tracking"
+      },
+      {
+        "name": "medium",
+        "action": "deny",
+        "reason": "Medium tracking"
+      },
+      {
+        "name": "content",
+        "action": "deny",
+        "reason": "Content tracking"
+      },
+      {
+        "name": "term",
+        "action": "deny",
+        "reason": "Term tracking"
+      },
+      {
+        "name": "hl",
+        "action": "allow",
+        "reason": "Language preference"
+      },
+      {
+        "name": "locale",
+        "action": "allow",
+        "reason": "Locale setting"
+      }
+    ],
+    "pathRules": [
+      {
+        "pattern": "^/p/([^/?#]+).*$",
+        "replacement": "/p/$1",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/reel/([^/?#]+).*$",
+        "replacement": "/reel/$1",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/tv/([^/?#]+).*$",
+        "replacement": "/tv/$1",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/stories/([^/]+)/([^/]+)/.*$",
+        "replacement": "/stories/$1/$2",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/share/([^/?#]+)/?.*$",
+        "replacement": "/share/$1",
+        "type": "regex"
+      }
+    ],
+    "redirectPolicy": {
+      "follow": true,
+      "maxDepth": 5,
+      "timeoutMs": 5000,
+      "allowedSchemes": [
+        "http",
+        "https"
+      ]
+    },
+    "canonicalBuilders": [
+      {
+        "type": "domain",
+        "template": "www.instagram.com",
+        "required": true
+      }
+    ],
+    "notes": "Instagram strategy removes tracking parameters while preserving content identifiers",
+    "createdAt": "2025-09-13T11:57:30.791Z",
+    "updatedAt": "2025-09-13T11:57:30.791Z"
+  },
+  {
+    "id": "youtube",
+    "name": "YouTube",
+    "version": "1.0.0",
+    "enabled": true,
+    "priority": 100,
+    "matchers": [
+      {
+        "type": "exact",
+        "pattern": "www.youtube.com"
+      },
+      {
+        "type": "exact",
+        "pattern": "youtube.com"
+      },
+      {
+        "type": "exact",
+        "pattern": "youtu.be"
+      },
+      {
+        "type": "wildcard",
+        "pattern": "*.youtube.com"
+      },
+      {
+        "type": "wildcard",
+        "pattern": "*.youtu.be"
+      }
+    ],
+    "paramPolicies": [
+      {
+        "name": "v",
+        "action": "allow",
+        "reason": "Video ID - essential for content"
+      },
+      {
+        "name": "t",
+        "action": "allow",
+        "reason": "Timestamp - preserves video position"
+      },
+      {
+        "name": "list",
+        "action": "allow",
+        "reason": "Playlist ID - essential for playlists"
+      },
+      {
+        "name": "index",
+        "action": "allow",
+        "reason": "Playlist index - preserves position"
+      },
+      {
+        "name": "hl",
+        "action": "allow",
+        "reason": "Language preference"
+      },
+      {
+        "name": "cc_lang_pref",
+        "action": "allow",
+        "reason": "Caption language preference"
+      },
+      {
+        "name": "cc_load_policy",
+        "action": "allow",
+        "reason": "Caption load policy"
+      },
+      {
+        "name": "iv_load_policy",
+        "action": "allow",
+        "reason": "Annotations policy"
+      },
+      {
+        "name": "fs",
+        "action": "allow",
+        "reason": "Fullscreen control"
+      },
+      {
+        "name": "rel",
+        "action": "allow",
+        "reason": "Related videos control"
+      },
+      {
+        "name": "modestbranding",
+        "action": "allow",
+        "reason": "Branding control"
+      },
+      {
+        "name": "playsinline",
+        "action": "allow",
+        "reason": "Mobile playback control"
+      },
+      {
+        "name": "autoplay",
+        "action": "allow",
+        "reason": "Autoplay control"
+      },
+      {
+        "name": "loop",
+        "action": "allow",
+        "reason": "Loop control"
+      },
+      {
+        "name": "mute",
+        "action": "allow",
+        "reason": "Mute control"
+      },
+      {
+        "name": "start",
+        "action": "allow",
+        "reason": "Start time"
+      },
+      {
+        "name": "end",
+        "action": "allow",
+        "reason": "End time"
+      },
+      {
+        "name": "si",
+        "action": "deny",
+        "reason": "YouTube tracking parameter"
+      },
+      {
+        "name": "igshid",
+        "action": "deny",
+        "reason": "Instagram tracking parameter"
+      },
+      {
+        "name": "utm_*",
+        "action": "deny",
+        "reason": "UTM tracking parameters"
+      },
+      {
+        "name": "fbclid",
+        "action": "deny",
+        "reason": "Facebook click ID"
+      },
+      {
+        "name": "gclid",
+        "action": "deny",
+        "reason": "Google click ID"
+      },
+      {
+        "name": "ref",
+        "action": "deny",
+        "reason": "Referral parameter"
+      },
+      {
+        "name": "source",
+        "action": "deny",
+        "reason": "Source tracking"
+      },
+      {
+        "name": "campaign",
+        "action": "deny",
+        "reason": "Campaign tracking"
+      },
+      {
+        "name": "medium",
+        "action": "deny",
+        "reason": "Medium tracking"
+      },
+      {
+        "name": "content",
+        "action": "deny",
+        "reason": "Content tracking"
+      },
+      {
+        "name": "term",
+        "action": "deny",
+        "reason": "Term tracking"
+      },
+      {
+        "name": "feature",
+        "action": "deny",
+        "reason": "Feature tracking"
+      },
+      {
+        "name": "app",
+        "action": "deny",
+        "reason": "App tracking"
+      },
+      {
+        "name": "client",
+        "action": "deny",
+        "reason": "Client tracking"
+      },
+      {
+        "name": "gl",
+        "action": "deny",
+        "reason": "Geographic tracking"
+      },
+      {
+        "name": "gclid",
+        "action": "deny",
+        "reason": "Google click ID"
+      }
+    ],
+    "pathRules": [
+      {
+        "pattern": "^/watch\\?.*",
+        "replacement": "/watch",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/playlist\\?.*",
+        "replacement": "/playlist",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/embed/[^/]+",
+        "replacement": "/embed/",
+        "type": "regex"
+      }
+    ],
+    "redirectPolicy": {
+      "follow": true,
+      "maxDepth": 2,
+      "timeoutMs": 3000,
+      "allowedSchemes": [
+        "http",
+        "https"
+      ]
+    },
+    "canonicalBuilders": [
+      {
+        "type": "domain",
+        "template": "www.youtube.com",
+        "required": true
+      }
+    ],
+    "notes": "YouTube strategy preserves video/playlist identifiers and playback controls while removing tracking parameters",
+    "createdAt": "2025-09-13T11:57:30.791Z",
+    "updatedAt": "2025-09-13T11:57:30.791Z"
+  },
+  {
+    "id": "twitter",
+    "name": "X (Twitter)",
+    "version": "1.0.0",
+    "enabled": true,
+    "priority": 100,
+    "matchers": [
+      {
+        "type": "exact",
+        "pattern": "twitter.com"
+      },
+      {
+        "type": "exact",
+        "pattern": "www.twitter.com"
+      },
+      {
+        "type": "exact",
+        "pattern": "x.com"
+      },
+      {
+        "type": "exact",
+        "pattern": "www.x.com"
+      },
+      {
+        "type": "wildcard",
+        "pattern": "*.twitter.com"
+      },
+      {
+        "type": "wildcard",
+        "pattern": "*.x.com"
+      }
+    ],
+    "paramPolicies": [
+      {
+        "name": "s",
+        "action": "deny",
+        "reason": "Twitter tracking parameter"
+      },
+      {
+        "name": "t",
+        "action": "deny",
+        "reason": "Twitter tracking parameter"
+      },
+      {
+        "name": "ref_src",
+        "action": "deny",
+        "reason": "Twitter referral source"
+      },
+      {
+        "name": "ref_url",
+        "action": "deny",
+        "reason": "Twitter referral URL"
+      },
+      {
+        "name": "via",
+        "action": "deny",
+        "reason": "Twitter via parameter"
+      },
+      {
+        "name": "hashtags",
+        "action": "deny",
+        "reason": "Twitter hashtag tracking"
+      },
+      {
+        "name": "text",
+        "action": "deny",
+        "reason": "Twitter text tracking"
+      },
+      {
+        "name": "url",
+        "action": "deny",
+        "reason": "Twitter URL tracking"
+      },
+      {
+        "name": "related",
+        "action": "deny",
+        "reason": "Twitter related tracking"
+      },
+      {
+        "name": "lang",
+        "action": "allow",
+        "reason": "Language preference"
+      },
+      {
+        "name": "locale",
+        "action": "allow",
+        "reason": "Locale setting"
+      },
+      {
+        "name": "utm_*",
+        "action": "deny",
+        "reason": "UTM tracking parameters"
+      },
+      {
+        "name": "fbclid",
+        "action": "deny",
+        "reason": "Facebook click ID"
+      },
+      {
+        "name": "gclid",
+        "action": "deny",
+        "reason": "Google click ID"
+      },
+      {
+        "name": "ref",
+        "action": "deny",
+        "reason": "Referral parameter"
+      },
+      {
+        "name": "source",
+        "action": "deny",
+        "reason": "Source tracking"
+      },
+      {
+        "name": "campaign",
+        "action": "deny",
+        "reason": "Campaign tracking"
+      },
+      {
+        "name": "medium",
+        "action": "deny",
+        "reason": "Medium tracking"
+      },
+      {
+        "name": "content",
+        "action": "deny",
+        "reason": "Content tracking"
+      },
+      {
+        "name": "term",
+        "action": "deny",
+        "reason": "Term tracking"
+      }
+    ],
+    "pathRules": [
+      {
+        "pattern": "^/status/\\d+",
+        "replacement": "/status/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/i/status/\\d+",
+        "replacement": "/i/status/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/intent/.*",
+        "replacement": "/intent/",
+        "type": "regex"
+      }
+    ],
+    "redirectPolicy": {
+      "follow": true,
+      "maxDepth": 3,
+      "timeoutMs": 3000,
+      "allowedSchemes": [
+        "http",
+        "https"
+      ]
+    },
+    "canonicalBuilders": [
+      {
+        "type": "domain",
+        "template": "twitter.com",
+        "required": true
+      }
+    ],
+    "notes": "Twitter/X strategy removes tracking parameters while preserving tweet identifiers",
+    "createdAt": "2025-09-13T11:57:30.791Z",
+    "updatedAt": "2025-09-13T11:57:30.791Z"
+  },
+  {
+    "id": "tiktok",
+    "name": "TikTok",
+    "version": "1.0.0",
+    "enabled": true,
+    "priority": 100,
+    "matchers": [
+      {
+        "type": "exact",
+        "pattern": "www.tiktok.com"
+      },
+      {
+        "type": "exact",
+        "pattern": "tiktok.com"
+      },
+      {
+        "type": "wildcard",
+        "pattern": "*.tiktok.com"
+      }
+    ],
+    "paramPolicies": [
+      {
+        "name": "is_from_webapp",
+        "action": "deny",
+        "reason": "TikTok webapp tracking"
+      },
+      {
+        "name": "sender_device",
+        "action": "deny",
+        "reason": "TikTok device tracking"
+      },
+      {
+        "name": "sender_web_id",
+        "action": "deny",
+        "reason": "TikTok web ID tracking"
+      },
+      {
+        "name": "share_app_id",
+        "action": "deny",
+        "reason": "TikTok app tracking"
+      },
+      {
+        "name": "share_link_id",
+        "action": "deny",
+        "reason": "TikTok link tracking"
+      },
+      {
+        "name": "share_item_id",
+        "action": "deny",
+        "reason": "TikTok item tracking"
+      },
+      {
+        "name": "timestamp",
+        "action": "deny",
+        "reason": "TikTok timestamp tracking"
+      },
+      {
+        "name": "utm_*",
+        "action": "deny",
+        "reason": "UTM tracking parameters"
+      },
+      {
+        "name": "fbclid",
+        "action": "deny",
+        "reason": "Facebook click ID"
+      },
+      {
+        "name": "gclid",
+        "action": "deny",
+        "reason": "Google click ID"
+      },
+      {
+        "name": "ref",
+        "action": "deny",
+        "reason": "Referral parameter"
+      },
+      {
+        "name": "source",
+        "action": "deny",
+        "reason": "Source tracking"
+      },
+      {
+        "name": "campaign",
+        "action": "deny",
+        "reason": "Campaign tracking"
+      },
+      {
+        "name": "medium",
+        "action": "deny",
+        "reason": "Medium tracking"
+      },
+      {
+        "name": "content",
+        "action": "deny",
+        "reason": "Content tracking"
+      },
+      {
+        "name": "term",
+        "action": "deny",
+        "reason": "Term tracking"
+      },
+      {
+        "name": "lang",
+        "action": "allow",
+        "reason": "Language preference"
+      },
+      {
+        "name": "locale",
+        "action": "allow",
+        "reason": "Locale setting"
+      }
+    ],
+    "pathRules": [
+      {
+        "pattern": "^/@[^/]+/video/\\d+",
+        "replacement": "/@/video/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/t/[^/]+",
+        "replacement": "/t/",
+        "type": "regex"
+      }
+    ],
+    "redirectPolicy": {
+      "follow": true,
+      "maxDepth": 3,
+      "timeoutMs": 3000,
+      "allowedSchemes": [
+        "http",
+        "https"
+      ]
+    },
+    "canonicalBuilders": [
+      {
+        "type": "domain",
+        "template": "www.tiktok.com",
+        "required": true
+      }
+    ],
+    "notes": "TikTok strategy removes tracking parameters while preserving video identifiers",
+    "createdAt": "2025-09-13T11:57:30.791Z",
+    "updatedAt": "2025-09-13T11:57:30.791Z"
+  },
+  {
+    "id": "facebook",
+    "name": "Facebook",
+    "version": "1.0.0",
+    "enabled": true,
+    "priority": 100,
+    "matchers": [
+      {
+        "type": "exact",
+        "pattern": "www.facebook.com"
+      },
+      {
+        "type": "exact",
+        "pattern": "facebook.com"
+      },
+      {
+        "type": "exact",
+        "pattern": "m.facebook.com"
+      },
+      {
+        "type": "wildcard",
+        "pattern": "*.facebook.com"
+      }
+    ],
+    "paramPolicies": [
+      {
+        "name": "fbclid",
+        "action": "deny",
+        "reason": "Facebook click ID"
+      },
+      {
+        "name": "fbid",
+        "action": "deny",
+        "reason": "Facebook ID tracking"
+      },
+      {
+        "name": "ref",
+        "action": "deny",
+        "reason": "Facebook referral tracking"
+      },
+      {
+        "name": "refid",
+        "action": "deny",
+        "reason": "Facebook referral ID"
+      },
+      {
+        "name": "refsrc",
+        "action": "deny",
+        "reason": "Facebook referral source"
+      },
+      {
+        "name": "refurl",
+        "action": "deny",
+        "reason": "Facebook referral URL"
+      },
+      {
+        "name": "source",
+        "action": "deny",
+        "reason": "Facebook source tracking"
+      },
+      {
+        "name": "campaign",
+        "action": "deny",
+        "reason": "Facebook campaign tracking"
+      },
+      {
+        "name": "medium",
+        "action": "deny",
+        "reason": "Facebook medium tracking"
+      },
+      {
+        "name": "content",
+        "action": "deny",
+        "reason": "Facebook content tracking"
+      },
+      {
+        "name": "term",
+        "action": "deny",
+        "reason": "Facebook term tracking"
+      },
+      {
+        "name": "utm_*",
+        "action": "deny",
+        "reason": "UTM tracking parameters"
+      },
+      {
+        "name": "gclid",
+        "action": "deny",
+        "reason": "Google click ID"
+      },
+      {
+        "name": "igshid",
+        "action": "deny",
+        "reason": "Instagram tracking parameter"
+      },
+      {
+        "name": "si",
+        "action": "deny",
+        "reason": "Session tracking"
+      },
+      {
+        "name": "locale",
+        "action": "allow",
+        "reason": "Locale setting"
+      },
+      {
+        "name": "language",
+        "action": "allow",
+        "reason": "Language preference"
+      },
+      {
+        "name": "hl",
+        "action": "allow",
+        "reason": "Language preference"
+      }
+    ],
+    "pathRules": [
+      {
+        "pattern": "^/posts/\\d+",
+        "replacement": "/posts/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/photo/\\d+",
+        "replacement": "/photo/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/videos/\\d+",
+        "replacement": "/videos/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/events/\\d+",
+        "replacement": "/events/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/groups/\\d+",
+        "replacement": "/groups/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/pages/\\d+",
+        "replacement": "/pages/",
+        "type": "regex"
+      }
+    ],
+    "redirectPolicy": {
+      "follow": true,
+      "maxDepth": 3,
+      "timeoutMs": 3000,
+      "allowedSchemes": [
+        "http",
+        "https"
+      ]
+    },
+    "canonicalBuilders": [
+      {
+        "type": "domain",
+        "template": "www.facebook.com",
+        "required": true
+      }
+    ],
+    "notes": "Facebook strategy removes tracking parameters while preserving content identifiers",
+    "createdAt": "2025-09-13T11:57:30.791Z",
+    "updatedAt": "2025-09-13T11:57:30.791Z"
+  },
+  {
+    "id": "linkedin",
+    "name": "LinkedIn",
+    "version": "1.0.0",
+    "enabled": true,
+    "priority": 100,
+    "matchers": [
+      {
+        "type": "exact",
+        "pattern": "www.linkedin.com"
+      },
+      {
+        "type": "exact",
+        "pattern": "linkedin.com"
+      },
+      {
+        "type": "wildcard",
+        "pattern": "*.linkedin.com"
+      }
+    ],
+    "paramPolicies": [
+      {
+        "name": "trk",
+        "action": "deny",
+        "reason": "LinkedIn tracking parameter"
+      },
+      {
+        "name": "trkInfo",
+        "action": "deny",
+        "reason": "LinkedIn tracking info"
+      },
+      {
+        "name": "trkData",
+        "action": "deny",
+        "reason": "LinkedIn tracking data"
+      },
+      {
+        "name": "refId",
+        "action": "deny",
+        "reason": "LinkedIn referral ID"
+      },
+      {
+        "name": "refUrl",
+        "action": "deny",
+        "reason": "LinkedIn referral URL"
+      },
+      {
+        "name": "refsrc",
+        "action": "deny",
+        "reason": "LinkedIn referral source"
+      },
+      {
+        "name": "source",
+        "action": "deny",
+        "reason": "LinkedIn source tracking"
+      },
+      {
+        "name": "campaign",
+        "action": "deny",
+        "reason": "LinkedIn campaign tracking"
+      },
+      {
+        "name": "medium",
+        "action": "deny",
+        "reason": "LinkedIn medium tracking"
+      },
+      {
+        "name": "content",
+        "action": "deny",
+        "reason": "LinkedIn content tracking"
+      },
+      {
+        "name": "term",
+        "action": "deny",
+        "reason": "LinkedIn term tracking"
+      },
+      {
+        "name": "utm_*",
+        "action": "deny",
+        "reason": "UTM tracking parameters"
+      },
+      {
+        "name": "fbclid",
+        "action": "deny",
+        "reason": "Facebook click ID"
+      },
+      {
+        "name": "gclid",
+        "action": "deny",
+        "reason": "Google click ID"
+      },
+      {
+        "name": "igshid",
+        "action": "deny",
+        "reason": "Instagram tracking parameter"
+      },
+      {
+        "name": "si",
+        "action": "deny",
+        "reason": "Session tracking"
+      },
+      {
+        "name": "locale",
+        "action": "allow",
+        "reason": "Locale setting"
+      },
+      {
+        "name": "language",
+        "action": "allow",
+        "reason": "Language preference"
+      },
+      {
+        "name": "hl",
+        "action": "allow",
+        "reason": "Language preference"
+      }
+    ],
+    "pathRules": [
+      {
+        "pattern": "^/posts/\\d+",
+        "replacement": "/posts/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/articles/\\d+",
+        "replacement": "/articles/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/videos/\\d+",
+        "replacement": "/videos/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/events/\\d+",
+        "replacement": "/events/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/groups/\\d+",
+        "replacement": "/groups/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/company/\\d+",
+        "replacement": "/company/",
+        "type": "regex"
+      }
+    ],
+    "redirectPolicy": {
+      "follow": true,
+      "maxDepth": 3,
+      "timeoutMs": 3000,
+      "allowedSchemes": [
+        "http",
+        "https"
+      ]
+    },
+    "canonicalBuilders": [
+      {
+        "type": "domain",
+        "template": "www.linkedin.com",
+        "required": true
+      }
+    ],
+    "notes": "LinkedIn strategy removes tracking parameters while preserving content identifiers",
+    "createdAt": "2025-09-13T11:57:30.791Z",
+    "updatedAt": "2025-09-13T11:57:30.791Z"
+  },
+  {
+    "id": "reddit",
+    "name": "Reddit",
+    "version": "1.0.0",
+    "enabled": true,
+    "priority": 100,
+    "matchers": [
+      {
+        "type": "exact",
+        "pattern": "www.reddit.com"
+      },
+      {
+        "type": "exact",
+        "pattern": "reddit.com"
+      },
+      {
+        "type": "exact",
+        "pattern": "old.reddit.com"
+      },
+      {
+        "type": "exact",
+        "pattern": "new.reddit.com"
+      },
+      {
+        "type": "exact",
+        "pattern": "m.reddit.com"
+      },
+      {
+        "type": "wildcard",
+        "pattern": "*.reddit.com"
+      }
+    ],
+    "paramPolicies": [
+      {
+        "name": "ref",
+        "action": "deny",
+        "reason": "Reddit referral tracking"
+      },
+      {
+        "name": "ref_source",
+        "action": "deny",
+        "reason": "Reddit referral source"
+      },
+      {
+        "name": "ref_campaign",
+        "action": "deny",
+        "reason": "Reddit campaign tracking"
+      },
+      {
+        "name": "utm_*",
+        "action": "deny",
+        "reason": "UTM tracking parameters"
+      },
+      {
+        "name": "fbclid",
+        "action": "deny",
+        "reason": "Facebook click ID"
+      },
+      {
+        "name": "gclid",
+        "action": "deny",
+        "reason": "Google click ID"
+      },
+      {
+        "name": "igshid",
+        "action": "deny",
+        "reason": "Instagram tracking parameter"
+      },
+      {
+        "name": "si",
+        "action": "deny",
+        "reason": "Session tracking"
+      },
+      {
+        "name": "source",
+        "action": "deny",
+        "reason": "Source tracking"
+      },
+      {
+        "name": "campaign",
+        "action": "deny",
+        "reason": "Campaign tracking"
+      },
+      {
+        "name": "medium",
+        "action": "deny",
+        "reason": "Medium tracking"
+      },
+      {
+        "name": "content",
+        "action": "deny",
+        "reason": "Content tracking"
+      },
+      {
+        "name": "term",
+        "action": "deny",
+        "reason": "Term tracking"
+      },
+      {
+        "name": "context",
+        "action": "allow",
+        "reason": "Reddit context parameter"
+      },
+      {
+        "name": "sort",
+        "action": "allow",
+        "reason": "Reddit sort parameter"
+      },
+      {
+        "name": "t",
+        "action": "allow",
+        "reason": "Reddit time filter"
+      },
+      {
+        "name": "limit",
+        "action": "allow",
+        "reason": "Reddit limit parameter"
+      },
+      {
+        "name": "after",
+        "action": "allow",
+        "reason": "Reddit pagination"
+      },
+      {
+        "name": "before",
+        "action": "allow",
+        "reason": "Reddit pagination"
+      },
+      {
+        "name": "count",
+        "action": "allow",
+        "reason": "Reddit count parameter"
+      },
+      {
+        "name": "raw_json",
+        "action": "allow",
+        "reason": "Reddit JSON format"
+      },
+      {
+        "name": "locale",
+        "action": "allow",
+        "reason": "Locale setting"
+      },
+      {
+        "name": "language",
+        "action": "allow",
+        "reason": "Language preference"
+      },
+      {
+        "name": "hl",
+        "action": "allow",
+        "reason": "Language preference"
+      }
+    ],
+    "pathRules": [
+      {
+        "pattern": "^/r/[^/]+/comments/[^/]+",
+        "replacement": "/r/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/user/[^/]+",
+        "replacement": "/user/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/u/[^/]+",
+        "replacement": "/u/",
+        "type": "regex"
+      }
+    ],
+    "redirectPolicy": {
+      "follow": true,
+      "maxDepth": 3,
+      "timeoutMs": 3000,
+      "allowedSchemes": [
+        "http",
+        "https"
+      ]
+    },
+    "canonicalBuilders": [
+      {
+        "type": "domain",
+        "template": "www.reddit.com",
+        "required": true
+      }
+    ],
+    "notes": "Reddit strategy removes tracking parameters while preserving subreddit and post identifiers",
+    "createdAt": "2025-09-13T11:57:30.791Z",
+    "updatedAt": "2025-09-13T11:57:30.791Z"
+  },
+  {
+    "id": "pinterest",
+    "name": "Pinterest",
+    "version": "1.0.0",
+    "enabled": true,
+    "priority": 100,
+    "matchers": [
+      {
+        "type": "exact",
+        "pattern": "www.pinterest.com"
+      },
+      {
+        "type": "exact",
+        "pattern": "pinterest.com"
+      },
+      {
+        "type": "exact",
+        "pattern": "pin.it"
+      },
+      {
+        "type": "wildcard",
+        "pattern": "*.pinterest.com"
+      },
+      {
+        "type": "wildcard",
+        "pattern": "*.pin.it"
+      }
+    ],
+    "paramPolicies": [
+      {
+        "name": "utm_*",
+        "action": "deny",
+        "reason": "UTM tracking parameters"
+      },
+      {
+        "name": "fbclid",
+        "action": "deny",
+        "reason": "Facebook click ID"
+      },
+      {
+        "name": "gclid",
+        "action": "deny",
+        "reason": "Google click ID"
+      },
+      {
+        "name": "igshid",
+        "action": "deny",
+        "reason": "Instagram tracking parameter"
+      },
+      {
+        "name": "si",
+        "action": "deny",
+        "reason": "Session tracking"
+      },
+      {
+        "name": "ref",
+        "action": "deny",
+        "reason": "Referral parameter"
+      },
+      {
+        "name": "source",
+        "action": "deny",
+        "reason": "Source tracking"
+      },
+      {
+        "name": "campaign",
+        "action": "deny",
+        "reason": "Campaign tracking"
+      },
+      {
+        "name": "medium",
+        "action": "deny",
+        "reason": "Medium tracking"
+      },
+      {
+        "name": "content",
+        "action": "deny",
+        "reason": "Content tracking"
+      },
+      {
+        "name": "term",
+        "action": "deny",
+        "reason": "Term tracking"
+      },
+      {
+        "name": "pin_id",
+        "action": "deny",
+        "reason": "Pinterest pin tracking"
+      },
+      {
+        "name": "board_id",
+        "action": "deny",
+        "reason": "Pinterest board tracking"
+      },
+      {
+        "name": "user_id",
+        "action": "deny",
+        "reason": "Pinterest user tracking"
+      },
+      {
+        "name": "session_id",
+        "action": "deny",
+        "reason": "Pinterest session tracking"
+      },
+      {
+        "name": "locale",
+        "action": "allow",
+        "reason": "Locale setting"
+      },
+      {
+        "name": "language",
+        "action": "allow",
+        "reason": "Language preference"
+      },
+      {
+        "name": "hl",
+        "action": "allow",
+        "reason": "Language preference"
+      }
+    ],
+    "pathRules": [
+      {
+        "pattern": "^/pin/\\d+",
+        "replacement": "/pin/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/board/\\d+",
+        "replacement": "/board/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/[^/]+/\\d+",
+        "replacement": "/",
+        "type": "regex"
+      }
+    ],
+    "redirectPolicy": {
+      "follow": true,
+      "maxDepth": 3,
+      "timeoutMs": 3000,
+      "allowedSchemes": [
+        "http",
+        "https"
+      ]
+    },
+    "canonicalBuilders": [
+      {
+        "type": "domain",
+        "template": "www.pinterest.com",
+        "required": true
+      }
+    ],
+    "notes": "Pinterest strategy removes tracking parameters while preserving pin and board identifiers",
+    "createdAt": "2025-09-13T11:57:30.791Z",
+    "updatedAt": "2025-09-13T11:57:30.791Z"
+  },
+  {
+    "id": "github",
+    "name": "GitHub",
+    "version": "1.0.0",
+    "enabled": true,
+    "priority": 100,
+    "matchers": [
+      {
+        "type": "exact",
+        "pattern": "github.com"
+      },
+      {
+        "type": "exact",
+        "pattern": "www.github.com"
+      },
+      {
+        "type": "wildcard",
+        "pattern": "*.github.com"
+      }
+    ],
+    "paramPolicies": [
+      {
+        "name": "utm_*",
+        "action": "deny",
+        "reason": "UTM tracking parameters"
+      },
+      {
+        "name": "fbclid",
+        "action": "deny",
+        "reason": "Facebook click ID"
+      },
+      {
+        "name": "gclid",
+        "action": "deny",
+        "reason": "Google click ID"
+      },
+      {
+        "name": "igshid",
+        "action": "deny",
+        "reason": "Instagram tracking parameter"
+      },
+      {
+        "name": "si",
+        "action": "deny",
+        "reason": "Session tracking"
+      },
+      {
+        "name": "ref",
+        "action": "deny",
+        "reason": "Referral parameter"
+      },
+      {
+        "name": "source",
+        "action": "deny",
+        "reason": "Source tracking"
+      },
+      {
+        "name": "campaign",
+        "action": "deny",
+        "reason": "Campaign tracking"
+      },
+      {
+        "name": "medium",
+        "action": "deny",
+        "reason": "Medium tracking"
+      },
+      {
+        "name": "content",
+        "action": "deny",
+        "reason": "Content tracking"
+      },
+      {
+        "name": "term",
+        "action": "deny",
+        "reason": "Term tracking"
+      },
+      {
+        "name": "tab",
+        "action": "allow",
+        "reason": "GitHub tab parameter"
+      },
+      {
+        "name": "branch",
+        "action": "allow",
+        "reason": "GitHub branch parameter"
+      },
+      {
+        "name": "path",
+        "action": "allow",
+        "reason": "GitHub path parameter"
+      },
+      {
+        "name": "line",
+        "action": "allow",
+        "reason": "GitHub line parameter"
+      },
+      {
+        "name": "startLine",
+        "action": "allow",
+        "reason": "GitHub start line parameter"
+      },
+      {
+        "name": "endLine",
+        "action": "allow",
+        "reason": "GitHub end line parameter"
+      },
+      {
+        "name": "q",
+        "action": "allow",
+        "reason": "GitHub search query"
+      },
+      {
+        "name": "type",
+        "action": "allow",
+        "reason": "GitHub type parameter"
+      },
+      {
+        "name": "language",
+        "action": "allow",
+        "reason": "GitHub language parameter"
+      },
+      {
+        "name": "sort",
+        "action": "allow",
+        "reason": "GitHub sort parameter"
+      },
+      {
+        "name": "order",
+        "action": "allow",
+        "reason": "GitHub order parameter"
+      },
+      {
+        "name": "per_page",
+        "action": "allow",
+        "reason": "GitHub pagination"
+      },
+      {
+        "name": "page",
+        "action": "allow",
+        "reason": "GitHub pagination"
+      },
+      {
+        "name": "state",
+        "action": "allow",
+        "reason": "GitHub state parameter"
+      },
+      {
+        "name": "labels",
+        "action": "allow",
+        "reason": "GitHub labels parameter"
+      },
+      {
+        "name": "milestone",
+        "action": "allow",
+        "reason": "GitHub milestone parameter"
+      },
+      {
+        "name": "assignee",
+        "action": "allow",
+        "reason": "GitHub assignee parameter"
+      },
+      {
+        "name": "creator",
+        "action": "allow",
+        "reason": "GitHub creator parameter"
+      },
+      {
+        "name": "mentioned",
+        "action": "allow",
+        "reason": "GitHub mentioned parameter"
+      },
+      {
+        "name": "locale",
+        "action": "allow",
+        "reason": "Locale setting"
+      },
+      {
+        "name": "hl",
+        "action": "allow",
+        "reason": "Language preference"
+      }
+    ],
+    "pathRules": [
+      {
+        "pattern": "^/[^/]+/[^/]+/blob/[^/]+",
+        "replacement": "/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/[^/]+/[^/]+/tree/[^/]+",
+        "replacement": "/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/[^/]+/[^/]+/commit/[^/]+",
+        "replacement": "/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/[^/]+/[^/]+/pull/\\d+",
+        "replacement": "/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/[^/]+/[^/]+/issues/\\d+",
+        "replacement": "/",
+        "type": "regex"
+      }
+    ],
+    "redirectPolicy": {
+      "follow": true,
+      "maxDepth": 2,
+      "timeoutMs": 3000,
+      "allowedSchemes": [
+        "http",
+        "https"
+      ]
+    },
+    "canonicalBuilders": [
+      {
+        "type": "domain",
+        "template": "github.com",
+        "required": true
+      }
+    ],
+    "notes": "GitHub strategy removes tracking parameters while preserving repository and content identifiers",
+    "createdAt": "2025-09-13T11:57:30.791Z",
+    "updatedAt": "2025-09-13T11:57:30.791Z"
+  },
+  {
+    "id": "medium",
+    "name": "Medium",
+    "version": "1.0.0",
+    "enabled": true,
+    "priority": 100,
+    "matchers": [
+      {
+        "type": "exact",
+        "pattern": "medium.com"
+      },
+      {
+        "type": "exact",
+        "pattern": "www.medium.com"
+      },
+      {
+        "type": "wildcard",
+        "pattern": "*.medium.com"
+      }
+    ],
+    "paramPolicies": [
+      {
+        "name": "utm_*",
+        "action": "deny",
+        "reason": "UTM tracking parameters"
+      },
+      {
+        "name": "fbclid",
+        "action": "deny",
+        "reason": "Facebook click ID"
+      },
+      {
+        "name": "gclid",
+        "action": "deny",
+        "reason": "Google click ID"
+      },
+      {
+        "name": "igshid",
+        "action": "deny",
+        "reason": "Instagram tracking parameter"
+      },
+      {
+        "name": "si",
+        "action": "deny",
+        "reason": "Session tracking"
+      },
+      {
+        "name": "ref",
+        "action": "deny",
+        "reason": "Referral parameter"
+      },
+      {
+        "name": "source",
+        "action": "deny",
+        "reason": "Source tracking"
+      },
+      {
+        "name": "campaign",
+        "action": "deny",
+        "reason": "Campaign tracking"
+      },
+      {
+        "name": "medium",
+        "action": "deny",
+        "reason": "Medium tracking"
+      },
+      {
+        "name": "content",
+        "action": "deny",
+        "reason": "Content tracking"
+      },
+      {
+        "name": "term",
+        "action": "deny",
+        "reason": "Term tracking"
+      },
+      {
+        "name": "source",
+        "action": "deny",
+        "reason": "Medium source tracking"
+      },
+      {
+        "name": "via",
+        "action": "deny",
+        "reason": "Medium via tracking"
+      },
+      {
+        "name": "share",
+        "action": "deny",
+        "reason": "Medium share tracking"
+      },
+      {
+        "name": "shareId",
+        "action": "deny",
+        "reason": "Medium share ID tracking"
+      },
+      {
+        "name": "userId",
+        "action": "deny",
+        "reason": "Medium user ID tracking"
+      },
+      {
+        "name": "postId",
+        "action": "deny",
+        "reason": "Medium post ID tracking"
+      },
+      {
+        "name": "collectionId",
+        "action": "deny",
+        "reason": "Medium collection ID tracking"
+      },
+      {
+        "name": "publicationId",
+        "action": "deny",
+        "reason": "Medium publication ID tracking"
+      },
+      {
+        "name": "locale",
+        "action": "allow",
+        "reason": "Locale setting"
+      },
+      {
+        "name": "language",
+        "action": "allow",
+        "reason": "Language preference"
+      },
+      {
+        "name": "hl",
+        "action": "allow",
+        "reason": "Language preference"
+      }
+    ],
+    "pathRules": [
+      {
+        "pattern": "^/@[^/]+/[^/]+",
+        "replacement": "/@/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/p/[^/]+",
+        "replacement": "/p/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/c/[^/]+",
+        "replacement": "/c/",
+        "type": "regex"
+      }
+    ],
+    "redirectPolicy": {
+      "follow": true,
+      "maxDepth": 3,
+      "timeoutMs": 3000,
+      "allowedSchemes": [
+        "http",
+        "https"
+      ]
+    },
+    "canonicalBuilders": [
+      {
+        "type": "domain",
+        "template": "medium.com",
+        "required": true
+      }
+    ],
+    "notes": "Medium strategy removes tracking parameters while preserving article and author identifiers",
+    "createdAt": "2025-09-13T11:57:30.792Z",
+    "updatedAt": "2025-09-13T11:57:30.792Z"
+  }
+]

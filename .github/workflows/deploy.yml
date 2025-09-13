@@ -1,0 +1,183 @@
+name: Test and Deploy
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: "package-lock.json"
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install server dependencies
+        run: |
+          cd server
+          npm ci
+
+      - name: Run server tests
+        run: |
+          cd server
+          npm test
+
+      - name: Run server linting
+        run: |
+          cd server
+          npm run lint
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.19.5"
+          channel: "stable"
+
+      - name: Install Flutter dependencies
+        run: |
+          cd mobile
+          flutter pub get
+
+      - name: Run Flutter tests
+        run: |
+          cd mobile
+          flutter test
+
+      - name: Run Flutter analysis
+        run: |
+          cd mobile
+          flutter analyze
+
+      - name: Build Flutter app (Android)
+        run: |
+          cd mobile
+          flutter build apk --debug
+
+      - name: Build Flutter app (Web)
+        run: |
+          cd mobile
+          flutter build web --release
+
+  deploy-server:
+    name: Deploy Server to Vercel
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: "server/package-lock.json"
+
+      - name: Install server dependencies
+        run: |
+          cd server
+          npm ci
+
+      - name: Build server
+        run: |
+          cd server
+          npm run build
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./server
+          vercel-args: "--prod"
+
+  deploy-mobile:
+    name: Build Mobile App
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.19.5"
+          channel: "stable"
+
+      - name: Install Flutter dependencies
+        run: |
+          cd mobile
+          flutter pub get
+
+      - name: Build Android APK
+        run: |
+          cd mobile
+          flutter build apk --release
+
+      - name: Build Android App Bundle
+        run: |
+          cd mobile
+          flutter build appbundle --release
+
+      - name: Build Web App
+        run: |
+          cd mobile
+          flutter build web --release
+
+      - name: Upload Android APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: mobile/build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Upload Android App Bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-aab
+          path: mobile/build/app/outputs/bundle/release/app-release.aab
+
+      - name: Upload Web App
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-app
+          path: mobile/build/web/
+
+  notify:
+    name: Notify Deployment Status
+    needs: [test, deploy-server, deploy-mobile]
+    runs-on: ubuntu-latest
+    if: always() && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Notify Success
+        if: needs.test.result == 'success' && needs.deploy-server.result == 'success'
+        run: |
+          echo "✅ All tests passed and deployment successful!"
+          echo "🚀 Server deployed to Vercel"
+          echo "📱 Mobile app built successfully"
+
+      - name: Notify Failure
+        if: needs.test.result == 'failure' || needs.deploy-server.result == 'failure'
+        run: |
+          echo "❌ Tests failed or deployment failed!"
+          echo "Check the logs for details"
+          exit 1

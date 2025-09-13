@@ -1,0 +1,106 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test-server:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd server
+          npm ci
+
+      - name: Run linter
+        run: |
+          cd server
+          npm run lint
+
+      - name: Run tests
+        run: |
+          cd server
+          npm test
+
+      - name: Build
+        run: |
+          cd server
+          npm run build
+
+  test-mobile:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.10.0"
+          channel: "stable"
+
+      - name: Install dependencies
+        run: |
+          cd mobile
+          flutter pub get
+
+      - name: Analyze code
+        run: |
+          cd mobile
+          flutter analyze
+
+      - name: Run tests
+        run: |
+          cd mobile
+          flutter test
+
+      - name: Build APK
+        run: |
+          cd mobile
+          flutter build apk --release
+
+  test-integration:
+    runs-on: ubuntu-latest
+    needs: [test-server, test-mobile]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install server dependencies
+        run: |
+          cd server
+          npm ci
+
+      - name: Start server
+        run: |
+          cd server
+          npm run build
+          npm start &
+          sleep 10
+
+      - name: Test API endpoints
+        run: |
+          curl -f http://localhost:3000/health || exit 1
+          curl -f -X POST http://localhost:3000/api/clean \
+            -H "Content-Type: application/json" \
+            -d '{"url":"https://example.com?utm_source=test"}' || exit 1

@@ -1,0 +1,57 @@
+{
+  "instagram": [
+    "https://www.instagram.com/p/ABC123/?utm_source=ig_web_button_share_sheet&utm_medium=copy_link&igshid=xyz789",
+    "https://www.instagram.com/reel/DEF456/?utm_campaign=share&utm_source=ig_web&igshid=abc123",
+    "https://www.instagram.com/stories/username/123456789/?utm_source=ig_story_share&igshid=def456"
+  ],
+  "youtube": [
+    "https://www.youtube.com/watch?v=dQw4w9WgXcQ&utm_source=google&utm_medium=referral&utm_campaign=test&t=30s",
+    "https://youtu.be/dQw4w9WgXcQ?t=30&utm_source=share&utm_medium=social&utm_campaign=test",
+    "https://www.youtube.com/playlist?list=PLrAXtmRdnEQy6nuLMOV8Fm4qHoLSy0k4&utm_source=google&utm_medium=referral"
+  ],
+  "twitter": [
+    "https://twitter.com/username/status/1234567890?utm_source=twitter&utm_medium=social&utm_campaign=test&s=20",
+    "https://x.com/username/status/1234567890?utm_source=twitter&utm_medium=social&utm_campaign=test&s=20",
+    "https://twitter.com/i/status/1234567890?utm_source=twitter&utm_medium=social&utm_campaign=test"
+  ],
+  "tiktok": [
+    "https://www.tiktok.com/@username/video/1234567890?utm_source=tt_web&utm_medium=share&is_from_webapp=1&sender_device=pc",
+    "https://vm.tiktok.com/ZMh123456/?utm_source=tt_web&utm_medium=share&is_from_webapp=1",
+    "https://www.tiktok.com/t/ZTd123456/?utm_source=tt_web&utm_medium=share&is_from_webapp=1"
+  ],
+  "facebook": [
+    "https://www.facebook.com/username/posts/1234567890?utm_source=facebook&utm_medium=social&utm_campaign=test&fbclid=abc123",
+    "https://m.facebook.com/username/posts/1234567890?utm_source=facebook&utm_medium=social&utm_campaign=test&fbclid=def456",
+    "https://www.facebook.com/photo.php?fbid=1234567890&utm_source=facebook&utm_medium=social&utm_campaign=test&fbclid=ghi789"
+  ],
+  "linkedin": [
+    "https://www.linkedin.com/posts/username_activity-1234567890-abcdef?utm_source=linkedin&utm_medium=social&utm_campaign=test&trk=xyz123",
+    "https://www.linkedin.com/posts/username_activity-1234567890-abcdef?utm_source=linkedin&utm_medium=social&utm_campaign=test&trkInfo=abc123",
+    "https://www.linkedin.com/feed/update/urn:li:activity:1234567890?utm_source=linkedin&utm_medium=social&utm_campaign=test&trk=def456"
+  ],
+  "reddit": [
+    "https://www.reddit.com/r/subreddit/comments/abc123/title/?utm_source=reddit&utm_medium=social&utm_campaign=test&ref=share",
+    "https://reddit.com/r/subreddit/comments/abc123/title/?utm_source=reddit&utm_medium=social&utm_campaign=test&ref=share",
+    "https://www.reddit.com/r/subreddit/comments/abc123/title/?utm_source=reddit&utm_medium=social&utm_campaign=test&context=3"
+  ],
+  "pinterest": [
+    "https://www.pinterest.com/pin/1234567890/?utm_source=pinterest&utm_medium=social&utm_campaign=test&pin_id=abc123",
+    "https://pin.it/abc123?utm_source=pinterest&utm_medium=social&utm_campaign=test&pin_id=def456",
+    "https://www.pinterest.com/username/board-name/?utm_source=pinterest&utm_medium=social&utm_campaign=test&board_id=ghi789"
+  ],
+  "github": [
+    "https://github.com/username/repository?utm_source=github&utm_medium=social&utm_campaign=test&tab=readme",
+    "https://github.com/username/repository/blob/main/file.js?utm_source=github&utm_medium=social&utm_campaign=test&line=10",
+    "https://github.com/username/repository/issues/123?utm_source=github&utm_medium=social&utm_campaign=test&tab=comments"
+  ],
+  "medium": [
+    "https://medium.com/@username/article-title-abc123?utm_source=medium&utm_medium=social&utm_campaign=test&source=share",
+    "https://username.medium.com/article-title-abc123?utm_source=medium&utm_medium=social&utm_campaign=test&source=share",
+    "https://medium.com/@username/article-title-abc123?utm_source=medium&utm_medium=social&utm_campaign=test&via=share"
+  ],
+  "generic": [
+    "https://example.com/page?utm_source=google&utm_medium=cpc&utm_campaign=test&utm_content=ad1&utm_term=keyword&ref=share&source=social&campaign=summer&medium=email&content=newsletter&term=promo&affiliate=partner&partner=sponsor&promo=discount&discount=20&tracking=123&click_id=abc&clickid=def&click=xyz&link=redirect&redirect=goto&goto=next&continue=flow&return=home&callback=success&success=true&error=false&status=ok&result=success&session=abc123&sessionid=def456&sid=ghi789&token=jkl012&key=mno345&id=pqr678&uid=stu901&user=vwx234&member=yz567&account=890&profile=123&settings=456&preferences=789",
+    "https://news.example.com/article?utm_source=newsletter&utm_medium=email&utm_campaign=daily&utm_content=headline&utm_term=breaking&ref=email&source=newsletter&campaign=daily&medium=email&content=headline&term=breaking&affiliate=none&partner=none&promo=none&discount=0&tracking=none&click_id=none&clickid=none&click=none&link=none&redirect=none&goto=none&continue=none&return=none&callback=none&success=none&error=none&status=none&result=none&session=none&sessionid=none&sid=none&token=none&key=none&id=none&uid=none&user=none&member=none&account=none&profile=none&settings=none&preferences=none",
+    "https://shop.example.com/product/123?utm_source=google&utm_medium=cpc&utm_campaign=shopping&utm_content=product&utm_term=buy&ref=google&source=google&campaign=shopping&medium=cpc&content=product&term=buy&affiliate=none&partner=none&promo=save20&discount=20&tracking=abc123&click_id=def456&clickid=ghi789&click=xyz&link=product&redirect=checkout&goto=cart&continue=shopping&return=home&callback=success&success=true&error=false&status=ok&result=success&session=abc123&sessionid=def456&sid=ghi789&token=jkl012&key=mno345&id=123&uid=456&user=789&member=012&account=345&profile=678&settings=901&preferences=234"
+  ]
+}

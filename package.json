@@ -1,0 +1,40 @@
+{
+  "name": "traceoff-monorepo",
+  "version": "1.0.0",
+  "description": "TraceOff - Share links without trackers - Flutter + Node/TS Monorepo",
+  "private": true,
+  "workspaces": [
+    "server",
+    "mobile"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:mobile\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:mobile": "cd mobile && flutter run",
+    "build": "npm run build:server && npm run build:mobile",
+    "build:server": "cd server && npm run build",
+    "build:mobile": "cd mobile && flutter build apk",
+    "build:mobile:web": "cd mobile && flutter build web --release",
+    "build:mobile:ios": "cd mobile && flutter build ios --release",
+    "test": "npm run test:server && npm run test:mobile",
+    "test:server": "cd server && npm test",
+    "test:mobile": "cd mobile && flutter test",
+    "test:integration": "npm run test:server && npm run test:api",
+    "test:api": "cd server && npm start & sleep 5 && curl -f http://localhost:3000/health && curl -f -X POST http://localhost:3000/api/clean -H 'Content-Type: application/json' -d '{\"url\": \"https://example.com?utm_source=test\"}' && curl -f http://localhost:3000/api/strategies",
+    "lint": "npm run lint:server && npm run lint:mobile",
+    "lint:server": "cd server && npm run lint",
+    "lint:mobile": "cd mobile && flutter analyze",
+    "lint:fix": "npm run lint:server:fix && npm run lint:mobile:fix",
+    "lint:server:fix": "cd server && npm run lint:fix",
+    "lint:mobile:fix": "cd mobile && dart fix --apply",
+    "clean": "npm run clean:server && npm run clean:mobile",
+    "clean:server": "cd server && npm run clean",
+    "clean:mobile": "cd mobile && flutter clean",
+    "deploy:vercel": "cd server && vercel --prod",
+    "deploy:mobile:android": "cd mobile && flutter build apk --release",
+    "deploy:mobile:web": "cd mobile && flutter build web --release"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

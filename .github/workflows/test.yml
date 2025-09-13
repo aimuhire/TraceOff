@@ -1,0 +1,122 @@
+name: Test Suite
+
+on:
+  push:
+    branches: [main, develop, feature/*]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test-server:
+    name: Test Server
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: "server/package-lock.json"
+
+      - name: Install dependencies
+        run: |
+          cd server
+          npm ci
+
+      - name: Run tests
+        run: |
+          cd server
+          npm test
+
+      - name: Run linting
+        run: |
+          cd server
+          npm run lint
+
+      - name: Build server
+        run: |
+          cd server
+          npm run build
+
+  test-mobile:
+    name: Test Mobile App
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.19.5"
+          channel: "stable"
+
+      - name: Install dependencies
+        run: |
+          cd mobile
+          flutter pub get
+
+      - name: Run tests
+        run: |
+          cd mobile
+          flutter test
+
+      - name: Run analysis
+        run: |
+          cd mobile
+          flutter analyze
+
+      - name: Build APK
+        run: |
+          cd mobile
+          flutter build apk --debug
+
+  test-integration:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: [test-server]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: "server/package-lock.json"
+
+      - name: Install dependencies
+        run: |
+          cd server
+          npm ci
+
+      - name: Build server
+        run: |
+          cd server
+          npm run build
+
+      - name: Start server
+        run: |
+          cd server
+          npm start &
+          sleep 10
+
+      - name: Test API endpoints
+        run: |
+          # Test health endpoint
+          curl -f http://localhost:3000/health || exit 1
+
+          # Test clean endpoint
+          curl -f -X POST http://localhost:3000/api/clean \
+            -H "Content-Type: application/json" \
+            -d '{"url": "https://example.com?utm_source=test"}' || exit 1
+
+          # Test strategies endpoint
+          curl -f http://localhost:3000/api/strategies || exit 1

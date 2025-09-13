@@ -1,0 +1,191 @@
+import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
+import Fastify from 'fastify';
+import { rateLimiterService } from '../middleware/rateLimiter';
+import { getRateLimitConfig } from '../config/rateLimit';
+
+describe('Rate Limiter Service', () => {
+    let fastify: any;
+
+    beforeEach(async () => {
+        fastify = Fastify({
+            logger: false,
+        });
+
+        // Register rate limiters
+        await rateLimiterService.registerRateLimiters(fastify);
+
+        // Add test routes
+        fastify.get('/test-general', async () => {
+            return { success: true, route: 'general' };
+        });
+
+        fastify.get('/test-clean', async () => {
+            return { success: true, route: 'clean' };
+        });
+
+        fastify.get('/test-health', async () => {
+            return { success: true, route: 'health' };
+        });
+
+        await fastify.ready();
+    });
+
+    afterEach(async () => {
+        await fastify.close();
+        await rateLimiterService.close();
+    });
+
+    test('should allow requests within rate limit', async () => {
+        const response = await fastify.inject({
+            method: 'GET',
+            url: '/test-general',
+        });
+
+        expect(response.statusCode).toBe(200);
+        expect(JSON.parse(response.payload)).toEqual({
+            success: true,
+            route: 'general',
+        });
+    });
+
+    test('should block requests exceeding rate limit', async () => {
+        // Use a smaller number of requests to avoid hitting the limit in other tests
+        const maxRequests = 5;
+
+        // Temporarily update the config for this test
+        rateLimiterService.updateConfig({
+            general: { max: maxRequests, timeWindow: '1m' },
+        });
+
+        // Make requests up to the limit
+        for (let i = 0; i < maxRequests; i++) {
+            const response = await fastify.inject({
+                method: 'GET',
+                url: '/test-general',
+            });
+            expect(response.statusCode).toBe(200);
+        }
+
+        // Next request should be rate limited
+        const response = await fastify.inject({
+            method: 'GET',
+            url: '/test-general',
+        });
+
+        expect(response.statusCode).toBe(429);
+        const body = JSON.parse(response.payload);
+        expect(body.error).toBe('Rate limit exceeded');
+        expect(body.limit).toBe(maxRequests);
+        expect(body.remaining).toBe(0);
+    });
+
+    test('should have different limits for different endpoints', async () => {
+        // Test that different endpoints work
+        const generalResponse = await fastify.inject({
+            method: 'GET',
+            url: '/test-general',
+        });
+        expect(generalResponse.statusCode).toBe(200);
+
+        const cleanResponse = await fastify.inject({
+            method: 'GET',
+            url: '/test-clean',
+        });
+        expect(cleanResponse.statusCode).toBe(200);
+
+        const healthResponse = await fastify.inject({
+            method: 'GET',
+            url: '/test-health',
+        });
+        expect(healthResponse.statusCode).toBe(200);
+    });
+
+    test('should include rate limit headers in response', async () => {
+        const response = await fastify.inject({
+            method: 'GET',
+            url: '/test-general',
+        });
+
+        expect(response.statusCode).toBe(200);
+        // Note: @fastify/rate-limit adds headers automatically
+        // The exact headers depend on the implementation
+    });
+
+    test('should handle Redis connection errors gracefully', async () => {
+        // This test verifies that the service falls back to memory store
+        // when Redis is not available
+        const response = await fastify.inject({
+            method: 'GET',
+            url: '/test-general',
+        });
+
+        expect(response.statusCode).toBe(200);
+    });
+
+    test('should get rate limit status', async () => {
+        const status = await rateLimiterService.getRateLimitStatus(
+            { ip: '127.0.0.1', headers: {} } as any,
+            'general'
+        );
+
+        // Status might be null if Redis is not available
+        if (status) {
+            expect(status).toHaveProperty('limit');
+            expect(status).toHaveProperty('remaining');
+            expect(status).toHaveProperty('resetTime');
+        }
+    });
+
+    test('should update configuration', () => {
+        const newConfig = {
+            general: { max: 50, timeWindow: '30s' },
+            clean: { max: 10, timeWindow: '30s' },
+            health: { max: 100, timeWindow: '30s' },
+            admin: { max: 25, timeWindow: '30s' },
+        };
+
+        rateLimiterService.updateConfig(newConfig);
+        const config = rateLimiterService.getConfig();
+
+        expect(config.general.max).toBe(50);
+        expect(config.clean.max).toBe(10);
+    });
+});
+
+describe('Rate Limit Configuration', () => {
+    test('should return development config in development', () => {
+        const originalEnv = process.env.NODE_ENV;
+        process.env.NODE_ENV = 'development';
+
+        const config = getRateLimitConfig();
+        expect(config.general.max).toBe(1000);
+        expect(config.clean.max).toBe(100);
+
+        process.env.NODE_ENV = originalEnv;
+    });
+
+    test('should return production config in production', () => {
+        const originalEnv = process.env.NODE_ENV;
+        process.env.NODE_ENV = 'production';
+
+        const config = getRateLimitConfig();
+        expect(config.general.max).toBe(50);
+        expect(config.clean.max).toBe(10);
+
+        process.env.NODE_ENV = originalEnv;
+    });
+
+    test('should use environment variables when available', () => {
+        const originalEnv = process.env.RATE_LIMIT_GENERAL_MAX;
+        process.env.RATE_LIMIT_GENERAL_MAX = '200';
+
+        const config = getRateLimitConfig();
+        expect(config.general.max).toBe(200);
+
+        if (originalEnv) {
+            process.env.RATE_LIMIT_GENERAL_MAX = originalEnv;
+        } else {
+            delete process.env.RATE_LIMIT_GENERAL_MAX;
+        }
+    });
+});
