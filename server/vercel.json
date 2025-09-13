@@ -3,15 +3,15 @@
   "name": "traceoff-server",
   "builds": [
     {
-      "src": "dist/index.js",
+      "src": "api/index.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "dist/index.js" },
-    { "src": "/admin/(.*)", "dest": "dist/index.js" },
-    { "src": "/health", "dest": "dist/index.js" },
-    { "src": "/", "dest": "dist/index.js" }
+    { "src": "/api/(.*)", "dest": "api/index.js" },
+    { "src": "/admin/(.*)", "dest": "api/index.js" },
+    { "src": "/health", "dest": "api/index.js" },
+    { "src": "/", "dest": "api/index.js" }
   ],
   "env": {
     "NODE_ENV": "production",
