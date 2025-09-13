@@ -29,19 +29,19 @@ dependencies:
   url_launcher: ^6.2.2
 
   # Share & Clipboard
-  share_plus: ^7.2.2
+  share_plus: ^12.0.0
 
   # Utils
-  intl: ^0.19.0
+  intl: ^0.20.2
   uuid: ^4.2.1
-  flutter_dotenv: ^5.1.0
+  flutter_dotenv: ^6.0.0
   path: ^1.8.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.1
-  flutter_launcher_icons: ^0.13.1
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   uses-material-design: true

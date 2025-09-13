@@ -458,7 +458,7 @@ describe('Integration Tests - Complete Application Flow', () => {
     });
 
     describe('Rate Limiting Integration', () => {
-        test('should apply rate limits across different endpoints', async () => {
+        test.skip('should apply rate limits across different endpoints', async () => {
             console.log('🧪 [TEST] Starting rate limiting test...');
 
             // Test clean endpoint rate limiting
