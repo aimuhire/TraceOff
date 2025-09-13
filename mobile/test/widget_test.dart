@@ -12,9 +12,14 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 void main() {
   // Set up test environment
   setUpAll(() async {
-    // Initialize dotenv for tests
-    await dotenv.load(fileName: '.env');
-    // Override with test values
+    // Initialize dotenv for tests - try to load .env file, but don't fail if it doesn't exist
+    try {
+      await dotenv.load(fileName: '.env');
+    } catch (e) {
+      // .env file doesn't exist, that's okay for tests
+      print('Note: .env file not found, using default test values');
+    }
+    // Set test environment variables
     dotenv.env['ENVIRONMENT'] = 'test';
     dotenv.env['API_BASE_URL'] = 'http://localhost:3000';
     dotenv.env['DEBUG_LOGGING'] = 'true';

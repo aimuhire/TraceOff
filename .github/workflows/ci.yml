@@ -63,7 +63,8 @@ jobs:
       - run: flutter --version
       - name: Setup environment file
         run: cp server/.env.example mobile/.env
-      - working-directory: mobile
+      - name: Test mobile app
+        working-directory: mobile
         run: |
           flutter pub get
           flutter analyze
@@ -83,22 +84,28 @@ jobs:
       CI: true
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 24.3.0
+
       - name: Match npm version (11.4.2) & verify
         run: |
+          set -euo pipefail
           npm install -g npm@11.4.2
           node -v
           npm -v
+
       - name: Install & start server
         working-directory: server
         run: |
+          set -euo pipefail
           npm ci
           npm run build
-          # Start server in background
-          nohup npm start > server.log 2>&1 &
+          # Start server in background (ensure it binds to PORT)
+          PORT=3000 nohup npm start > server.log 2>&1 &
           echo $! > server.pid
+
           # Wait for server to be ready
           for i in {1..30}; do
             if curl -fsS http://127.0.0.1:3000/health > /dev/null 2>&1; then
@@ -108,19 +115,40 @@ jobs:
             echo "Waiting for server... attempt $i/30"
             sleep 2
           done
-          # Verify server is actually running
-          curl -fsS http://127.0.0.1:3000/health || (echo "Server failed to start" && cat server.log && exit 1)
+
+          # Verify server is actually running (dump log if not)
+          curl -fsS http://127.0.0.1:3000/health || { echo "Server failed to start"; cat server.log; exit 1; }
+
       - name: Run integration tests (API endpoints)
         run: |
+          set -euo pipefail
           # Test health endpoint
           curl -fsS http://127.0.0.1:3000/health
           # Test clean endpoint
           curl -fsS -X POST http://127.0.0.1:3000/api/clean \
             -H "Content-Type: application/json" \
             -d '{"url":"https://example.com?utm_source=test&utm_medium=email"}'
+
+      # Optional: always upload the server log to help debug failures
+      - name: Upload server.log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-log
+          path: server/server.log
+          if-no-files-found: ignore
+
       - name: Cleanup
         if: always()
+        working-directory: server
         run: |
+          set -euo pipefail
           if [ -f server.pid ]; then
-            kill $(cat server.pid) 2>/dev/null || true
+            # Try graceful shutdown first
+            kill -TERM "$(cat server.pid)" 2>/dev/null || true
+            sleep 2
+            # Force kill if still running
+            if ps -p "$(cat server.pid)" > /dev/null 2>&1; then
+              kill -KILL "$(cat server.pid)" 2>/dev/null || true
+            fi
           fi
