@@ -12,20 +12,5 @@
     { "src": "/admin/(.*)", "dest": "dist/index.js" },
     { "src": "/health", "dest": "dist/index.js" },
     { "src": "/", "dest": "dist/index.js" }
-  ],
-  "env": {
-    "NODE_ENV": "production",
-    "LOG_LEVEL": "info",
-    "ADMIN_SECRET": "@admin_secret",
-    "RATE_LIMIT_GENERAL_MAX": "100",
-    "RATE_LIMIT_GENERAL_WINDOW": "1m",
-    "RATE_LIMIT_CLEAN_MAX": "20",
-    "RATE_LIMIT_CLEAN_WINDOW": "1m",
-    "RATE_LIMIT_HEALTH_MAX": "1000",
-    "RATE_LIMIT_HEALTH_WINDOW": "1m",
-    "RATE_LIMIT_ADMIN_MAX": "50",
-    "RATE_LIMIT_ADMIN_WINDOW": "1m",
-    "RATE_LIMIT_WHITELIST_IPS": "127.0.0.1,::1",
-    "REDIS_URL": "@redis_url"
-  }
+  ]
 }

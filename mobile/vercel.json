@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "name": "traceoff-mobile",
+  "builds": [
+    {
+      "src": "build/web/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [{ "src": "/(.*)", "dest": "/index.html" }]
+}

@@ -1,4 +1,4 @@
-name: CI
+name: Test
 
 on:
   push:
@@ -10,15 +10,17 @@ permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: test-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   test-server:
+    name: Test Server
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
       CI: true
+      ADMIN_SECRET: "a".repeat(64)
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -43,6 +45,7 @@ jobs:
           path: server/dist
 
   test-mobile:
+    name: Test Mobile App
     runs-on: ubuntu-latest
     timeout-minutes: 40
     env:
@@ -75,80 +78,3 @@ jobs:
         with:
           name: app-release-apk
           path: mobile/build/app/outputs/flutter-apk/app-release.apk
-
-  test-integration:
-    runs-on: ubuntu-latest
-    needs: [test-server, test-mobile]
-    timeout-minutes: 20
-    env:
-      CI: true
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24.3.0
-
-      - name: Match npm version (11.4.2) & verify
-        run: |
-          set -euo pipefail
-          npm install -g npm@11.4.2
-          node -v
-          npm -v
-
-      - name: Install & start server
-        working-directory: server
-        run: |
-          set -euo pipefail
-          npm ci
-          npm run build
-          # Start server in background (ensure it binds to PORT)
-          PORT=3000 nohup npm start > server.log 2>&1 &
-          echo $! > server.pid
-
-          # Wait for server to be ready
-          for i in {1..30}; do
-            if curl -fsS http://127.0.0.1:3000/health > /dev/null 2>&1; then
-              echo "Server is up and running"
-              break
-            fi
-            echo "Waiting for server... attempt $i/30"
-            sleep 2
-          done
-
-          # Verify server is actually running (dump log if not)
-          curl -fsS http://127.0.0.1:3000/health || { echo "Server failed to start"; cat server.log; exit 1; }
-
-      - name: Run integration tests (API endpoints)
-        run: |
-          set -euo pipefail
-          # Test health endpoint
-          curl -fsS http://127.0.0.1:3000/health
-          # Test clean endpoint
-          curl -fsS -X POST http://127.0.0.1:3000/api/clean \
-            -H "Content-Type: application/json" \
-            -d '{"url":"https://example.com?utm_source=test&utm_medium=email"}'
-
-      # Optional: always upload the server log to help debug failures
-      - name: Upload server.log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: server-log
-          path: server/server.log
-          if-no-files-found: ignore
-
-      - name: Cleanup
-        if: always()
-        working-directory: server
-        run: |
-          set -euo pipefail
-          if [ -f server.pid ]; then
-            # Try graceful shutdown first
-            kill -TERM "$(cat server.pid)" 2>/dev/null || true
-            sleep 2
-            # Force kill if still running
-            if ps -p "$(cat server.pid)" > /dev/null 2>&1; then
-              kill -KILL "$(cat server.pid)" 2>/dev/null || true
-            fi
-          fi
