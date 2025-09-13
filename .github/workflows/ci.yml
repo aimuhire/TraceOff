@@ -96,14 +96,31 @@ jobs:
         run: |
           npm ci
           npm run build
-          nohup npm start &
-          sleep 5
-      - name: Run integration tests (API endpoints) with retry
-        run: |
-          for i in {1..10}; do
-            if curl -fsS http://localhost:3000/health; then break; fi
+          # Start server in background
+          nohup npm start > server.log 2>&1 &
+          echo $! > server.pid
+          # Wait for server to be ready
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:3000/health > /dev/null 2>&1; then
+              echo "Server is up and running"
+              break
+            fi
+            echo "Waiting for server... attempt $i/30"
             sleep 2
           done
-          curl -fsS -X POST http://localhost:3000/api/clean \
+          # Verify server is actually running
+          curl -fsS http://127.0.0.1:3000/health || (echo "Server failed to start" && cat server.log && exit 1)
+      - name: Run integration tests (API endpoints)
+        run: |
+          # Test health endpoint
+          curl -fsS http://127.0.0.1:3000/health
+          # Test clean endpoint
+          curl -fsS -X POST http://127.0.0.1:3000/api/clean \
             -H "Content-Type: application/json" \
-            -d '{"url":"https://example.co
+            -d '{"url":"https://example.com?utm_source=test&utm_medium=email"}'
+      - name: Cleanup
+        if: always()
+        run: |
+          if [ -f server.pid ]; then
+            kill $(cat server.pid) 2>/dev/null || true
+          fi
