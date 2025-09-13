@@ -346,7 +346,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-void _showThemeDialog(SettingsProvider settings) {
+  void _showThemeDialog(SettingsProvider settings) {
     showDialog<void>(
       context: context,
       builder: (dialogCtx) {

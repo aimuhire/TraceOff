@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main, develop]
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test-server:
     runs-on: ubuntu-latest
@@ -17,26 +21,24 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "18"
+          cache: "npm"
+          cache-dependency-path: server/package-lock.json
 
       - name: Install dependencies
-        run: |
-          cd server
-          npm ci
+        working-directory: server
+        run: npm ci
 
       - name: Run linter
-        run: |
-          cd server
-          npm run lint
+        working-directory: server
+        run: npm run lint
 
       - name: Run tests
-        run: |
-          cd server
-          npm test
+        working-directory: server
+        run: npm test
 
       - name: Build
-        run: |
-          cd server
-          npm run build
+        working-directory: server
+        run: npm run build
 
   test-mobile:
     runs-on: ubuntu-latest
@@ -44,31 +46,44 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Match local Flutter exactly: 3.35.3 (stable)
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.13.9"
+          flutter-version: "3.35.3"
           channel: "stable"
+          cache: true
+
+      # JDK 17 is the current default for modern Android/Gradle
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      # Android SDK & licenses for building APKs
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Show Flutter version (sanity check)
+        run: flutter --version
 
       - name: Install dependencies
-        run: |
-          cd mobile
-          flutter pub get
+        working-directory: mobile
+        run: flutter pub get
 
       - name: Analyze code
-        run: |
-          cd mobile
-          flutter analyze
+        working-directory: mobile
+        run: flutter analyze
 
       - name: Run tests
-        run: |
-          cd mobile
-          flutter test
+        working-directory: mobile
+        run: flutter test
 
-      - name: Build APK
-        run: |
-          cd mobile
-          flutter build apk --release
+      - name: Build APK (release)
+        working-directory: mobile
+        run: flutter build apk --release
 
   test-integration:
     runs-on: ubuntu-latest
@@ -81,22 +96,24 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "18"
+          cache: "npm"
+          cache-dependency-path: server/package-lock.json
 
       - name: Install server dependencies
-        run: |
-          cd server
-          npm ci
+        working-directory: server
+        run: npm ci
 
       - name: Start server
+        working-directory: server
         run: |
-          cd server
           npm run build
           npm start &
+          # give the server a moment to boot
           sleep 10
 
       - name: Test API endpoints
         run: |
-          curl -f http://localhost:3000/health || exit 1
-          curl -f -X POST http://localhost:3000/api/clean \
+          curl -fsS http://localhost:3000/health
+          curl -fsS -X POST http://localhost:3000/api/clean \
             -H "Content-Type: application/json" \
-            -d '{"url":"https://example.com?utm_source=test"}' || exit 1
+            -d '{"url":"https://example.com?utm_source=test"}'
