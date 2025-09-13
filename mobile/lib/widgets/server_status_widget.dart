@@ -143,6 +143,8 @@ class ServerStatusIndicator extends StatefulWidget {
 }
 
 class _ServerStatusIndicatorState extends State<ServerStatusIndicator> {
+  bool _hasInitialized = false;
+
   @override
   void initState() {
     super.initState();
@@ -166,9 +168,9 @@ class _ServerStatusIndicatorState extends State<ServerStatusIndicator> {
   Widget build(BuildContext context) {
     return Consumer<ServerStatusProvider>(
       builder: (context, serverStatus, child) {
-        // Trigger health check if previous check failed
-        if (serverStatus.status == ServerStatus.offline ||
-            serverStatus.status == ServerStatus.error) {
+        // Only trigger health check once on initialization, not on every rebuild
+        if (!_hasInitialized) {
+          _hasInitialized = true;
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _checkHealthIfNeeded();
           });

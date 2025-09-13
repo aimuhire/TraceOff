@@ -16,6 +16,8 @@ class ServerStatusProvider with ChangeNotifier {
   String? _serverTimestamp;
   String? _serverStatus;
   int? _responseTime;
+  int _consecutiveFailures = 0;
+  DateTime? _lastFailureTime;
 
   ServerStatus get status => _status;
   String? get errorMessage => _errorMessage;
@@ -60,6 +62,11 @@ class ServerStatusProvider with ChangeNotifier {
   }
 
   Future<void> checkServerStatus() async {
+    // Check if we should skip this health check due to exponential backoff
+    if (_shouldSkipHealthCheck()) {
+      return;
+    }
+
     _status = ServerStatus.checking;
     _errorMessage = null;
     notifyListeners();
@@ -75,20 +82,44 @@ class ServerStatusProvider with ChangeNotifier {
         _serverStatus = healthData['serverStatus'];
         _responseTime = healthData['responseTime'];
         _errorMessage = null;
+        // Reset failure count on success
+        _consecutiveFailures = 0;
+        _lastFailureTime = null;
       } else if (healthData['status'] == 'error') {
         _status = ServerStatus.error;
         _errorMessage = healthData['error'];
+        _recordFailure();
       } else {
         _status = ServerStatus.offline;
         _errorMessage = healthData['error'];
+        _recordFailure();
       }
     } catch (e) {
       _status = ServerStatus.error;
       _errorMessage = e.toString();
       _lastChecked = DateTime.now();
+      _recordFailure();
     }
 
     notifyListeners();
+  }
+
+  bool _shouldSkipHealthCheck() {
+    if (_consecutiveFailures == 0) return false;
+    
+    final now = DateTime.now();
+    if (_lastFailureTime == null) return false;
+    
+    // Calculate exponential backoff delay: 2^failures seconds, max 300 seconds (5 minutes)
+    final delaySeconds = (1 << _consecutiveFailures).clamp(1, 300);
+    final timeSinceLastFailure = now.difference(_lastFailureTime!).inSeconds;
+    
+    return timeSinceLastFailure < delaySeconds;
+  }
+
+  void _recordFailure() {
+    _consecutiveFailures++;
+    _lastFailureTime = DateTime.now();
   }
 
   void reset() {
@@ -98,6 +129,8 @@ class ServerStatusProvider with ChangeNotifier {
     _serverTimestamp = null;
     _serverStatus = null;
     _responseTime = null;
+    _consecutiveFailures = 0;
+    _lastFailureTime = null;
     notifyListeners();
   }
 

@@ -4,10 +4,22 @@ import 'package:provider/provider.dart';
 import 'package:traceoff_mobile/providers/url_cleaner_provider.dart';
 import 'package:traceoff_mobile/providers/history_provider.dart';
 import 'package:traceoff_mobile/providers/settings_provider.dart';
+import 'package:traceoff_mobile/providers/server_status_provider.dart';
 import 'package:traceoff_mobile/screens/home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() {
+  // Set up test environment
+  setUpAll(() async {
+    // Initialize dotenv for tests
+    dotenv.testLoad(fileInput: '''
+ENVIRONMENT=test
+API_BASE_URL=http://localhost:3000
+DEBUG_LOGGING=true
+''');
+  });
+
   group('HomeScreen Widget Tests', () {
     testWidgets('HomeScreen displays correctly', (WidgetTester tester) async {
       // Mock shared preferences
@@ -20,6 +32,7 @@ void main() {
             ChangeNotifierProvider(create: (_) => UrlCleanerProvider()),
             ChangeNotifierProvider(create: (_) => HistoryProvider()),
             ChangeNotifierProvider(create: (_) => SettingsProvider(prefs)),
+            ChangeNotifierProvider(create: (_) => ServerStatusProvider()),
           ],
           child: const MaterialApp(
             home: HomeScreen(),
@@ -28,8 +41,8 @@ void main() {
       );
 
       // Verify that the home screen displays
-      expect(find.text('Enter Link to Clean'), findsOneWidget);
-      expect(find.text('Clean Link'), findsOneWidget);
+      expect(find.text('Paste a link to clean (http/https)'), findsOneWidget);
+      expect(find.text('TraceOff'), findsOneWidget); // App bar title
     });
 
     testWidgets('URL input field accepts text', (WidgetTester tester) async {
@@ -42,6 +55,7 @@ void main() {
             ChangeNotifierProvider(create: (_) => UrlCleanerProvider()),
             ChangeNotifierProvider(create: (_) => HistoryProvider()),
             ChangeNotifierProvider(create: (_) => SettingsProvider(prefs)),
+            ChangeNotifierProvider(create: (_) => ServerStatusProvider()),
           ],
           child: const MaterialApp(
             home: HomeScreen(),
