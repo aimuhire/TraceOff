@@ -146,8 +146,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      # run from repo root; deploy the built folder path explicitly
+      # Deploy from mobile directory context
       - name: Vercel pull (production)
+        working-directory: mobile
         run: npx vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
       - name: Deploy built web to Vercel (prod)
-        run: npx vercel deploy mobile/build/web --prod --yes --token="$VERCEL_TOKEN"
+        working-directory: mobile
+        run: npx vercel deploy build/web --prod --yes --token="$VERCEL_TOKEN"
