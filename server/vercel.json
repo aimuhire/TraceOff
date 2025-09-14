@@ -1,13 +1,12 @@
 {
   "version": 2,
-  "name": "traceoff-server",
-  "buildCommand": "npm ci && npm run build",
-  "installCommand": "npm ci --include=dev",
-  "outputDirectory": "dist",
-  "routes": [
-    { "src": "/api/(.*)", "dest": "index.js" },
-    { "src": "/admin/(.*)", "dest": "index.js" },
-    { "src": "/health", "dest": "index.js" },
-    { "src": "/", "dest": "index.js" }
-  ]
+  "builds": [
+    {
+      "src": "dist/index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [{ "src": "/(.*)", "dest": "dist/index.js" }],
+  "buildCommand": "npm run build",
+  "installCommand": "npm ci --include=dev"
 }
