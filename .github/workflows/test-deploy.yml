@@ -14,6 +14,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # -------------------------
+  # Server: test & build
+  # -------------------------
   test-server:
     name: Test Server
     runs-on: ubuntu-latest
@@ -44,6 +47,9 @@ jobs:
           name: server-build
           path: server/dist
 
+  # -------------------------
+  # Server: deploy (only after server tests pass, only on main)
+  # -------------------------
   deploy-server:
     name: Deploy Server (traceoffapi)
     runs-on: ubuntu-latest
@@ -51,18 +57,29 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/setup-node@v4
         with:
-          name: server-build
-          path: server/dist
-      - name: Deploy to Vercel
-        run: |
-          npx vercel deploy --prod \
-            --token=${{ secrets.VERCEL_TOKEN }} \
-            --scope=${{ secrets.VERCEL_ORG_ID }} \
-            --project=${{ secrets.VERCEL_PROJECT_API_ID }} \
-            --cwd server
+          node-version: 20
+      # Create .vercel/project.json at runtime without committing it
+      - name: Vercel pull (production)
+        working-directory: server
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_API_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }} # optional for Personal accounts
+        run: npx vercel pull --yes --environment=production
+      # Deploy using project/env from the pull step
+      - name: Deploy to Vercel (prod)
+        working-directory: server
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_API_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }} # optional
+        run: npx vercel deploy --prod --yes
 
+  # -------------------------
+  # Mobile: test Android build
+  # -------------------------
   test-mobile:
     name: Test Mobile App
     runs-on: ubuntu-latest
@@ -98,6 +115,9 @@ jobs:
           name: app-release-apk
           path: mobile/build/app/outputs/flutter-apk/app-release.apk
 
+  # -------------------------
+  # Web: build & deploy Flutter web (only after mobile tests pass, only on main)
+  # -------------------------
   deploy-web:
     name: Deploy Flutter Web (traceoff)
     runs-on: ubuntu-latest
@@ -110,14 +130,26 @@ jobs:
           flutter-version: 3.35.3
           channel: stable
           cache: true
-      - working-directory: mobile
+      - name: Build Flutter Web
+        working-directory: mobile
         run: |
           flutter pub get
           flutter build web --release
-      - name: Deploy to Vercel
-        run: |
-          npx vercel deploy --prod \
-            --token=${{ secrets.VERCEL_TOKEN }} \
-            --scope=${{ secrets.VERCEL_ORG_ID }} \
-            --project=${{ secrets.VERCEL_PROJECT_WEB_ID }} \
-            --cwd mobile/build/web
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # Link project for this directory (we deploy from build output dir)
+      - name: Vercel pull (production)
+        working-directory: mobile/build/web
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_WEB_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }} # optional
+        run: npx vercel pull --yes --environment=production
+      - name: Deploy to Vercel (prod)
+        working-directory: mobile/build/web
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_WEB_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }} # optional
+        run: npx vercel deploy --prod --yes
