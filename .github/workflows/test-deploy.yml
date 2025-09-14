@@ -136,11 +136,13 @@ jobs:
           if [ ! -d "web" ]; then
             flutter create . --platforms web
           fi
+      - name: Provide web env file for assets
+        run: cp server/.env.example mobile/.env
       - name: Build Flutter Web
         working-directory: mobile
         run: |
           flutter pub get
-          flutter build web --release
+          flutter build web --release --no-wasm-dry-run
       - uses: actions/setup-node@v4
         with:
           node-version: 20
