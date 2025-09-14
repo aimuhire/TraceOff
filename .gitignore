@@ -186,6 +186,8 @@ temp/
 .pub-cache/
 .pub/
 build/
+!build/web/
+!mobile/build/web/
 
 # Symbolication related
 app.*.symbols

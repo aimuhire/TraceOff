@@ -11,3 +11,8 @@ ios/
 .packages
 analysis_options.yaml
 *.iml
+
+# Ignore build files except web
+build/app/
+build/test_cache/
+build/b9dbe592fc2ae558329e0a126bb30b5a.cache.dill.track.dill
