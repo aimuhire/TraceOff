@@ -1,0 +1,13 @@
+# Ignore Flutter-specific files that Vercel shouldn't process
+pubspec.yaml
+pubspec.lock
+lib/
+test/
+android/
+ios/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+analysis_options.yaml
+*.iml
