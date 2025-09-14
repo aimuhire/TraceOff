@@ -1,0 +1,9 @@
+{
+  "name": "traceoff-mobile-web",
+  "version": "1.0.0",
+  "description": "TraceOff Mobile Web App - Static Build",
+  "scripts": {
+    "build": "echo 'Using pre-built Flutter web files'",
+    "start": "echo 'Static files served by Vercel'"
+  }
+}
