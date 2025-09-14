@@ -104,19 +104,28 @@ jobs:
         working-directory: server
         id: deploy
         run: |
-          DEPLOY_OUTPUT=$(npx vercel deploy --prod --yes --token="$VERCEL_TOKEN")
+          set -e
+          # Use JSON output to reliably capture the deployment URL
+          DEPLOY_OUTPUT=$(npx vercel deploy --prod --yes --token="$VERCEL_TOKEN" --output=json)
           echo "$DEPLOY_OUTPUT"
-          DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | grep "Production:" | grep -o 'https://[^[:space:]]*')
+          DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | node -e "const fs=require('fs');const lines=fs.readFileSync(0,'utf8').trim().split(/\n/).filter(Boolean);const objs=lines.map(l=>{try{return JSON.parse(l)}catch(e){return null}}).filter(Boolean);const last=objs.reverse().find(o=>o.url);if(!last){process.exit(2)}console.log(last.url)")
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
           echo "Deployed to: $DEPLOY_URL"
       - name: Health check server
         run: |
           echo "Waiting for deployment to be ready..."
-          sleep 30
           DEPLOY_URL="${{ steps.deploy.outputs.deploy_url }}"
           echo "Testing health at: $DEPLOY_URL/api/health"
-          curl -f "$DEPLOY_URL/api/health" || exit 1
-          echo "✅ Server health check passed"
+          for i in {1..10}; do
+            if curl -fsS "$DEPLOY_URL/api/health" > /dev/null; then
+              echo "✅ Server health check passed"
+              exit 0
+            fi
+            echo "Attempt $i failed; retrying in 6s..."
+            sleep 6
+          done
+          echo "❌ Server health check failed"
+          exit 1
 
   # -------------------------
   # Web: deploy Flutter web (requires BOTH tests, only on main)
@@ -139,11 +148,16 @@ jobs:
         with:
           node-version: 20
       # Deploy using pre-built files from git
+      - name: Download web build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: web-build
+          path: mobile/build/web
       - name: Verify web build files exist
         working-directory: mobile
         run: |
           if [ ! -d "build/web" ]; then
-            echo "❌ Error: build/web directory not found. Make sure to commit Flutter web build files."
+            echo "❌ Error: build/web directory not found after artifact download."
             exit 1
           fi
           echo "✅ Web build files found"
@@ -155,19 +169,27 @@ jobs:
         working-directory: mobile
         id: deploy-mobile
         run: |
-          DEPLOY_OUTPUT=$(npx vercel deploy --prod --yes --token="$VERCEL_TOKEN")
+          set -e
+          DEPLOY_OUTPUT=$(npx vercel deploy --prod --yes --token="$VERCEL_TOKEN" --output=json)
           echo "$DEPLOY_OUTPUT"
-          DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | grep "Production:" | grep -o 'https://[^[:space:]]*')
+          DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | node -e "const fs=require('fs');const lines=fs.readFileSync(0,'utf8').trim().split(/\n/).filter(Boolean);const objs=lines.map(l=>{try{return JSON.parse(l)}catch(e){return null}}).filter(Boolean);const last=objs.reverse().find(o=>o.url);if(!last){process.exit(2)}console.log(last.url)")
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
           echo "Deployed to: $DEPLOY_URL"
       - name: Health check mobile app
         run: |
           echo "Waiting for deployment to be ready..."
-          sleep 30
           DEPLOY_URL="${{ steps.deploy-mobile.outputs.deploy_url }}"
           echo "Testing mobile app at: $DEPLOY_URL"
-          curl -f "$DEPLOY_URL" || exit 1
-          echo "✅ Mobile app health check passed"
+          for i in {1..10}; do
+            if curl -fsS "$DEPLOY_URL" > /dev/null; then
+              echo "✅ Mobile app health check passed"
+              exit 0
+            fi
+            echo "Attempt $i failed; retrying in 6s..."
+            sleep 6
+          done
+          echo "❌ Mobile app health check failed"
+          exit 1
 
   # -------------------------
   # Integration tests after deployment
