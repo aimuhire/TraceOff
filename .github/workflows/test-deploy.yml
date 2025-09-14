@@ -84,6 +84,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [test-server, test-mobile]
     if: github.ref == 'refs/heads/main'
+    outputs:
+      deploy-url: ${{ steps.deploy.outputs.deploy_url }}
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_API_ID }}
@@ -100,12 +102,18 @@ jobs:
         run: npx vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
       - name: Deploy to Vercel (prod)
         working-directory: server
-        run: npx vercel deploy --prod --yes --token="$VERCEL_TOKEN"
+        id: deploy
+        run: |
+          DEPLOY_URL=$(npx vercel deploy --prod --yes --token="$VERCEL_TOKEN" | grep -o 'https://[^[:space:]]*' | head -1)
+          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+          echo "Deployed to: $DEPLOY_URL"
       - name: Health check server
         run: |
           echo "Waiting for deployment to be ready..."
           sleep 30
-          curl -f https://traceoffapi.vercel.app/api/health || exit 1
+          DEPLOY_URL="${{ steps.deploy.outputs.deploy_url }}"
+          echo "Testing health at: $DEPLOY_URL/api/health"
+          curl -f "$DEPLOY_URL/api/health" || exit 1
           echo "✅ Server health check passed"
 
   # -------------------------
@@ -116,6 +124,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [test-server, test-mobile]
     if: github.ref == 'refs/heads/main'
+    outputs:
+      deploy-url: ${{ steps.deploy-mobile.outputs.deploy_url }}
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_WEB_ID }}
@@ -141,12 +151,18 @@ jobs:
         run: npx vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
       - name: Deploy to Vercel (prod)
         working-directory: mobile
-        run: npx vercel deploy --prod --yes --token="$VERCEL_TOKEN"
+        id: deploy-mobile
+        run: |
+          DEPLOY_URL=$(npx vercel deploy --prod --yes --token="$VERCEL_TOKEN" | grep -o 'https://[^[:space:]]*' | head -1)
+          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+          echo "Deployed to: $DEPLOY_URL"
       - name: Health check mobile app
         run: |
           echo "Waiting for deployment to be ready..."
           sleep 30
-          curl -f https://traceoff.vercel.app || exit 1
+          DEPLOY_URL="${{ steps.deploy-mobile.outputs.deploy_url }}"
+          echo "Testing mobile app at: $DEPLOY_URL"
+          curl -f "$DEPLOY_URL" || exit 1
           echo "✅ Mobile app health check passed"
 
   # -------------------------
@@ -162,34 +178,44 @@ jobs:
       - name: Test API endpoints
         run: |
           echo "🧪 Testing API endpoints..."
+          API_URL="${{ needs.deploy-server.outputs.deploy-url }}"
+          echo "Testing API at: $API_URL"
+          
           # Test health endpoint
-          curl -f https://traceoffapi.vercel.app/api/health
+          curl -f "$API_URL/api/health"
           echo "✅ Health endpoint working"
           
           # Test clean endpoint
-          curl -f -X POST https://traceoffapi.vercel.app/api/clean \
+          curl -f -X POST "$API_URL/api/clean" \
             -H "Content-Type: application/json" \
             -d '{"url": "https://example.com?utm_source=test"}'
           echo "✅ Clean endpoint working"
           
           # Test strategies endpoint
-          curl -f https://traceoffapi.vercel.app/api/strategies
+          curl -f "$API_URL/api/strategies"
           echo "✅ Strategies endpoint working"
       
       - name: Test mobile app
         run: |
           echo "🧪 Testing mobile app..."
+          MOBILE_URL="${{ needs.deploy-web.outputs.deploy-url }}"
+          echo "Testing mobile app at: $MOBILE_URL"
+          
           # Test mobile app loads
-          curl -f https://traceoff.vercel.app
+          curl -f "$MOBILE_URL"
           echo "✅ Mobile app loading"
           
           # Test mobile app assets
-          curl -f https://traceoff.vercel.app/manifest.json
+          curl -f "$MOBILE_URL/manifest.json"
           echo "✅ Mobile app assets working"
       
       - name: Deployment summary
         run: |
           echo "🎉 All deployments successful!"
+          echo "📱 Mobile App: ${{ needs.deploy-web.outputs.deploy-url }}"
+          echo "🔧 API Server: ${{ needs.deploy-server.outputs.deploy-url }}"
+          echo "🏥 Health Check: ${{ needs.deploy-server.outputs.deploy-url }}/api/health"
+          echo ""
+          echo "Production URLs (after promotion):"
           echo "📱 Mobile App: https://traceoff.vercel.app"
           echo "🔧 API Server: https://traceoffapi.vercel.app"
-          echo "🏥 Health Check: https://traceoffapi.vercel.app/api/health"
