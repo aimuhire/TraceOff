@@ -30,7 +30,7 @@
     "clean": "rm -rf dist",
     "prebuild": "npm run clean",
     "postbuild": "npm run seed",
-    "vercel-build": "npm run build",
+    "vercel-build": "tsc -p tsconfig.json",
     "deploy": "vercel --prod"
   },
   "dependencies": {

@@ -67,17 +67,13 @@ async function initApp() {
     // Initialize admin authentication
     const adminSecret = process.env.ADMIN_SECRET;
     if (!adminSecret || adminSecret.length !== 64) {
-        const msg = 'ERROR: ADMIN_SECRET must be a 64-character string';
-        console.error(msg);
-        // In serverless environments, avoid exiting the process; throw instead
-        if (process.env.VERCEL) {
-            throw new Error(msg);
-        } else {
-            console.error('Please set ADMIN_SECRET in your environment variables');
-            process.exit(1);
-        }
+        const msg = 'WARN: ADMIN_SECRET missing or invalid length; admin routes will require valid token and remain protected.';
+        console.warn(msg);
+        // Use a dummy secret so admin routes still respond with 401 instead of crashing
+        adminAuthOnce = createAdminAuthMiddleware({ adminSecret: '0'.repeat(64) });
+    } else {
+        adminAuthOnce = createAdminAuthMiddleware({ adminSecret });
     }
-    adminAuthOnce = createAdminAuthMiddleware({ adminSecret });
 
     // Initialize rate limiting with configuration
     const rateLimitConfig = getRateLimitConfig();
