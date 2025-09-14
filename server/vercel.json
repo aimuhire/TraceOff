@@ -1,16 +1,12 @@
 {
   "version": 2,
   "name": "traceoff-server",
-  "builds": [
-    {
-      "src": "dist/index.js",
-      "use": "@vercel/node"
-    }
-  ],
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "routes": [
-    { "src": "/api/(.*)", "dest": "dist/index.js" },
-    { "src": "/admin/(.*)", "dest": "dist/index.js" },
-    { "src": "/health", "dest": "dist/index.js" },
-    { "src": "/", "dest": "dist/index.js" }
+    { "src": "/api/(.*)", "dest": "index.js" },
+    { "src": "/admin/(.*)", "dest": "index.js" },
+    { "src": "/health", "dest": "index.js" },
+    { "src": "/", "dest": "index.js" }
   ]
 }
