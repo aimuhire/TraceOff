@@ -7,7 +7,6 @@
       "use": "@vercel/node"
     }
   ],
-  "buildCommand": "npm run build",
   "routes": [
     { "src": "/api/(.*)", "dest": "dist/index.js" },
     { "src": "/admin/(.*)", "dest": "dist/index.js" },
