@@ -105,10 +105,13 @@ jobs:
         id: deploy
         run: |
           set -e
-          # Use JSON output to reliably capture the deployment URL
-          DEPLOY_OUTPUT=$(npx vercel deploy --prod --yes --token="$VERCEL_TOKEN" --output=json)
+          DEPLOY_OUTPUT=$(npx vercel deploy --prod --yes --token="$VERCEL_TOKEN")
           echo "$DEPLOY_OUTPUT"
-          DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | node -e "const fs=require('fs');const lines=fs.readFileSync(0,'utf8').trim().split(/\n/).filter(Boolean);const objs=lines.map(l=>{try{return JSON.parse(l)}catch(e){return null}}).filter(Boolean);const last=objs.reverse().find(o=>o.url);if(!last){process.exit(2)}console.log(last.url)")
+          DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | grep -E "Production:" | grep -Eo 'https://[^[:space:]]+' | head -1)
+          if [ -z "$DEPLOY_URL" ]; then
+            # Fallback: take last https URL in output
+            DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | grep -Eo 'https://[^[:space:]]+' | tail -1)
+          fi
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
           echo "Deployed to: $DEPLOY_URL"
       - name: Health check server
@@ -170,9 +173,12 @@ jobs:
         id: deploy-mobile
         run: |
           set -e
-          DEPLOY_OUTPUT=$(npx vercel deploy --prod --yes --token="$VERCEL_TOKEN" --output=json)
+          DEPLOY_OUTPUT=$(npx vercel deploy --prod --yes --token="$VERCEL_TOKEN")
           echo "$DEPLOY_OUTPUT"
-          DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | node -e "const fs=require('fs');const lines=fs.readFileSync(0,'utf8').trim().split(/\n/).filter(Boolean);const objs=lines.map(l=>{try{return JSON.parse(l)}catch(e){return null}}).filter(Boolean);const last=objs.reverse().find(o=>o.url);if(!last){process.exit(2)}console.log(last.url)")
+          DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | grep -E "Production:" | grep -Eo 'https://[^[:space:]]+' | head -1)
+          if [ -z "$DEPLOY_URL" ]; then
+            DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | grep -Eo 'https://[^[:space:]]+' | tail -1)
+          fi
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
           echo "Deployed to: $DEPLOY_URL"
       - name: Health check mobile app
