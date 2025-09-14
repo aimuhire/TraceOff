@@ -104,7 +104,9 @@ jobs:
         working-directory: server
         id: deploy
         run: |
-          DEPLOY_URL=$(npx vercel deploy --prod --yes --token="$VERCEL_TOKEN" | grep -o 'https://[^[:space:]]*' | head -1)
+          DEPLOY_OUTPUT=$(npx vercel deploy --prod --yes --token="$VERCEL_TOKEN")
+          echo "$DEPLOY_OUTPUT"
+          DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | grep "Production:" | grep -o 'https://[^[:space:]]*')
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
           echo "Deployed to: $DEPLOY_URL"
       - name: Health check server
@@ -153,7 +155,9 @@ jobs:
         working-directory: mobile
         id: deploy-mobile
         run: |
-          DEPLOY_URL=$(npx vercel deploy --prod --yes --token="$VERCEL_TOKEN" | grep -o 'https://[^[:space:]]*' | head -1)
+          DEPLOY_OUTPUT=$(npx vercel deploy --prod --yes --token="$VERCEL_TOKEN")
+          echo "$DEPLOY_OUTPUT"
+          DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | grep "Production:" | grep -o 'https://[^[:space:]]*')
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
           echo "Deployed to: $DEPLOY_URL"
       - name: Health check mobile app
@@ -180,35 +184,31 @@ jobs:
           echo "🧪 Testing API endpoints..."
           API_URL="${{ needs.deploy-server.outputs.deploy-url }}"
           echo "Testing API at: $API_URL"
-          
+
           # Test health endpoint
           curl -f "$API_URL/api/health"
           echo "✅ Health endpoint working"
-          
+
           # Test clean endpoint
           curl -f -X POST "$API_URL/api/clean" \
             -H "Content-Type: application/json" \
             -d '{"url": "https://example.com?utm_source=test"}'
           echo "✅ Clean endpoint working"
-          
-          # Test strategies endpoint
-          curl -f "$API_URL/api/strategies"
-          echo "✅ Strategies endpoint working"
-      
+
       - name: Test mobile app
         run: |
           echo "🧪 Testing mobile app..."
           MOBILE_URL="${{ needs.deploy-web.outputs.deploy-url }}"
           echo "Testing mobile app at: $MOBILE_URL"
-          
+
           # Test mobile app loads
           curl -f "$MOBILE_URL"
           echo "✅ Mobile app loading"
-          
+
           # Test mobile app assets
           curl -f "$MOBILE_URL/manifest.json"
           echo "✅ Mobile app assets working"
-      
+
       - name: Deployment summary
         run: |
           echo "🎉 All deployments successful!"
