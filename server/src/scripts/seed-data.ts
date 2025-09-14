@@ -69,7 +69,15 @@ async function seedData() {
 
 // Run if called directly
 if (require.main === module) {
-    seedData().catch(console.error);
+    seedData()
+        .then(() => {
+            console.log('🚀 Process completed, exiting...');
+            process.exit(0);
+        })
+        .catch((error) => {
+            console.error('❌ Seeding failed:', error);
+            process.exit(1);
+        });
 }
 
 export { seedData };
