@@ -1,7 +1,6 @@
 {
   "version": 2,
   "name": "traceoff-mobile",
-  "buildCommand": "flutter build web --release",
   "outputDirectory": "build/web",
   "routes": [{ "src": "/(.*)", "dest": "/index.html" }]
 }
