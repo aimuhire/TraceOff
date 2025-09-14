@@ -140,8 +140,8 @@
       }
     ],
     "notes": "Instagram strategy removes tracking parameters while preserving content identifiers",
-    "createdAt": "2025-09-13T18:14:06.521Z",
-    "updatedAt": "2025-09-13T18:14:06.522Z"
+    "createdAt": "2025-09-14T12:59:19.548Z",
+    "updatedAt": "2025-09-14T12:59:19.549Z"
   },
   {
     "id": "youtube",
@@ -372,8 +372,8 @@
       }
     ],
     "notes": "YouTube strategy preserves video/playlist identifiers and playback controls while removing tracking parameters",
-    "createdAt": "2025-09-13T18:14:06.522Z",
-    "updatedAt": "2025-09-13T18:14:06.522Z"
+    "createdAt": "2025-09-14T12:59:19.549Z",
+    "updatedAt": "2025-09-14T12:59:19.549Z"
   },
   {
     "id": "twitter",
@@ -543,8 +543,8 @@
       }
     ],
     "notes": "Twitter/X strategy removes tracking parameters while preserving tweet identifiers",
-    "createdAt": "2025-09-13T18:14:06.522Z",
-    "updatedAt": "2025-09-13T18:14:06.522Z"
+    "createdAt": "2025-09-14T12:59:19.549Z",
+    "updatedAt": "2025-09-14T12:59:19.549Z"
   },
   {
     "id": "tiktok",
@@ -687,8 +687,8 @@
       }
     ],
     "notes": "TikTok strategy removes tracking parameters while preserving video identifiers",
-    "createdAt": "2025-09-13T18:14:06.522Z",
-    "updatedAt": "2025-09-13T18:14:06.522Z"
+    "createdAt": "2025-09-14T12:59:19.549Z",
+    "updatedAt": "2025-09-14T12:59:19.549Z"
   },
   {
     "id": "facebook",
@@ -855,8 +855,8 @@
       }
     ],
     "notes": "Facebook strategy removes tracking parameters while preserving content identifiers",
-    "createdAt": "2025-09-13T18:14:06.522Z",
-    "updatedAt": "2025-09-13T18:14:06.522Z"
+    "createdAt": "2025-09-14T12:59:19.549Z",
+    "updatedAt": "2025-09-14T12:59:19.549Z"
   },
   {
     "id": "linkedin",
@@ -1024,8 +1024,8 @@
       }
     ],
     "notes": "LinkedIn strategy removes tracking parameters while preserving content identifiers",
-    "createdAt": "2025-09-13T18:14:06.522Z",
-    "updatedAt": "2025-09-13T18:14:06.522Z"
+    "createdAt": "2025-09-14T12:59:19.549Z",
+    "updatedAt": "2025-09-14T12:59:19.549Z"
   },
   {
     "id": "reddit",
@@ -1215,8 +1215,8 @@
       }
     ],
     "notes": "Reddit strategy removes tracking parameters while preserving subreddit and post identifiers",
-    "createdAt": "2025-09-13T18:14:06.522Z",
-    "updatedAt": "2025-09-13T18:14:06.522Z"
+    "createdAt": "2025-09-14T12:59:19.549Z",
+    "updatedAt": "2025-09-14T12:59:19.549Z"
   },
   {
     "id": "pinterest",
@@ -1372,8 +1372,8 @@
       }
     ],
     "notes": "Pinterest strategy removes tracking parameters while preserving pin and board identifiers",
-    "createdAt": "2025-09-13T18:14:06.522Z",
-    "updatedAt": "2025-09-13T18:14:06.522Z"
+    "createdAt": "2025-09-14T12:59:19.549Z",
+    "updatedAt": "2025-09-14T12:59:19.549Z"
   },
   {
     "id": "github",
@@ -1601,8 +1601,8 @@
       }
     ],
     "notes": "GitHub strategy removes tracking parameters while preserving repository and content identifiers",
-    "createdAt": "2025-09-13T18:14:06.522Z",
-    "updatedAt": "2025-09-13T18:14:06.522Z"
+    "createdAt": "2025-09-14T12:59:19.549Z",
+    "updatedAt": "2025-09-14T12:59:19.549Z"
   },
   {
     "id": "medium",
@@ -1770,7 +1770,7 @@
       }
     ],
     "notes": "Medium strategy removes tracking parameters while preserving article and author identifiers",
-    "createdAt": "2025-09-13T18:14:06.522Z",
-    "updatedAt": "2025-09-13T18:14:06.522Z"
+    "createdAt": "2025-09-14T12:59:19.549Z",
+    "updatedAt": "2025-09-14T12:59:19.549Z"
   }
 ]
