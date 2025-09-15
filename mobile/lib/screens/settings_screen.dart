@@ -77,7 +77,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     const Divider(height: 1),
                     SwitchListTile(
                       title: const Text('Local Processing'),
-                      subtitle: Text(
+                      subtitle: const Text(
                         kIsWeb
                             ? 'Not available on web. Use the mobile app for offline/local processing.'
                             : 'Process links locally on device instead of using cloud API. When enabled, all cleaning happens on your device for better privacy.',

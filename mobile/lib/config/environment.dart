@@ -32,7 +32,7 @@ class EnvironmentConfig {
               '🌍 Environment: ${dotenv.env['ENVIRONMENT'] ?? 'development'}');
           print('🔗 Base URL: $baseUrl');
           print('🔗 API URL: $apiUrl');
-          print('📱 Platform: ${_platformName}');
+          print('📱 Platform: $_platformName');
           print('🤖 Is Android Emulator: $isEmulator');
         }
       } catch (e) {
@@ -84,7 +84,7 @@ class EnvironmentConfig {
           dotenv.env['ANDROID_API_BASE_URL'] ?? 'http://10.0.2.2:3000';
       if (enableDebugLogging) {
         print('🤖 Android URL: $androidUrl');
-        print('📱 Platform: ${_platformName}');
+        print('📱 Platform: $_platformName');
       }
       return androidUrl;
     } else {
@@ -92,7 +92,7 @@ class EnvironmentConfig {
       final devUrl = dotenv.env['DEV_API_BASE_URL'] ?? 'http://localhost:3000';
       if (enableDebugLogging) {
         print('🛠️  Development URL: $devUrl');
-        print('📱 Platform: ${_platformName}');
+        print('📱 Platform: $_platformName');
       }
       return devUrl;
     }
@@ -139,7 +139,7 @@ class EnvironmentConfig {
       print('🔗 API URL: $apiUrl');
       print('🔗 Effective Base URL: $effectiveBaseUrl');
       print('🔗 Effective API URL: $effectiveApiUrl');
-      print('📱 Platform: ${_platformName}');
+      print('📱 Platform: $_platformName');
       print('🤖 Is Android Emulator: $isEmulator');
       print('⏱️  API Timeout: ${apiTimeoutSeconds}s');
       print('🔄 API Retry Attempts: $apiRetryAttempts');
