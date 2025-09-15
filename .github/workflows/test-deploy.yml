@@ -193,19 +193,7 @@ jobs:
         id: deploy-mobile
         run: |
           set -e
-          # Include SPA fallback + filesystem in the deployed output
-          cat > build/web/vercel.json <<'JSON'
-          {
-            "version": 2,
-            "routes": [
-              { "handle": "filesystem" },
-              { "src": "/(.*)", "dest": "/index.html" }
-            ]
-          }
-          JSON
-
-          # Deploy the prebuilt directory directly to avoid rebuilding on Vercel
-          DEPLOY_OUTPUT=$(npx vercel deploy build/web --prod --yes --token="$VERCEL_TOKEN")
+          DEPLOY_OUTPUT=$(npx vercel deploy --prod --yes --token="$VERCEL_TOKEN")
           echo "$DEPLOY_OUTPUT"
           DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | grep -E "Production:" | grep -Eo 'https://[^[:space:]]+' | head -1)
           if [ -z "$DEPLOY_URL" ]; then
