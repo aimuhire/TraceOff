@@ -17,64 +17,64 @@ jobs:
   # -------------------------
   # Server: test & build
   # -------------------------
-  # test-server:
-  #   name: Test Server
-  #   runs-on: ubuntu-latest
-  #   timeout-minutes: 20
-  #   env:
-  #     CI: true
-  #     ADMIN_SECRET: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 20
-  #     - name: Install, lint, test, build
-  #       working-directory: server
-  #       run: |
-  #         npm ci
-  #         npm run lint
-  #         npm test
-  #         npm run build
-  #     - name: Upload server build
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: server-build
-  #         path: server/dist
+  test-server:
+    name: Test Server
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CI: true
+      ADMIN_SECRET: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install, lint, test, build
+        working-directory: server
+        run: |
+          npm ci
+          npm run lint
+          npm test
+          npm run build
+      - name: Upload server build
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-build
+          path: server/dist
 
   # -------------------------
   # Mobile: test Flutter web build
   # -------------------------
-  # test-mobile:
-  #   name: Test Mobile (Flutter Web)
-  #   runs-on: ubuntu-latest
-  #   timeout-minutes: 20
-  #   env:
-  #     CI: true
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: subosito/flutter-action@v2
-  #       with:
-  #         flutter-version: 3.35.3
-  #         channel: stable
-  #         cache: true
-  #     - name: Ensure Flutter web is enabled
-  #       working-directory: mobile
-  #       run: flutter config --enable-web
-  #     - name: Setup environment file
-  #       run: cp mobile/.env.example mobile/.env
-  #     - name: Test mobile app
-  #       working-directory: mobile
-  #       run: |
-  #         flutter pub get
-  #         flutter analyze
-  #         flutter test
-  #         flutter build web --release --no-wasm-dry-run
-  #     - name: Upload web build
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: web-build
-  #         path: mobile/build/web
+  test-mobile:
+    name: Test Mobile (Flutter Web)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CI: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.35.3
+          channel: stable
+          cache: true
+      - name: Ensure Flutter web is enabled
+        working-directory: mobile
+        run: flutter config --enable-web
+      - name: Setup environment file
+        run: cp mobile/.env.example mobile/.env
+      - name: Test mobile app
+        working-directory: mobile
+        run: |
+          flutter pub get
+          flutter analyze
+          flutter test
+          flutter build web --release --no-wasm-dry-run
+      - name: Upload web build
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: mobile/build/web
 
   # -------------------------
   # Server: deploy (requires BOTH tests, only on main)
@@ -82,7 +82,7 @@ jobs:
   deploy-server:
     name: Deploy Server (traceoffapi)
     runs-on: ubuntu-latest
-    # needs: [test-server, test-mobile]
+    needs: [test-server, test-mobile]
     if: github.ref == 'refs/heads/main'
     outputs:
       deploy-url: ${{ steps.deploy.outputs.deploy_url }}
@@ -145,7 +145,7 @@ jobs:
   deploy-web:
     name: Deploy Flutter Web (traceoff)
     runs-on: ubuntu-latest
-    # needs: [test-server, test-mobile]
+    needs: [test-server, test-mobile]
     if: github.ref == 'refs/heads/main'
     outputs:
       deploy-url: ${{ steps.deploy-mobile.outputs.deploy_url }}
