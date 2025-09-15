@@ -119,13 +119,15 @@ jobs:
           echo "Waiting for deployment to be ready..."
           DEPLOY_URL="${{ steps.deploy.outputs.deploy_url }}"
           echo "Testing health at: $DEPLOY_URL/api/health"
-          for i in {1..10}; do
+          # Initial wait to allow cold start and DNS propagation
+          sleep 15
+          for i in {1..30}; do
             if curl -fsS "$DEPLOY_URL/api/health" > /dev/null; then
               echo "✅ Server health check passed"
               exit 0
             fi
-            echo "Attempt $i failed; retrying in 6s..."
-            sleep 6
+            echo "Attempt $i failed; retrying in 5s..."
+            sleep 5
           done
           echo "❌ Server health check failed"
           exit 1
@@ -196,13 +198,14 @@ jobs:
           echo "Waiting for deployment to be ready..."
           DEPLOY_URL="${{ steps.deploy-mobile.outputs.deploy_url }}"
           echo "Testing mobile app at: $DEPLOY_URL"
-          for i in {1..10}; do
+          sleep 15
+          for i in {1..30}; do
             if curl -fsS "$DEPLOY_URL" > /dev/null; then
               echo "✅ Mobile app health check passed"
               exit 0
             fi
-            echo "Attempt $i failed; retrying in 6s..."
-            sleep 6
+            echo "Attempt $i failed; retrying in 5s..."
+            sleep 5
           done
           echo "❌ Mobile app health check failed"
           exit 1
