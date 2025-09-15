@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:traceoff_mobile/config/environment.dart';
 import 'package:traceoff_mobile/models/cleaning_strategy.dart';
@@ -89,6 +90,10 @@ class SettingsProvider with ChangeNotifier {
   }
 
   Future<void> setOfflineMode(bool value) async {
+    // On web, do not allow enabling offline/local processing
+    if (kIsWeb && value == true) {
+      return;
+    }
     _offlineMode = value;
     await _prefs.setBool(_offlineModeKey, value);
     notifyListeners();

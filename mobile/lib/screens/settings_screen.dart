@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:traceoff_mobile/providers/settings_provider.dart';
@@ -75,16 +77,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     const Divider(height: 1),
                     SwitchListTile(
                       title: const Text('Local Processing'),
-                      subtitle: const Text(
-                          'Process links locally on device instead of using cloud API. When enabled, all cleaning happens on your device for better privacy.'),
-                      value: settings.offlineMode,
-                      onChanged: (value) => settings.setOfflineMode(value),
+                      subtitle: Text(
+                        kIsWeb
+                            ? 'Not available on web. Use the mobile app for offline/local processing.'
+                            : 'Process links locally on device instead of using cloud API. When enabled, all cleaning happens on your device for better privacy.',
+                      ),
+                      value: kIsWeb ? false : settings.offlineMode,
+                      onChanged: (value) {
+                        if (kIsWeb && value) {
+                          _showInstallAppToast();
+                        } else {
+                          settings.setOfflineMode(value);
+                        }
+                      },
                       activeThumbColor: Colors.blue,
                       inactiveThumbColor: Colors.green,
                       secondary: Icon(
-                        settings.offlineMode ? Icons.storage : Icons.cloud,
-                        color:
-                            settings.offlineMode ? Colors.blue : Colors.green,
+                        (kIsWeb ? false : settings.offlineMode)
+                            ? Icons.storage
+                            : Icons.cloud,
+                        color: (kIsWeb ? false : settings.offlineMode)
+                            ? Colors.blue
+                            : Colors.green,
                       ),
                     ),
                   ],
@@ -102,10 +116,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       leading: const Icon(Icons.tune),
                       title: const Text('Manage Local Strategies'),
                       subtitle: Text(
-                        'Active: ${settings.activeStrategy?.name ?? 'Default offline cleaner'}',
+                        kIsWeb
+                            ? 'Not available on web. Download the app to customize offline strategies.'
+                            : 'Active: ${settings.activeStrategy?.name ?? 'Default offline cleaner'}',
                       ),
                       trailing: const Icon(Icons.arrow_forward_ios),
-                      onTap: () => _showStrategiesDialog(settings),
+                      onTap: () {
+                        if (kIsWeb) {
+                          _showInstallAppToast();
+                        } else {
+                          _showStrategiesDialog(settings);
+                        }
+                      },
                     ),
                   ],
                 ),
@@ -333,6 +355,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
     );
+  }
+
+  void _showInstallAppToast() async {
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.hideCurrentSnackBar();
+    final snack = SnackBar(
+      content: const Text(
+        'Local offline processing is not available on web. Download the app to use local strategies.',
+      ),
+      action: SnackBarAction(
+        label: 'Get the app',
+        onPressed: () async {
+          final url = Uri.parse('https://github.com/aimuhire/TraceOff');
+          if (await canLaunchUrl(url)) {
+            await launchUrl(url, mode: LaunchMode.externalApplication);
+          }
+        },
+      ),
+      duration: const Duration(seconds: 6),
+    );
+    messenger.showSnackBar(snack);
   }
 
   String _getThemeModeText(ThemeMode mode) {
