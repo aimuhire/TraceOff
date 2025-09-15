@@ -1,4 +1,7 @@
-import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
+// Only use dart:io on non-web platforms
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:io' show Platform;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 enum Environment {
@@ -29,7 +32,7 @@ class EnvironmentConfig {
               '🌍 Environment: ${dotenv.env['ENVIRONMENT'] ?? 'development'}');
           print('🔗 Base URL: $baseUrl');
           print('🔗 API URL: $apiUrl');
-          print('📱 Platform: ${Platform.operatingSystem}');
+          print('📱 Platform: ${_platformName}');
           print('🤖 Is Android Emulator: $isEmulator');
         }
       } catch (e) {
@@ -47,6 +50,24 @@ class EnvironmentConfig {
       print('🔍 Getting base URL for environment: $env');
     }
 
+    // If a generic API_BASE_URL is provided, prefer it across platforms
+    final explicit = dotenv.env['API_BASE_URL'];
+    if (explicit != null && explicit.isNotEmpty) {
+      if (enableDebugLogging) {
+        print('🔗 Using explicit API_BASE_URL: $explicit');
+      }
+      return explicit;
+    }
+
+    // Web: never use dart:io Platform. Prefer explicit WEB_API_BASE_URL or fall back to current origin.
+    if (kIsWeb) {
+      final webUrl = dotenv.env['WEB_API_BASE_URL'] ?? Uri.base.origin;
+      if (enableDebugLogging) {
+        print('🌐 Web URL: $webUrl');
+      }
+      return webUrl;
+    }
+
     if (env == 'production') {
       final prodUrl = dotenv.env['PROD_API_BASE_URL'] ??
           'https://your-production-server.com';
@@ -57,13 +78,13 @@ class EnvironmentConfig {
     }
 
     // Development environment
-    if (Platform.isAndroid) {
+    if (!kIsWeb && Platform.isAndroid) {
       // Use 10.0.2.2 for Android emulator to access host machine
       final androidUrl =
           dotenv.env['ANDROID_API_BASE_URL'] ?? 'http://10.0.2.2:3000';
       if (enableDebugLogging) {
         print('🤖 Android URL: $androidUrl');
-        print('📱 Platform: ${Platform.operatingSystem}');
+        print('📱 Platform: ${_platformName}');
       }
       return androidUrl;
     } else {
@@ -71,7 +92,7 @@ class EnvironmentConfig {
       final devUrl = dotenv.env['DEV_API_BASE_URL'] ?? 'http://localhost:3000';
       if (enableDebugLogging) {
         print('🛠️  Development URL: $devUrl');
-        print('📱 Platform: ${Platform.operatingSystem}');
+        print('📱 Platform: ${_platformName}');
       }
       return devUrl;
     }
@@ -81,6 +102,7 @@ class EnvironmentConfig {
 
   // Helper method to detect if running on emulator
   static bool get isEmulator {
+    if (kIsWeb) return false;
     if (!Platform.isAndroid) return false;
     // Android emulator detection - can be overridden via environment variable
     return dotenv.env['IS_ANDROID_EMULATOR']?.toLowerCase() == 'true';
@@ -117,7 +139,7 @@ class EnvironmentConfig {
       print('🔗 API URL: $apiUrl');
       print('🔗 Effective Base URL: $effectiveBaseUrl');
       print('🔗 Effective API URL: $effectiveApiUrl');
-      print('📱 Platform: ${Platform.operatingSystem}');
+      print('📱 Platform: ${_platformName}');
       print('🤖 Is Android Emulator: $isEmulator');
       print('⏱️  API Timeout: ${apiTimeoutSeconds}s');
       print('🔄 API Retry Attempts: $apiRetryAttempts');
@@ -127,4 +149,6 @@ class EnvironmentConfig {
       print('🔧 === END CONFIGURATION ===');
     }
   }
+
+  static String get _platformName => kIsWeb ? 'web' : Platform.operatingSystem;
 }
