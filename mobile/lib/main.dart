@@ -13,6 +13,7 @@ import 'package:traceoff_mobile/services/api_service.dart';
 import 'package:traceoff_mobile/utils/app_theme.dart';
 import 'package:traceoff_mobile/config/environment.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,8 +27,10 @@ void main() async {
   // Set environment (you can change this to Environment.production for production builds)
   EnvironmentConfig.setEnvironment(Environment.development);
 
-  // Initialize database
-  await DatabaseService.instance.init();
+  // Initialize database (skip on web)
+  if (!kIsWeb) {
+    await DatabaseService.instance.init();
+  }
 
   // Initialize shared preferences
   final prefs = await SharedPreferences.getInstance();
@@ -71,7 +74,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
   static const MethodChannel _shareChannel =
-      MethodChannel('com.example.link_cleaner_mobile/share');
+      MethodChannel('com.aimuhire.traceoff/share');
 
   final List<Widget> _screens = [
     const HomeScreen(),

@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Link Cleaner Development Script
+# TraceOff Development Script
 # This script helps set up and run the development environment
 
 set -e
 
-echo "🚀 Link Cleaner Development Setup"
+echo "🚀 TraceOff Development Setup"
 echo "================================="
 
 # Check if we're in the right directory

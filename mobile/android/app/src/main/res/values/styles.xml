@@ -1,14 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<!-- Theme for app launch (splash screen) -->
-	<style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
-		<item name="android:windowBackground">
-			@drawable/launch_background
-		</item>
-	</style>
-	<!-- Normal theme after splash -->
-	<style name="NormalTheme" parent="@android:style/Theme.Material.Light.NoActionBar">
-		<item name="android:windowBackground">
-			@android:color/white
-		</item>
-	</style>
+    <!-- Minimal themes that do not require AndroidX SplashScreen or Material libraries -->
+    <!-- Shown while the process starts. Uses our drawable as background. -->
+    <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowBackground">@drawable/launch_background</item>
+    </style>
+
+    <!-- Theme applied after Flutter initializes. Keep simple to avoid extra deps. -->
+    <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowBackground">@drawable/launch_background</item>
+    </style>
 </resources>

@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 
 async function seedData() {
-    console.log('🌱 Seeding Link Cleaner data...');
+    console.log('🌱 Seeding TraceOff data...');
 
     // Initialize strategy engine
     const strategyEngine = new StrategyEngine();

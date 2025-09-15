@@ -126,7 +126,7 @@ class EnvironmentConfig {
   static bool get enableDebugLogging =>
       dotenv.env['ENABLE_DEBUG_LOGGING']?.toLowerCase() == 'true';
   static String get databaseName =>
-      dotenv.env['DATABASE_NAME'] ?? 'link_cleaner.db';
+      dotenv.env['DATABASE_NAME'] ?? 'traceoff.db';
   static int get databaseVersion =>
       int.tryParse(dotenv.env['DATABASE_VERSION'] ?? '1') ?? 1;
 

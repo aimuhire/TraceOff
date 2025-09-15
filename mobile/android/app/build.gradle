@@ -29,12 +29,12 @@ if (flutterVersionName == null) {
  
 
 android {
-    namespace "com.example.link_cleaner_mobile"
+    namespace "com.aimuhire.traceoff"
     compileSdk 36
     ndkVersion flutter.ndkVersion
 
     defaultConfig {
-        applicationId "com.example.link_cleaner_mobile"
+        applicationId "com.aimuhire.traceoff"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion 36
         versionCode flutterVersionCode.toInteger()
@@ -51,7 +51,15 @@ android {
     }
 
     sourceSets {
-        main.java.srcDirs += "src/main/kotlin"
+        main {
+            java.srcDirs += "src/main/kotlin"
+            // Include shared icon resources from repo-level resources/android/res
+            // so they override default launcher icons across densities.
+            res.srcDirs = [
+                "../../../resources/android/res",
+                "src/main/res",
+            ]
+        }
     }
 
     buildTypes {

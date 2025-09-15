@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:traceoff_mobile/models/history_item.dart';
@@ -9,8 +10,11 @@ class DatabaseService {
   static Database? _database;
 
   Future<Database> get database async {
+    if (kIsWeb) {
+      throw UnsupportedError('Database not supported on web');
+    }
     if (_database != null) return _database!;
-    _database = await _initDB('link_cleaner.db');
+    _database = await _initDB('traceoff.db');
     return _database!;
   }
 
@@ -68,6 +72,11 @@ R        isFavorite $boolType,
   }
 
   Future<void> init() async {
+    if (kIsWeb) {
+      // ignore: avoid_print
+      print('[DB] Web platform detected - skipping SQLite init');
+      return;
+    }
     await database;
     // Logging: database initialized
     // ignore: avoid_print

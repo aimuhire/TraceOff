@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Test Setup Script for Link Cleaner
-echo "🧪 Testing Link Cleaner Setup"
+# Test Setup Script for TraceOff
+echo "🧪 Testing TraceOff Setup"
 echo "============================="
 
 # Test server setup
