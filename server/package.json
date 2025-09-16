@@ -28,9 +28,9 @@
     "lint:fix": "eslint src --ext .ts --fix",
     "seed": "tsx src/scripts/seed-data.ts",
     "clean": "rm -rf dist",
-    "prebuild": "npm run clean",
+    "prebuild": "npm run clean && node scripts/generate-build-info.js",
     "postbuild": "npm run seed",
-    "vercel-build": "tsc -p tsconfig.json",
+    "vercel-build": "node scripts/generate-build-info.js && tsc -p tsconfig.json",
     "deploy": "vercel --prod"
   },
   "dependencies": {

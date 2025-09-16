@@ -8,6 +8,7 @@ import { rateLimiterService } from './middleware/rateLimiter';
 import { getRateLimitConfig } from './config/rateLimit';
 import { createAdminAuthMiddleware } from './middleware/adminAuth';
 import path from 'path';
+import { BUILD_INFO } from './buildInfo.generated';
 
 // Create Fastify instance early; we will either
 // - export a Vercel handler that forwards requests to it, or
@@ -106,19 +107,21 @@ async function initApp() {
     await fastify.register(cleanRoutes, { prefix: '/api' });
     await fastify.register(strategyRoutes, { prefix: '/api' });
 
-    // Version endpoint - exposes last commit hash if available in env
+    // Version endpoint - exposes last commit hash if available in env or build info
     fastify.get('/api/version', async (_request, _reply) => {
         const fullSha = process.env.VERCEL_GIT_COMMIT_SHA
             || process.env.GIT_COMMIT_SHA
             || process.env.COMMIT_SHA
+            || process.env.GITHUB_SHA
             || process.env.HEROKU_SLUG_COMMIT
+            || BUILD_INFO.commit
             || 'unknown';
-        const shortSha = fullSha && fullSha !== 'unknown' ? fullSha.substring(0, 7) : 'unknown';
+        const shortSha = (fullSha && fullSha !== 'unknown') ? fullSha.substring(0, 7) : (BUILD_INFO.short || 'unknown');
         return {
             commit: fullSha,
             short: shortSha,
             source: process.env.VERCEL ? 'vercel' : 'runtime',
-            timestamp: new Date().toISOString(),
+            timestamp: BUILD_INFO.builtAt && BUILD_INFO.builtAt !== 'unknown' ? BUILD_INFO.builtAt : new Date().toISOString(),
         };
     });
 
