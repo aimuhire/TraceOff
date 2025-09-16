@@ -22,7 +22,7 @@ void main() async {
 
   // Use clean path-based URLs on web (no #)
   if (kIsWeb) {
-    setUrlStrategy(PathUrlStrategy());
+    setUrlStrategy(const PathUrlStrategy());
   }
 
   // Initialize environment configuration
@@ -181,19 +181,19 @@ class _MainScreenState extends State<MainScreen> {
             switch (index) {
               case 0:
                 SystemNavigator.routeInformationUpdated(
-                  location: '/',
+                  uri: Uri.parse('/'),
                   replace: true,
                 );
                 break;
               case 1:
                 SystemNavigator.routeInformationUpdated(
-                  location: '/history',
+                  uri: Uri.parse('/history'),
                   replace: true,
                 );
                 break;
               case 2:
                 SystemNavigator.routeInformationUpdated(
-                  location: '/settings',
+                  uri: Uri.parse('/settings'),
                   replace: true,
                 );
                 break;
