@@ -103,6 +103,8 @@ jobs:
           echo "COMMIT_SHA=${{ github.sha }}" > server/.env.production.local
           echo "GIT_COMMIT_SHA=${{ github.sha }}" >> server/.env.production.local
           echo "VERCEL_GIT_COMMIT_SHA=${{ github.sha }}" >> server/.env.production.local
+          echo "Writing commit SHA to server/src/.commit-sha (included in build upload)"
+          echo "${{ github.sha }}" > server/src/.commit-sha
       # Deploy from server directory
       - name: Vercel pull (production)
         working-directory: server
@@ -112,7 +114,12 @@ jobs:
         id: deploy
         run: |
           set -e
-          DEPLOY_OUTPUT=$(npx vercel deploy --prod --yes --token="$VERCEL_TOKEN")
+          DEPLOY_OUTPUT=$(npx vercel deploy --prod --yes \
+            --build-env VERCEL_GIT_COMMIT_SHA=${{ github.sha }} \
+            --build-env GIT_COMMIT_SHA=${{ github.sha }} \
+            --build-env COMMIT_SHA=${{ github.sha }} \
+            --build-env GITHUB_SHA=${{ github.sha }} \
+            --token="$VERCEL_TOKEN")
           echo "$DEPLOY_OUTPUT"
           DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | grep -E "Production:" | grep -Eo 'https://[^[:space:]]+' | head -1)
           if [ -z "$DEPLOY_URL" ]; then

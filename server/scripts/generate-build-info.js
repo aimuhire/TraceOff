@@ -4,16 +4,35 @@
  be bundled and read at runtime (including on Vercel serverless).
 */
 const { execSync } = require('node:child_process');
-const { writeFileSync } = require('node:fs');
+const { writeFileSync, existsSync, readFileSync } = require('node:fs');
 const { join } = require('node:path');
 
 function resolveCommit() {
+  // 1) Explicit file path via env
+  const commitFileFromEnv = process.env.COMMIT_SHA_FILE;
+  if (commitFileFromEnv && existsSync(commitFileFromEnv)) {
+    const v = readFileSync(commitFileFromEnv, 'utf8').trim();
+    if (v) return v;
+  }
+  // 2) Known local files (uploaded to Vercel)
+  const candidateFiles = [
+    join(__dirname, '..', 'src', '.commit-sha'),
+    join(__dirname, '..', 'commit.sha'),
+  ];
+  for (const p of candidateFiles) {
+    if (existsSync(p)) {
+      const v = readFileSync(p, 'utf8').trim();
+      if (v) return v;
+    }
+  }
+  // 3) Environment variables
   const envSha = process.env.VERCEL_GIT_COMMIT_SHA
     || process.env.GIT_COMMIT_SHA
     || process.env.COMMIT_SHA
     || process.env.GITHUB_SHA
     || '';
   if (envSha) return envSha.trim();
+  // 4) Git (local builds)
   try {
     const sha = execSync('git rev-parse HEAD', { stdio: ['ignore', 'pipe', 'ignore'] })
       .toString().trim();
@@ -43,4 +62,3 @@ function main() {
 }
 
 main();
-
