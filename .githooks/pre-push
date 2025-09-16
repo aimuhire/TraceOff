@@ -60,9 +60,9 @@ while read local_ref local_sha remote_ref remote_sha; do
         echo "Installing mobile dependencies..."
         flutter pub get
         
-        # Run analysis
+        # Run analysis (treat infos as failures as well)
         echo "Running mobile analysis..."
-        flutter analyze --no-fatal-infos
+        flutter analyze
         
         # Run tests
         echo "Running mobile tests..."

@@ -247,7 +247,7 @@ class _Example extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mono = const TextStyle(fontFamily: 'monospace', fontSize: 11);
+    const mono = TextStyle(fontFamily: 'monospace', fontSize: 11);
     final faded = Theme.of(context)
         .textTheme
         .bodySmall
