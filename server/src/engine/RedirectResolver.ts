@@ -1,4 +1,5 @@
 import axios, { AxiosResponse, Method } from 'axios';
+import { load as loadHtml } from 'cheerio';
 
 export interface RedirectResult {
     chain: string[];     // every hop including the start
@@ -75,6 +76,22 @@ export class RedirectResolver {
 
                     // If we get here, this UA did not produce a redirect.
 
+                    // Only for known interstitial hosts (e.g., LinkedIn), inspect small HTML snippet
+                    // to extract the intended external destination. Avoid doing this for arbitrary hosts
+                    // to prevent accidentally following asset links (e.g., fonts, images, svgs).
+                    const ct = String((getResp.headers as any)['content-type'] || '');
+                    const snippet = (getResp as any).bodySnippet as string | undefined;
+                    const currentHost = (() => { try { return new URL(currentUrl).hostname.toLowerCase(); } catch { return ''; } })();
+                    if (snippet && _isLikelyHtml(ct) && isLinkedInHost(currentHost)) {
+                        const found = extractExternalUrlFromHtml(snippet) || extractUrlFromText(snippet);
+                        if (found) {
+                            nextUrlFromAnyUA = resolveLocation(found, currentUrl);
+                            break;
+                        }
+                    }
+
+                    // (Intentionally no Pinterest-specific HTML parsing here; path rules handle normalization)
+
                     // Bail early if content-length is huge (treat as final to avoid heavy download).
                     const cl = headerInt(getResp.headers['content-length']);
                     if (cl !== null && cl > runtimeOpts.maxBodyBytes) {
@@ -133,15 +150,52 @@ export class RedirectResolver {
                 validateStatus: () => true,
             });
 
-            // For GET/stream, we don't read the stream; headers are enough to check Location.
-            // Axios will keep the socket open briefly; caller quickly discards response object.
-            try {
-                if (isGet && resp.data?.destroy && typeof resp.data.destroy === 'function') {
-                    // Proactively destroy stream to free resources
-                    resp.data.destroy();
-                }
-            } catch {
-                // ignore
+            // For GET/stream, capture a small snippet so we can parse HTML-based redirects
+            // like LinkedIn interstitial pages. Keep it bounded by maxBodyBytes, then destroy stream.
+            if (isGet && resp.data && typeof (resp.data as any).on === 'function') {
+                await new Promise<void>((resolve) => {
+                    try {
+                        const stream: any = resp.data;
+                        const chunks: Buffer[] = [];
+                        let received = 0;
+                        const maxBytes = opts.maxBodyBytes;
+
+                        const onData = (chunk: Buffer) => {
+                            if (!Buffer.isBuffer(chunk)) chunk = Buffer.from(String(chunk));
+                            const remaining = Math.max(0, maxBytes - received);
+                            if (remaining > 0) {
+                                const toPush = chunk.length > remaining ? chunk.subarray(0, remaining) : chunk;
+                                chunks.push(toPush);
+                                received += toPush.length;
+                            }
+                            if (received >= maxBytes) {
+                                cleanup();
+                            }
+                        };
+
+                        const onEnd = () => cleanup();
+                        const onError = () => cleanup();
+
+                        const cleanup = () => {
+                            try { stream.off('data', onData); } catch { /* ignore: best-effort detach */ }
+                            try { stream.off('end', onEnd); } catch { /* ignore: best-effort detach */ }
+                            try { stream.off('error', onError); } catch { /* ignore: best-effort detach */ }
+                            try { if (typeof stream.destroy === 'function') stream.destroy(); } catch { /* ignore: best-effort destroy */ }
+                            try { (resp as any).bodySnippet = Buffer.concat(chunks).toString('utf8'); } catch { /* ignore: best-effort capture */ }
+                            resolve();
+                        };
+
+                        stream.on('data', onData);
+                        stream.on('end', onEnd);
+                        stream.on('error', onError);
+                    } catch {
+                        // Best-effort; ensure resolution
+                        try { if (resp.data?.destroy) resp.data.destroy(); } catch { /* ignore: destroy may fail */ }
+                        resolve();
+                    }
+                });
+            } else {
+                // Non-stream case or no data; nothing to capture
             }
 
             return resp;
@@ -189,3 +243,69 @@ function dedupeUA(list: UAOption[]): UAOption[] {
     }
     return out;
 }
+
+// Heuristics
+function _isLikelyHtml(contentType: string): boolean {
+    const ct = contentType.toLowerCase();
+    return ct.includes('text/html') || ct.includes('application/xhtml');
+}
+
+// Extract first external href from HTML (skip LinkedIn/lnkd.in domains) using a DOM parser for reliability
+function extractExternalUrlFromHtml(html: string): string | null {
+    try {
+        const $ = loadHtml(html);
+        // Prefer LinkedIn interstitial button selector if present
+        const preferred = $('a[data-tracking-control-name="external_url_click"][href]')
+            .map((_, el) => ($(el).attr('href') || '').trim())
+            .get();
+        const anchors = preferred.length > 0
+            ? preferred
+            : $('a[href]')
+                .map((_, el) => ($(el).attr('href') || '').trim())
+                .get();
+
+        for (const href of anchors) {
+            if (!href) continue;
+            try {
+                const u = new URL(href);
+                const host = u.hostname.toLowerCase();
+                if (!isLinkedInHost(host)) return href;
+            } catch {
+                // skip invalid
+            }
+        }
+
+        // As a last resort, scan visible text nodes for absolute URLs
+        const text = $('body').text();
+        const fromText = extractUrlFromText(text);
+        if (fromText) return fromText;
+    } catch {
+        // ignore parser failures
+    }
+    return null;
+}
+
+function isLinkedInHost(host: string): boolean {
+    return host === 'lnkd.in' || host === 'linkedin.com' || host.endsWith('.linkedin.com');
+}
+
+// Note: no Pinterest-specific parsing required; keep resolver generic
+
+// Plain text URL extraction (fallback)
+function extractUrlFromText(text?: string): string | null {
+    if (!text) return null;
+    const re = /(https?:\/\/[^\s"'<>]+)/gim;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(text))) {
+        const candidate = m[1];
+        try {
+            const host = new URL(candidate).hostname.toLowerCase();
+            if (!isLinkedInHost(host)) return candidate;
+        } catch {
+            // ignore
+        }
+    }
+    return null;
+}
+
+// (No site-specific HTML canonical extraction to keep resolver generic)
