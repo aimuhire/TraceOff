@@ -97,6 +97,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Write commit env for server build
+        run: |
+          echo "Writing commit metadata to server/.env.production.local"
+          echo "COMMIT_SHA=${{ github.sha }}" >> server/.env.production.local
+          echo "GIT_COMMIT_SHA=${{ github.sha }}" >> server/.env.production.local
+          echo "VERCEL_GIT_COMMIT_SHA=${{ github.sha }}" >> server/.env.production.local
       # Deploy from server directory
       - name: Vercel pull (production)
         working-directory: server
