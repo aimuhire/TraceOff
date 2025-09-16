@@ -267,3 +267,21 @@ Thumbs.db
 *.jks
 *.p12
 *.keystore
+
+# Flutter project local metadata
+**/.metadata
+
+# Android Gradle caches and local config
+**/android/.gradle/
+**/android/local.properties
+**/android/key.properties
+mobile/android/.gradle/
+mobile/android/local.properties
+mobile/android/key.properties
+
+# iOS generated workspace and Pods
+**/ios/Runner.xcworkspace/
+**/ios/Pods/
+**/ios/Runner.xcodeproj/project.xcworkspace/
+mobile/ios/**
+mobile/.metadata
