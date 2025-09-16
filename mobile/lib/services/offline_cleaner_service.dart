@@ -57,6 +57,15 @@ class OfflineCleanerService {
     'profile': 'Profile tracking',
     'settings': 'Settings tracking',
     'preferences': 'Preferences tracking',
+    // TikTok-specific tracking params (align with server strategy)
+    'is_from_webapp': 'TikTok webapp tracking',
+    'sender_device': 'TikTok device tracking',
+    'sender_web_id': 'TikTok web ID tracking',
+    'web_id': 'TikTok web ID tracking',
+    'share_app_id': 'TikTok app tracking',
+    'share_link_id': 'TikTok link tracking',
+    'share_item_id': 'TikTok item tracking',
+    'timestamp': 'TikTok timestamp tracking',
   };
 
   // --- Allowed params (unchanged) ---
@@ -420,16 +429,35 @@ class OfflineCleanerService {
           }
         }
 
-        // If HTML, inspect small body head for meta/canonical/og
+        // If HTML, inspect small body for redirects. Only extract external links for LinkedIn interstitial pages
         if (_isLikelyHtml(getResp.headers['content-type']) &&
             getResp.bodySnippet != null) {
           final html = getResp.bodySnippet!;
+
+          // LinkedIn interstitial: extract the external destination anchor
+          final currentHost =
+              Uri.tryParse(currentUrl)?.host.toLowerCase() ?? '';
+          if (_isLinkedInHost(currentHost)) {
+            final external = _extractExternalUrlFromLinkedInHtml(html) ??
+                _extractAbsoluteUrlFromText(html, disallowHosts: const {
+                  'linkedin.com',
+                  'www.linkedin.com',
+                  'lnkd.in'
+                });
+            if (external != null) {
+              nextUrl = _resolveLocation(currentUrl, external);
+              break;
+            }
+          }
+
+          // Generic meta refresh
           final metaUrl = _extractMetaRefresh(html);
           if (metaUrl != null) {
             nextUrl = _resolveLocation(currentUrl, metaUrl);
             break;
           }
 
+          // Canonical or og:url (can point to homepages; safe as a last resort only)
           final canonical = _extractCanonical(html) ?? _extractOgUrl(html);
           if (canonical != null) {
             nextUrl = _resolveLocation(currentUrl, canonical);
@@ -565,6 +593,47 @@ class OfflineCleanerService {
   static String _resolveLocation(String baseUrl, String location) {
     final base = Uri.parse(baseUrl);
     return base.resolve(location).toString();
+  }
+
+  // Consider LinkedIn and its shortener as interstitial hosts
+  static bool _isLinkedInHost(String host) {
+    final h = host.toLowerCase();
+    return h == 'lnkd.in' || h == 'linkedin.com' || h.endsWith('.linkedin.com');
+  }
+
+  // Extract first external anchor from LinkedIn interstitial HTML
+  static String? _extractExternalUrlFromLinkedInHtml(String html) {
+    try {
+      // Look for anchor with data-tracking-control-name="external_url_click"
+      final anchorRe = RegExp(
+          "<a[^>]+data-tracking-control-name=[\"\\']external_url_click[\"\\'][^>]*href=[\"\\']([^\"\\']+)[\"\\']",
+          caseSensitive: false);
+      final m = anchorRe.firstMatch(html);
+      if (m != null && m.groupCount >= 1) {
+        final href = m.group(1)!.trim();
+        if (href.startsWith('http://') || href.startsWith('https://')) {
+          final host = Uri.tryParse(href)?.host.toLowerCase() ?? '';
+          if (!_isLinkedInHost(host)) return href;
+        }
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  // Fallback: scan text for absolute URLs, skipping disallowed hosts
+  static String? _extractAbsoluteUrlFromText(String text,
+      {Set<String> disallowHosts = const {}}) {
+    final re = RegExp("(https?:\\/\\/[^\\s\"'<>]+)", multiLine: true);
+    final it = re.allMatches(text).iterator;
+    while (it.moveNext()) {
+      final candidate = it.current.group(1);
+      if (candidate == null) continue;
+      final host = Uri.tryParse(candidate)?.host.toLowerCase();
+      if (host == null) continue;
+      if (disallowHosts.contains(host)) continue;
+      return candidate;
+    }
+    return null;
   }
 
   // Refresh: 0;url=/path or 0; URL='https://...'

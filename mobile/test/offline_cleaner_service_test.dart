@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'dart:io' show Platform;
 import 'package:traceoff_mobile/services/offline_cleaner_service.dart';
 
 void main() {
@@ -75,5 +76,23 @@ void main() {
       expect(result.primary.url.contains('keep=this'), isTrue);
       expect(result.primary.url, 'https://example.com/page?keep=this');
     });
+
+    final allowNetwork = Platform.environment['ALLOW_NETWORK'] == 'true';
+    
+    test('cleans TikTok video URL by stripping tracking params (jellyfam)', () async {
+      const input = 'https://www.tiktok.com/@jellyfam__/video/7535631609966677279?is_from_webapp=1&sender_device=pc';
+      final result = await OfflineCleanerService.cleanUrl(input);
+      expect(result.primary.url, 'https://www.tiktok.com/@jellyfam__/video/7535631609966677279');
+    });
+    test('LinkedIn shortener resolves to external destination (real network)',
+        () async {
+      const input = 'https://lnkd.in/gUfrRGMD';
+      const expected = 'https://rss.com/podcasts/deescovered-oasis/2082075/';
+      final result = await OfflineCleanerService.cleanUrl(input);
+      expect(result.primary.url, expected);
+    },
+        skip: allowNetwork
+            ? false
+            : 'Set ALLOW_NETWORK=true to run network test');
   });
 }
