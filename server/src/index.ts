@@ -106,6 +106,22 @@ async function initApp() {
     await fastify.register(cleanRoutes, { prefix: '/api' });
     await fastify.register(strategyRoutes, { prefix: '/api' });
 
+    // Version endpoint - exposes last commit hash if available in env
+    fastify.get('/api/version', async (_request, _reply) => {
+        const fullSha = process.env.VERCEL_GIT_COMMIT_SHA
+            || process.env.GIT_COMMIT_SHA
+            || process.env.COMMIT_SHA
+            || process.env.HEROKU_SLUG_COMMIT
+            || 'unknown';
+        const shortSha = fullSha && fullSha !== 'unknown' ? fullSha.substring(0, 7) : 'unknown';
+        return {
+            commit: fullSha,
+            short: shortSha,
+            source: process.env.VERCEL ? 'vercel' : 'runtime',
+            timestamp: new Date().toISOString(),
+        };
+    });
+
     // Health check endpoint (non-prefixed)
     fastify.get('/health', async (_request, _reply) => {
         return { status: 'ok', timestamp: new Date().toISOString() };

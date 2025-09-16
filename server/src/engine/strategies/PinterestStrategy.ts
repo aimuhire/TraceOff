@@ -31,24 +31,35 @@ export class PinterestStrategy {
                 { name: 'board_id', action: 'deny', reason: 'Pinterest board tracking' },
                 { name: 'user_id', action: 'deny', reason: 'Pinterest user tracking' },
                 { name: 'session_id', action: 'deny', reason: 'Pinterest session tracking' },
+                // Pinterest invite/share specific params
+                { name: 'invite_code', action: 'deny', reason: 'Pinterest invite code' },
+                { name: 'sender', action: 'deny', reason: 'Pinterest sender identifier' },
+                { name: 'sfo', action: 'deny', reason: 'Pinterest share flag' },
                 { name: 'locale', action: 'allow', reason: 'Locale setting' },
                 { name: 'language', action: 'allow', reason: 'Language preference' },
                 { name: 'hl', action: 'allow', reason: 'Language preference' },
             ],
             pathRules: [
+                // Normalize pin sent/share pages to canonical pin path
                 {
-                    pattern: '^/pin/\\d+',
-                    replacement: '/pin/',
+                    pattern: '^/pin/(\\d+)/sent/.*$',
+                    replacement: '/pin/$1/',
+                    type: 'regex',
+                },
+                // Normalize verbose slug pins that embed numeric id at the end: ...--{id}/
+                {
+                    pattern: '^/pin/.+--(\\d+)/?$',
+                    replacement: '/pin/$1/',
+                    type: 'regex',
+                },
+                {
+                    pattern: '^/pin/(\\d+).*$',
+                    replacement: '/pin/$1/',
                     type: 'regex',
                 },
                 {
                     pattern: '^/board/\\d+',
                     replacement: '/board/',
-                    type: 'regex',
-                },
-                {
-                    pattern: '^/[^/]+/\\d+',
-                    replacement: '/',
                     type: 'regex',
                 },
             ],

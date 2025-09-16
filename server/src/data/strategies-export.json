@@ -140,8 +140,8 @@
       }
     ],
     "notes": "Instagram strategy removes tracking parameters while preserving content identifiers",
-    "createdAt": "2025-09-14T12:59:19.548Z",
-    "updatedAt": "2025-09-14T12:59:19.549Z"
+    "createdAt": "2025-09-16T08:07:14.742Z",
+    "updatedAt": "2025-09-16T08:07:14.742Z"
   },
   {
     "id": "youtube",
@@ -348,6 +348,11 @@
         "pattern": "^/playlist\\?.*",
         "replacement": "/playlist",
         "type": "regex"
+      },
+      {
+        "pattern": "^/embed/[^/]+",
+        "replacement": "/embed/",
+        "type": "regex"
       }
     ],
     "redirectPolicy": {
@@ -367,8 +372,8 @@
       }
     ],
     "notes": "YouTube strategy preserves video/playlist identifiers and playback controls while removing tracking parameters",
-    "createdAt": "2025-09-14T12:59:19.549Z",
-    "updatedAt": "2025-09-14T12:59:19.549Z"
+    "createdAt": "2025-09-16T08:07:14.743Z",
+    "updatedAt": "2025-09-16T08:07:14.743Z"
   },
   {
     "id": "twitter",
@@ -505,7 +510,16 @@
       }
     ],
     "pathRules": [
-      
+      {
+        "pattern": "^/status/\\d+",
+        "replacement": "/status/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/i/status/\\d+",
+        "replacement": "/i/status/",
+        "type": "regex"
+      },
       {
         "pattern": "^/intent/.*",
         "replacement": "/intent/",
@@ -529,8 +543,8 @@
       }
     ],
     "notes": "Twitter/X strategy removes tracking parameters while preserving tweet identifiers",
-    "createdAt": "2025-09-14T12:59:19.549Z",
-    "updatedAt": "2025-09-14T12:59:19.549Z"
+    "createdAt": "2025-09-16T08:07:14.743Z",
+    "updatedAt": "2025-09-16T08:07:14.743Z"
   },
   {
     "id": "tiktok",
@@ -565,6 +579,11 @@
       },
       {
         "name": "sender_web_id",
+        "action": "deny",
+        "reason": "TikTok web ID tracking"
+      },
+      {
+        "name": "web_id",
         "action": "deny",
         "reason": "TikTok web ID tracking"
       },
@@ -644,7 +663,13 @@
         "reason": "Locale setting"
       }
     ],
-    "pathRules": [],
+    "pathRules": [
+      {
+        "pattern": "^/@([^/]+)/video/(\\d+).*$",
+        "replacement": "/@$1/video/$2",
+        "type": "regex"
+      }
+    ],
     "redirectPolicy": {
       "follow": true,
       "maxDepth": 3,
@@ -662,8 +687,8 @@
       }
     ],
     "notes": "TikTok strategy removes tracking parameters while preserving video identifiers",
-    "createdAt": "2025-09-14T12:59:19.549Z",
-    "updatedAt": "2025-09-14T12:59:19.549Z"
+    "createdAt": "2025-09-16T08:07:14.743Z",
+    "updatedAt": "2025-09-16T08:07:14.743Z"
   },
   {
     "id": "facebook",
@@ -781,7 +806,38 @@
         "reason": "Language preference"
       }
     ],
-    "pathRules": [],
+    "pathRules": [
+      {
+        "pattern": "^/posts/\\d+",
+        "replacement": "/posts/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/photo/\\d+",
+        "replacement": "/photo/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/videos/\\d+",
+        "replacement": "/videos/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/events/\\d+",
+        "replacement": "/events/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/groups/\\d+",
+        "replacement": "/groups/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/pages/\\d+",
+        "replacement": "/pages/",
+        "type": "regex"
+      }
+    ],
     "redirectPolicy": {
       "follow": true,
       "maxDepth": 3,
@@ -799,8 +855,8 @@
       }
     ],
     "notes": "Facebook strategy removes tracking parameters while preserving content identifiers",
-    "createdAt": "2025-09-14T12:59:19.549Z",
-    "updatedAt": "2025-09-14T12:59:19.549Z"
+    "createdAt": "2025-09-16T08:07:14.743Z",
+    "updatedAt": "2025-09-16T08:07:14.743Z"
   },
   {
     "id": "linkedin",
@@ -919,7 +975,38 @@
         "reason": "Language preference"
       }
     ],
-    "pathRules": [],
+    "pathRules": [
+      {
+        "pattern": "^/posts/\\d+",
+        "replacement": "/posts/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/articles/\\d+",
+        "replacement": "/articles/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/videos/\\d+",
+        "replacement": "/videos/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/events/\\d+",
+        "replacement": "/events/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/groups/\\d+",
+        "replacement": "/groups/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/company/\\d+",
+        "replacement": "/company/",
+        "type": "regex"
+      }
+    ],
     "redirectPolicy": {
       "follow": true,
       "maxDepth": 3,
@@ -937,8 +1024,8 @@
       }
     ],
     "notes": "LinkedIn strategy removes tracking parameters while preserving content identifiers",
-    "createdAt": "2025-09-14T12:59:19.549Z",
-    "updatedAt": "2025-09-14T12:59:19.549Z"
+    "createdAt": "2025-09-16T08:07:14.743Z",
+    "updatedAt": "2025-09-16T08:07:14.743Z"
   },
   {
     "id": "reddit",
@@ -1094,7 +1181,23 @@
         "reason": "Language preference"
       }
     ],
-    "pathRules": [],
+    "pathRules": [
+      {
+        "pattern": "^/r/[^/]+/comments/[^/]+",
+        "replacement": "/r/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/user/[^/]+",
+        "replacement": "/user/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/u/[^/]+",
+        "replacement": "/u/",
+        "type": "regex"
+      }
+    ],
     "redirectPolicy": {
       "follow": true,
       "maxDepth": 3,
@@ -1112,8 +1215,8 @@
       }
     ],
     "notes": "Reddit strategy removes tracking parameters while preserving subreddit and post identifiers",
-    "createdAt": "2025-09-14T12:59:19.549Z",
-    "updatedAt": "2025-09-14T12:59:19.549Z"
+    "createdAt": "2025-09-16T08:07:14.743Z",
+    "updatedAt": "2025-09-16T08:07:14.743Z"
   },
   {
     "id": "pinterest",
@@ -1235,7 +1338,23 @@
         "reason": "Language preference"
       }
     ],
-    "pathRules": [],
+    "pathRules": [
+      {
+        "pattern": "^/pin/\\d+",
+        "replacement": "/pin/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/board/\\d+",
+        "replacement": "/board/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/[^/]+/\\d+",
+        "replacement": "/",
+        "type": "regex"
+      }
+    ],
     "redirectPolicy": {
       "follow": true,
       "maxDepth": 3,
@@ -1253,8 +1372,8 @@
       }
     ],
     "notes": "Pinterest strategy removes tracking parameters while preserving pin and board identifiers",
-    "createdAt": "2025-09-14T12:59:19.549Z",
-    "updatedAt": "2025-09-14T12:59:19.549Z"
+    "createdAt": "2025-09-16T08:07:14.743Z",
+    "updatedAt": "2025-09-16T08:07:14.743Z"
   },
   {
     "id": "github",
@@ -1438,7 +1557,33 @@
         "reason": "Language preference"
       }
     ],
-    "pathRules": [],
+    "pathRules": [
+      {
+        "pattern": "^/[^/]+/[^/]+/blob/[^/]+",
+        "replacement": "/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/[^/]+/[^/]+/tree/[^/]+",
+        "replacement": "/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/[^/]+/[^/]+/commit/[^/]+",
+        "replacement": "/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/[^/]+/[^/]+/pull/\\d+",
+        "replacement": "/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/[^/]+/[^/]+/issues/\\d+",
+        "replacement": "/",
+        "type": "regex"
+      }
+    ],
     "redirectPolicy": {
       "follow": true,
       "maxDepth": 2,
@@ -1456,8 +1601,8 @@
       }
     ],
     "notes": "GitHub strategy removes tracking parameters while preserving repository and content identifiers",
-    "createdAt": "2025-09-14T12:59:19.549Z",
-    "updatedAt": "2025-09-14T12:59:19.549Z"
+    "createdAt": "2025-09-16T08:07:14.743Z",
+    "updatedAt": "2025-09-16T08:07:14.743Z"
   },
   {
     "id": "medium",
@@ -1591,7 +1736,23 @@
         "reason": "Language preference"
       }
     ],
-    "pathRules": [],
+    "pathRules": [
+      {
+        "pattern": "^/@[^/]+/[^/]+",
+        "replacement": "/@/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/p/[^/]+",
+        "replacement": "/p/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/c/[^/]+",
+        "replacement": "/c/",
+        "type": "regex"
+      }
+    ],
     "redirectPolicy": {
       "follow": true,
       "maxDepth": 3,
@@ -1609,7 +1770,7 @@
       }
     ],
     "notes": "Medium strategy removes tracking parameters while preserving article and author identifiers",
-    "createdAt": "2025-09-14T12:59:19.549Z",
-    "updatedAt": "2025-09-14T12:59:19.549Z"
+    "createdAt": "2025-09-16T08:07:14.743Z",
+    "updatedAt": "2025-09-16T08:07:14.743Z"
   }
 ]

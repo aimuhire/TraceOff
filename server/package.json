@@ -42,7 +42,7 @@
     "@types/jest": "^29.5.12",
     "@types/node": "^20.14.10",
     "axios": "^1.6.2",
-    "cheerio": "^1.0.0-rc.12",
+    "cheerio": "^1.1.2",
     "dotenv": "^16.3.1",
     "fastify": "^4.24.3",
     "ioredis": "^5.7.0",

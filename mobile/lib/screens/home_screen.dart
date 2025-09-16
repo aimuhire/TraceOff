@@ -11,6 +11,7 @@ import 'package:traceoff_mobile/providers/server_status_provider.dart';
 import 'package:traceoff_mobile/screens/tutorial_screen.dart';
 import 'package:traceoff_mobile/widgets/server_status_widget.dart';
 import 'package:traceoff_mobile/models/clean_result.dart';
+import 'package:traceoff_mobile/widgets/supported_platforms_panel.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -26,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final Map<String, String> _titleCache = {};
   final Map<String, String> _imageCache = {};
   String? _lastHandledResultUrl;
+  bool _hideSupportedPanel = false;
 
   @override
   void initState() {
@@ -36,6 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
       // Check server status on app startup
       context.read<ServerStatusProvider>().checkServerStatus();
       _loadUsageTipsFlag();
+      _loadHideSupportedPanelFlag();
       // Consume shared/pending URL from provider if any
       final pending = context.read<UrlCleanerProvider>().takePendingInputUrl();
       if (pending != null && pending.isNotEmpty) {
@@ -99,6 +102,23 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!mounted) return;
     setState(() {
       _usageTipsShown = prefs.getBool('usage_tips_shown') ?? false;
+    });
+  }
+
+  Future<void> _loadHideSupportedPanelFlag() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+    setState(() {
+      _hideSupportedPanel = prefs.getBool('hide_supported_panel') ?? false;
+    });
+  }
+
+  Future<void> _markHideSupportedPanel() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('hide_supported_panel', true);
+    if (!mounted) return;
+    setState(() {
+      _hideSupportedPanel = true;
     });
   }
 
@@ -635,6 +655,50 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 16),
                   _buildAlternatives(provider.result!),
                   const SizedBox(height: 16),
+                ],
+                if (!_hideSupportedPanel) ...[
+                  const SizedBox(height: 12),
+                  SupportedPlatformsPanel(
+                    onHideForever: _markHideSupportedPanel,
+                    onHideOnce: () =>
+                        setState(() => _hideSupportedPanel = true),
+                    onRequestHideDialog: () async {
+                      if (!mounted) return;
+                      final choice = await showDialog<String>(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text('Hide Supported Platforms'),
+                            content: const Text(
+                                'Do you want to hide this panel temporarily or never show it again?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.of(context).pop('cancel'),
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.of(context).pop('hide'),
+                                child: const Text('Hide'),
+                              ),
+                              FilledButton(
+                                onPressed: () =>
+                                    Navigator.of(context).pop('forever'),
+                                child: const Text("Don't show again"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                      if (choice == 'hide') {
+                        if (!mounted) return;
+                        setState(() => _hideSupportedPanel = true);
+                      } else if (choice == 'forever') {
+                        await _markHideSupportedPanel();
+                      }
+                    },
+                  ),
                 ],
               ],
             ),

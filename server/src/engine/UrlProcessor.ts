@@ -10,7 +10,8 @@ export class UrlProcessor {
         // Apply path rules
         for (const pathRule of strategy.pathRules) {
             if (pathRule.type === 'regex') {
-                const regex = new RegExp(pathRule.pattern, 'g');
+                // Use single replacement to avoid unintended repeated rewrites
+                const regex = new RegExp(pathRule.pattern);
                 const before = urlObj.pathname;
                 urlObj.pathname = urlObj.pathname.replace(regex, pathRule.replacement);
                 if (before !== urlObj.pathname) {

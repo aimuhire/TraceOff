@@ -17,6 +17,7 @@ export class TikTokStrategy {
                 { name: 'is_from_webapp', action: 'deny', reason: 'TikTok webapp tracking' },
                 { name: 'sender_device', action: 'deny', reason: 'TikTok device tracking' },
                 { name: 'sender_web_id', action: 'deny', reason: 'TikTok web ID tracking' },
+                { name: 'web_id', action: 'deny', reason: 'TikTok web ID tracking' },
                 { name: 'share_app_id', action: 'deny', reason: 'TikTok app tracking' },
                 { name: 'share_link_id', action: 'deny', reason: 'TikTok link tracking' },
                 { name: 'share_item_id', action: 'deny', reason: 'TikTok item tracking' },
@@ -34,16 +35,12 @@ export class TikTokStrategy {
                 { name: 'locale', action: 'allow', reason: 'Locale setting' },
             ],
             pathRules: [
+                // Normalize to /@{handle}/video/{id} and discard any trailing segments
                 {
-                    pattern: '^/@[^/]+/video/\\d+',
-                    replacement: '/@/video/',
+                    pattern: '^/@([^/]+)/video/(\\d+).*$',
+                    replacement: '/@$1/video/$2',
                     type: 'regex',
-                },
-                {
-                    pattern: '^/t/[^/]+',
-                    replacement: '/t/',
-                    type: 'regex',
-                },
+                }
             ],
             redirectPolicy: {
                 follow: true,

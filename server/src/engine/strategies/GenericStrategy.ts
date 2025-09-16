@@ -356,9 +356,16 @@ export class GenericStrategy {
         }
         urlObj.search = sortedParams.toString();
 
-        // Remove trailing slash from path (except for root)
+        // Trailing slash normalization:
+        // Preserve trailing slash for directory-like paths (common canonical form),
+        // but remove it for file-like paths (e.g., "/file.jpg/"). Never touch root "/".
         if (urlObj.pathname.length > 1 && urlObj.pathname.endsWith('/')) {
-            urlObj.pathname = urlObj.pathname.slice(0, -1);
+            const segments = urlObj.pathname.split('/').filter(Boolean);
+            const lastSeg = segments[segments.length - 1] || '';
+            const looksFile = lastSeg.includes('.');
+            if (looksFile) {
+                urlObj.pathname = urlObj.pathname.slice(0, -1);
+            }
         }
     }
 
