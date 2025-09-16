@@ -8,15 +8,22 @@ import 'package:traceoff_mobile/providers/server_status_provider.dart';
 import 'package:traceoff_mobile/screens/home_screen.dart';
 import 'package:traceoff_mobile/screens/history_screen.dart';
 import 'package:traceoff_mobile/screens/settings_screen.dart';
+import 'package:traceoff_mobile/screens/privacy_policy_screen.dart';
 import 'package:traceoff_mobile/services/database_service.dart';
 import 'package:traceoff_mobile/services/api_service.dart';
 import 'package:traceoff_mobile/utils/app_theme.dart';
 import 'package:traceoff_mobile/config/environment.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Use clean path-based URLs on web (no #)
+  if (kIsWeb) {
+    setUrlStrategy(PathUrlStrategy());
+  }
 
   // Initialize environment configuration
   await EnvironmentConfig.initialize();
@@ -53,19 +60,38 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ServerStatusProvider()),
       ],
       child: MaterialApp(
-        title: 'TraceOff',
+        title: 'TraceOff — Share links without trackers',
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: ThemeMode.system,
-        home: const MainScreen(),
         debugShowCheckedModeBanner: false,
+        onGenerateRoute: (settings) {
+          final name = settings.name ?? '/';
+          switch (name) {
+            case '/':
+              return MaterialPageRoute(builder: (_) => const MainScreen(initialIndex: 0));
+            case '/privacy':
+              return MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen());
+            case '/settings':
+              // Route to MainScreen with the Settings tab selected
+              return MaterialPageRoute(builder: (_) => const MainScreen(initialIndex: 2));
+            case '/history':
+              // Route to MainScreen with the History tab selected
+              return MaterialPageRoute(builder: (_) => const MainScreen(initialIndex: 1));
+            default:
+              // Fallback to home
+              return MaterialPageRoute(builder: (_) => const MainScreen(initialIndex: 0));
+          }
+        },
       ),
     );
   }
 }
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  const MainScreen({super.key, this.initialIndex = 0});
+
+  final int initialIndex;
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -85,7 +111,16 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
+    // Initialize current tab from route-provided initialIndex
+    _currentIndex = widget.initialIndex.clamp(0, _screens.length - 1);
     _initShareListener();
+    if (_currentIndex == 1) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        try {
+          context.read<HistoryProvider>().loadHistory();
+        } catch (_) {}
+      });
+    }
   }
 
   void _initShareListener() {
@@ -103,6 +138,12 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       _currentIndex = 0;
     });
+
+    // Update the browser URL on web to reflect the active tab
+    if (kIsWeb) {
+      // Replace rather than push so history stays clean
+      Navigator.of(context, rootNavigator: true).pushReplacementNamed('/');
+    }
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final settings = context.read<SettingsProvider>();
@@ -126,9 +167,38 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
+          if (_currentIndex == index) return;
           setState(() {
             _currentIndex = index;
           });
+          if (index == 1) {
+            try {
+              context.read<HistoryProvider>().loadHistory();
+            } catch (_) {}
+          }
+          // Sync URL with selected tab on web without rebuilding routes
+          if (kIsWeb) {
+            switch (index) {
+              case 0:
+                SystemNavigator.routeInformationUpdated(
+                  location: '/',
+                  replace: true,
+                );
+                break;
+              case 1:
+                SystemNavigator.routeInformationUpdated(
+                  location: '/history',
+                  replace: true,
+                );
+                break;
+              case 2:
+                SystemNavigator.routeInformationUpdated(
+                  location: '/settings',
+                  replace: true,
+                );
+                break;
+            }
+          }
         },
         type: BottomNavigationBarType.fixed,
         items: const [

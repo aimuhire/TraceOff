@@ -34,6 +34,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   void _filterItems() {
+    // ignore: avoid_print
+    print('[HistoryScreen] filter: query="${_searchController.text}" favoritesOnly=$_showFavoritesOnly');
     final historyProvider = context.read<HistoryProvider>();
     final query = _searchController.text.toLowerCase();
 
@@ -63,6 +65,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
     setState(() {
       _showFavoritesOnly = !_showFavoritesOnly;
     });
+    // ignore: avoid_print
+    print('[HistoryScreen] toggleFavoritesOnly -> $_showFavoritesOnly');
     _filterItems();
   }
 
@@ -152,6 +156,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: () async {
+                    // ignore: avoid_print
+                    print('[HistoryScreen] pull-to-refresh');
                     await context.read<HistoryProvider>().loadHistory();
                     _filterItems();
                   },

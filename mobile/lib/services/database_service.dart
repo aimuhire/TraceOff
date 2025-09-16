@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:traceoff_mobile/models/history_item.dart';
@@ -8,13 +10,15 @@ class DatabaseService {
 
   static const DatabaseService instance = DatabaseService._init();
   static Database? _database;
+  static const String _prefsHistoryKey = 'history_items_v1';
+  static const String _dbFileName = 'traceoff.db';
 
   Future<Database> get database async {
     if (kIsWeb) {
       throw UnsupportedError('Database not supported on web');
     }
     if (_database != null) return _database!;
-    _database = await _initDB('traceoff.db');
+    _database = await _initDB(_dbFileName);
     return _database!;
   }
 
@@ -24,7 +28,7 @@ class DatabaseService {
 
     return await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: _createDB,
       onUpgrade: (db, oldVersion, newVersion) async {
         // ignore: avoid_print
@@ -45,8 +49,50 @@ class DatabaseService {
           // ignore: avoid_print
           print('[DB] Migration to v2 complete');
         }
+        if (oldVersion < 3) {
+          // Ensure isFavorite column exists for older databases
+          try {
+            await db.execute(
+                'ALTER TABLE history ADD COLUMN isFavorite INTEGER NOT NULL DEFAULT 0');
+          } catch (_) {
+            // Column may already exist; ignore
+          }
+          // ignore: avoid_print
+          print('[DB] Migration to v3 complete (added isFavorite)');
+        }
       },
     );
+  }
+
+  /// Destructively reset all stored history.
+  ///
+  /// - On web: clears SharedPreferences key used for history
+  /// - On mobile: closes and deletes the SQLite database file, then re-creates it
+  Future<void> resetDatabase() async {
+    if (kIsWeb) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_prefsHistoryKey);
+      // ignore: avoid_print
+      print('[DB] Web history cleared (SharedPreferences)');
+      return;
+    }
+
+    try {
+      if (_database != null) {
+        await _database!.close();
+      }
+    } catch (_) {}
+    _database = null;
+
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, _dbFileName);
+    // ignore: avoid_print
+    print('[DB] Deleting SQLite database at $path');
+    await deleteDatabase(path);
+    // Recreate to ensure fresh schema
+    await _initDB(_dbFileName);
+    // ignore: avoid_print
+    print('[DB] Database reset complete');
   }
 
   Future _createDB(Database db, int version) async {
@@ -64,7 +110,7 @@ class DatabaseService {
         strategyId $textType,
         confidence $realType,
         createdAt $textType,
-R        isFavorite $boolType,
+        isFavorite $boolType,
         title TEXT,
         thumbnailUrl TEXT
       )
@@ -84,6 +130,13 @@ R        isFavorite $boolType,
   }
 
   Future<String> insertHistoryItem(HistoryItem item) async {
+    if (kIsWeb) {
+      // Save to SharedPreferences as a JSON array
+      final list = await _prefsLoadAll();
+      final updated = [item, ...list];
+      await _prefsSaveAll(updated);
+      return item.id;
+    }
     final db = await database;
     // Logging: inserting history item
     // ignore: avoid_print
@@ -94,6 +147,11 @@ R        isFavorite $boolType,
   }
 
   Future<List<HistoryItem>> getAllHistoryItems() async {
+    if (kIsWeb) {
+      final list = await _prefsLoadAll();
+      list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return list;
+    }
     final db = await database;
     final result = await db.query('history', orderBy: 'createdAt DESC');
     // Logging: fetched count
@@ -104,6 +162,12 @@ R        isFavorite $boolType,
   }
 
   Future<List<HistoryItem>> getFavoriteHistoryItems() async {
+    if (kIsWeb) {
+      final list = await _prefsLoadAll();
+      final favs = list.where((e) => e.isFavorite).toList()
+        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return favs;
+    }
     final db = await database;
     final result = await db.query(
       'history',
@@ -118,6 +182,14 @@ R        isFavorite $boolType,
   }
 
   Future<HistoryItem?> getHistoryItem(String id) async {
+    if (kIsWeb) {
+      final list = await _prefsLoadAll();
+      try {
+        return list.firstWhere((e) => e.id == id);
+      } catch (_) {
+        return null;
+      }
+    }
     final db = await database;
     final result = await db.query('history', where: 'id = ?', whereArgs: [id]);
 
@@ -132,6 +204,15 @@ R        isFavorite $boolType,
   }
 
   Future<void> updateHistoryItem(HistoryItem item) async {
+    if (kIsWeb) {
+      final list = await _prefsLoadAll();
+      final idx = list.indexWhere((e) => e.id == item.id);
+      if (idx >= 0) {
+        list[idx] = item;
+        await _prefsSaveAll(list);
+      }
+      return;
+    }
     final db = await database;
     // ignore: avoid_print
     print('[DB] Updating history item id=${item.id}');
@@ -144,6 +225,12 @@ R        isFavorite $boolType,
   }
 
   Future<void> deleteHistoryItem(String id) async {
+    if (kIsWeb) {
+      final list = await _prefsLoadAll();
+      list.removeWhere((e) => e.id == id);
+      await _prefsSaveAll(list);
+      return;
+    }
     final db = await database;
     // ignore: avoid_print
     print('[DB] Deleting history item id=$id');
@@ -151,6 +238,10 @@ R        isFavorite $boolType,
   }
 
   Future<void> clearAllHistory() async {
+    if (kIsWeb) {
+      await _prefsSaveAll([]);
+      return;
+    }
     final db = await database;
     // ignore: avoid_print
     print('[DB] Clearing all history');
@@ -167,6 +258,17 @@ R        isFavorite $boolType,
   }
 
   Future<List<HistoryItem>> searchHistory(String query) async {
+    if (kIsWeb) {
+      final list = await _prefsLoadAll();
+      final q = query.toLowerCase();
+      final filtered = list.where((e) {
+        return e.originalUrl.toLowerCase().contains(q) ||
+            e.cleanedUrl.toLowerCase().contains(q) ||
+            e.domain.toLowerCase().contains(q);
+      }).toList()
+        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return filtered;
+    }
     final db = await database;
     final result = await db.query(
       'history',
@@ -181,7 +283,29 @@ R        isFavorite $boolType,
   }
 
   Future<void> close() async {
+    if (kIsWeb) return;
     final db = await database;
     db.close();
+  }
+
+  // -------- Web storage (SharedPreferences) helpers ---------
+  Future<List<HistoryItem>> _prefsLoadAll() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_prefsHistoryKey);
+    if (raw == null || raw.isEmpty) return [];
+    try {
+      final list = (jsonDecode(raw) as List)
+          .map((e) => HistoryItem.fromJson(Map<String, dynamic>.from(e)))
+          .toList();
+      return list;
+    } catch (_) {
+      return [];
+    }
+  }
+
+  Future<void> _prefsSaveAll(List<HistoryItem> items) async {
+    final prefs = await SharedPreferences.getInstance();
+    final encoded = jsonEncode(items.map((e) => e.toJson()).toList());
+    await prefs.setString(_prefsHistoryKey, encoded);
   }
 }

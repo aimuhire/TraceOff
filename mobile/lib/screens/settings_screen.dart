@@ -302,6 +302,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         );
                       },
                     ),
+                    const Divider(height: 1),
+                    ListTile(
+                      leading: const Icon(Icons.privacy_tip),
+                      title: const Text('Privacy Policy'),
+                      subtitle: const Text('How we handle your data'),
+                      trailing: const Icon(Icons.arrow_forward_ios),
+                      onTap: () {
+                        Navigator.of(context).pushNamed('/privacy');
+                      },
+                    ),
                   ],
                 ),
               ),

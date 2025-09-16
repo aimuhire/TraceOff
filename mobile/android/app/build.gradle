@@ -28,6 +28,16 @@ if (flutterVersionName == null) {
 }
  
 
+def keystorePropertiesFile = rootProject.file('key.properties')
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+def keystorePathProp = keystoreProperties.getProperty('storeFile')
+def storeTypeProp = keystoreProperties.getProperty('storeType')
+def resolvedKeystoreFile = keystorePathProp ? file(keystorePathProp) : null
+def hasReleaseKeystore = keystorePropertiesFile.exists() && resolvedKeystoreFile != null && resolvedKeystoreFile.exists()
+
 android {
     namespace "com.aimuhire.traceoff"
     compileSdk 36
@@ -62,12 +72,34 @@ android {
         }
     }
 
+    signingConfigs {
+        release {
+            if (!hasReleaseKeystore) {
+                // Fail fast for release builds so we never produce a debug-signed artifact by mistake
+                throw new GradleException(
+                    "Release keystore not found. Configure mobile/android/key.properties and place the keystore at 'mobile/android/app/" +
+                    (keystorePathProp ?: "upload-keystore.jks") + "'.\n" +
+                    "See mobile/android/key.properties.example for the required fields.")
+            }
+            if (storeTypeProp != null && storeTypeProp.trim()) {
+                // Allow overriding store type, e.g., PKCS12
+                storeType storeTypeProp.trim()
+            }
+            storeFile resolvedKeystoreFile
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: configure proper signingConfig for release
-            signingConfig signingConfigs.debug
-            minifyEnabled false
-            shrinkResources false
+            // Always use release signing; the signingConfigs.release block will throw with a helpful message if misconfigured
+            signingConfig signingConfigs.release
+            // Enable shrinking/obfuscation to reduce size and produce a mapping.txt for Play Console
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }

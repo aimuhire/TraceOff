@@ -1,0 +1,6 @@
+storePassword=change-me-strong-password
+keyPassword=change-me-strong-password
+keyAlias=upload
+storeFile=upload-keystore.jks
+## Optional: if your keystore is PKCS12 instead of JKS, uncomment:
+# storeType=PKCS12
