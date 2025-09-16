@@ -22,7 +22,7 @@ void main() async {
 
   // Use clean path-based URLs on web (no #)
   if (kIsWeb) {
-    setUrlStrategy(const PathUrlStrategy());
+    setUrlStrategy(PathUrlStrategy());
   }
 
   // Initialize environment configuration
