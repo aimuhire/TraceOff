@@ -262,3 +262,8 @@ lib/generated_plugin_registrant.dart
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+
+*.jks
+*.p12
+*.keystore

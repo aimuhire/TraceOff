@@ -22,6 +22,7 @@ void main() async {
 
   // Use clean path-based URLs on web (no #)
   if (kIsWeb) {
+    // ignore: prefer_const_constructors
     setUrlStrategy(PathUrlStrategy());
   }
 
@@ -69,18 +70,23 @@ class MyApp extends StatelessWidget {
           final name = settings.name ?? '/';
           switch (name) {
             case '/':
-              return MaterialPageRoute(builder: (_) => const MainScreen(initialIndex: 0));
+              return MaterialPageRoute(
+                  builder: (_) => const MainScreen(initialIndex: 0));
             case '/privacy':
-              return MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen());
+              return MaterialPageRoute(
+                  builder: (_) => const PrivacyPolicyScreen());
             case '/settings':
               // Route to MainScreen with the Settings tab selected
-              return MaterialPageRoute(builder: (_) => const MainScreen(initialIndex: 2));
+              return MaterialPageRoute(
+                  builder: (_) => const MainScreen(initialIndex: 2));
             case '/history':
               // Route to MainScreen with the History tab selected
-              return MaterialPageRoute(builder: (_) => const MainScreen(initialIndex: 1));
+              return MaterialPageRoute(
+                  builder: (_) => const MainScreen(initialIndex: 1));
             default:
               // Fallback to home
-              return MaterialPageRoute(builder: (_) => const MainScreen(initialIndex: 0));
+              return MaterialPageRoute(
+                  builder: (_) => const MainScreen(initialIndex: 0));
           }
         },
       ),
