@@ -157,6 +157,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     const Divider(height: 1),
                     ListTile(
+                      leading: const Icon(Icons.language),
                       title: Text(AppLocalizations.of(context)!.language),
                       subtitle: Text(_getLanguageText(settings.locale)),
                       trailing: const Icon(Icons.arrow_forward_ios),
