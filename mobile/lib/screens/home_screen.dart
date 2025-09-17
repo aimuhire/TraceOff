@@ -12,6 +12,8 @@ import 'package:traceoff_mobile/screens/tutorial_screen.dart';
 import 'package:traceoff_mobile/widgets/server_status_widget.dart';
 import 'package:traceoff_mobile/models/clean_result.dart';
 import 'package:traceoff_mobile/widgets/supported_platforms_panel.dart';
+import 'package:traceoff_mobile/l10n/app_localizations.dart';
+import 'package:traceoff_mobile/utils/url_extractor.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -71,27 +73,30 @@ class _HomeScreenState extends State<HomeScreen> {
     final text = data?.text?.trim() ?? '';
     if (!mounted) return;
     final settings = context.read<SettingsProvider>();
-    if (text.isNotEmpty &&
-        _isValidHttpUrl(text) &&
-        _urlController.text.isEmpty) {
+
+    // Extract the first HTTP URL from the clipboard text
+    final String? extractedUrl = UrlExtractor.extractFirstHttpUrl(text);
+
+    if (extractedUrl != null && _urlController.text.isEmpty) {
       if (settings.autoSubmitClipboard) {
-        _urlController.text = text;
+        _urlController.text = extractedUrl;
         setState(() {});
         // Auto-submit
         _cleanUrl();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Pasted URL from clipboard and cleaning...'),
-              duration: Duration(seconds: 2)),
+          SnackBar(
+              content:
+                  Text(AppLocalizations.of(context)!.snackPastedAndCleaning),
+              duration: const Duration(seconds: 2)),
         );
       } else {
         // Only paste, no auto-submit
-        _urlController.text = text;
+        _urlController.text = extractedUrl;
         setState(() {});
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Pasted URL from clipboard'),
-              duration: Duration(seconds: 2)),
+          SnackBar(
+              content: Text(AppLocalizations.of(context)!.snackPasted),
+              duration: const Duration(seconds: 2)),
         );
       }
     }
@@ -215,7 +220,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final url = _urlController.text.trim();
     if (!_isValidHttpUrl(url)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid http/https URL')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.enterValidUrl)),
       );
       return;
     }
@@ -226,7 +231,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('TraceOff'),
+        title: Text(AppLocalizations.of(context)!.appTitle),
         actions: [
           Consumer<SettingsProvider>(
             builder: (context, settings, child) {
@@ -315,10 +320,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                           if (!context.mounted) return;
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
-                                            const SnackBar(
+                                            SnackBar(
                                               content: Text(
-                                                  'Switched to local cleaning - using device processing'),
-                                              duration: Duration(seconds: 2),
+                                                  AppLocalizations.of(context)!
+                                                      .switchedToLocal),
+                                              duration:
+                                                  const Duration(seconds: 2),
                                             ),
                                           );
                                         },
@@ -350,7 +357,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               ),
                                               const SizedBox(width: 6),
                                               Text(
-                                                'Local',
+                                                AppLocalizations.of(context)!
+                                                    .local,
                                                 style: TextStyle(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w500,
@@ -378,10 +386,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                           if (!context.mounted) return;
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
-                                            const SnackBar(
+                                            SnackBar(
                                               content: Text(
-                                                  'Switched to remote cleaning - using cloud API'),
-                                              duration: Duration(seconds: 2),
+                                                  AppLocalizations.of(context)!
+                                                      .switchedToRemote),
+                                              duration:
+                                                  const Duration(seconds: 2),
                                             ),
                                           );
                                         },
@@ -413,7 +423,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               ),
                                               const SizedBox(width: 6),
                                               Text(
-                                                'Remote',
+                                                AppLocalizations.of(context)!
+                                                    .remote,
                                                 style: TextStyle(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w500,
@@ -448,7 +459,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        'Processing Mode',
+                                        AppLocalizations.of(context)!
+                                            .processingMode,
                                         style: TextStyle(
                                           fontSize: 12,
                                           color: Theme.of(context)
@@ -473,9 +485,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                         ),
                         const SizedBox(height: 16),
-                        const Text(
-                          'Paste Link to Clean',
-                          style: TextStyle(
+                        Text(
+                          AppLocalizations.of(context)!.pasteLinkTitle,
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
@@ -485,14 +497,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           controller: _urlController,
                           focusNode: _urlFocusNode,
                           decoration: InputDecoration(
-                            hintText: 'Paste a link to clean (http/https)',
+                            hintText:
+                                AppLocalizations.of(context)!.inputHintHttp,
                             prefixIcon: const Icon(Icons.link),
                             border: const OutlineInputBorder(),
                             suffixIcon: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 IconButton(
-                                  tooltip: 'Paste',
+                                  tooltip:
+                                      AppLocalizations.of(context)!.actionPaste,
                                   icon: const Icon(Icons.paste),
                                   onPressed: () async {
                                     final data =
@@ -500,13 +514,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                     final text = data?.text ?? '';
                                     if (text.isNotEmpty) {
                                       if (!mounted) return;
-                                      _urlController.text = text.trim();
+
+                                      // Extract the first HTTP URL from the clipboard text
+                                      final String? extractedUrl =
+                                          UrlExtractor.extractFirstHttpUrl(
+                                              text);
+                                      if (extractedUrl != null) {
+                                        _urlController.text = extractedUrl;
+                                      } else {
+                                        // If no URL found, paste the original text
+                                        _urlController.text = text.trim();
+                                      }
                                       setState(() {});
                                     }
                                   },
                                 ),
                                 IconButton(
-                                  tooltip: 'Clear',
+                                  tooltip:
+                                      AppLocalizations.of(context)!.actionClear,
                                   icon: const Icon(Icons.clear),
                                   onPressed: () {
                                     if (!mounted) return;
@@ -540,10 +565,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                   )
                                 : const Icon(Icons.cleaning_services),
                             label: Text(provider.isLoading
-                                ? 'Cleaning...'
+                                ? AppLocalizations.of(context)!.cleaning
                                 : (_isValidHttpUrl(_urlController.text)
-                                    ? 'Clean Link'
-                                    : 'Enter a valid http/https URL')),
+                                    ? AppLocalizations.of(context)!.tabClean
+                                    : AppLocalizations.of(context)!
+                                        .enterValidUrl)),
                           ),
                         ),
                       ],
@@ -603,7 +629,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       onPressed: () =>
                                           _processLocally(provider),
                                       icon: const Icon(Icons.storage),
-                                      label: const Text('Process Locally'),
+                                      label: Text(AppLocalizations.of(context)!
+                                          .processLocally),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Theme.of(context)
                                             .colorScheme
@@ -638,7 +665,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                'This result is not 100% certain. Please review the alternatives below.',
+                                AppLocalizations.of(context)!
+                                    .notCertainReviewAlternatives,
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Theme.of(context)
@@ -668,24 +696,27 @@ class _HomeScreenState extends State<HomeScreen> {
                         context: context,
                         builder: (context) {
                           return AlertDialog(
-                            title: const Text('Hide Supported Platforms'),
-                            content: const Text(
-                                'Do you want to hide this panel temporarily or never show it again?'),
+                            title: Text(AppLocalizations.of(context)!
+                                .hideSupportedTitle),
+                            content: Text(AppLocalizations.of(context)!
+                                .hideSupportedQuestion),
                             actions: [
                               TextButton(
                                 onPressed: () =>
                                     Navigator.of(context).pop('cancel'),
-                                child: const Text('Cancel'),
+                                child:
+                                    Text(AppLocalizations.of(context)!.cancel),
                               ),
                               TextButton(
                                 onPressed: () =>
                                     Navigator.of(context).pop('hide'),
-                                child: const Text('Hide'),
+                                child: Text(AppLocalizations.of(context)!.hide),
                               ),
                               FilledButton(
                                 onPressed: () =>
                                     Navigator.of(context).pop('forever'),
-                                child: const Text("Don't show again"),
+                                child: Text(AppLocalizations.of(context)!
+                                    .dontShowAgain),
                               ),
                             ],
                           );
@@ -726,7 +757,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Clean Link Ready',
+                  AppLocalizations.of(context)!.cleanLinkReady,
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -764,7 +795,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Clean Link:',
+                    AppLocalizations.of(context)!.cleanLinkLabel,
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
@@ -811,16 +842,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (!_usageTipsShown) {
                         if (!mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content:
-                                  Text('Tip: Long-press any link to copy')),
+                          SnackBar(
+                              content: Text(AppLocalizations.of(context)!
+                                  .tipLongPressToCopy)),
                         );
                         _markUsageTipsShown();
                       }
                       _copyToClipboard(result.primary.url);
                     },
                     icon: const Icon(Icons.copy),
-                    label: const Text('Copy Clean Link'),
+                    label: Text(AppLocalizations.of(context)!.copyCleanLink),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
@@ -833,16 +864,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (!_usageTipsShown) {
                         if (!mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text(
-                                  'Tip: Tap link to open, long-press to copy')),
+                          SnackBar(
+                              content: Text(AppLocalizations.of(context)!
+                                  .tipTapOpenLongPressCopy)),
                         );
                         _markUsageTipsShown();
                       }
                       _shareUrl(result.primary.url);
                     },
                     icon: const Icon(Icons.share),
-                    label: const Text('Share Link'),
+                    label: Text(AppLocalizations.of(context)!.shareLink),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
@@ -855,7 +886,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 16),
             ExpansionTile(
               title: Text(
-                'Technical Details',
+                AppLocalizations.of(context)!.technicalDetails,
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -937,7 +968,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (result.primary.actions.isNotEmpty) ...[
                   const SizedBox(height: 8),
                   Text(
-                    'Actions taken:',
+                    AppLocalizations.of(context)!.actionsTaken,
                     style: TextStyle(
                       fontSize: 12,
                       color: Theme.of(context)
@@ -992,9 +1023,9 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Alternative Results',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              AppLocalizations.of(context)!.alternativeResults,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             ...alternatives.asMap().entries.map((entry) {
@@ -1020,7 +1051,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Row(
                         children: [
                           Text(
-                            'Alternative ${index + 1}',
+                            '${AppLocalizations.of(context)!.alternative} ${index + 1}',
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
@@ -1083,11 +1114,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               icon: const Icon(Icons.share, size: 18),
                               onPressed: () {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
+                                  SnackBar(
                                     content: Text(
-                                      'Warning: Alternative may still contain trackers',
+                                      AppLocalizations.of(context)!
+                                          .shareAltWarningSnack,
                                     ),
-                                    duration: Duration(seconds: 2),
+                                    duration: const Duration(seconds: 2),
                                   ),
                                 );
                                 _shareUrl(alt.url);
@@ -1145,7 +1177,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Clipboard.setData(ClipboardData(text: text));
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Copied to clipboard')),
+      SnackBar(content: Text(AppLocalizations.of(context)!.copiedToClipboard)),
     );
   }
 
@@ -1169,7 +1201,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(settings.autoCopyPrimary && settings.autoShareOnSuccess
-              ? 'URL cleaned: copied and shared'
+              ? AppLocalizations.of(context)!.urlCleanedCopiedAndShared
               : settings.autoCopyPrimary
                   ? 'URL cleaned: copied'
                   : 'URL cleaned: shared'),
@@ -1186,13 +1218,15 @@ class _HomeScreenState extends State<HomeScreen> {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       } else {
         if (!mounted) return;
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Could not launch $url')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content:
+                Text('${AppLocalizations.of(context)!.couldNotLaunch} $url')));
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error launching URL: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content:
+              Text('${AppLocalizations.of(context)!.errorLaunchingUrl} $e')));
     }
   }
 
@@ -1207,9 +1241,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Switched to local processing and cleaned URL'),
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!
+              .switchedToLocalProcessingAndCleaned),
+          duration: const Duration(seconds: 2),
         ),
       );
     }

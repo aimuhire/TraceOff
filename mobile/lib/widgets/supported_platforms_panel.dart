@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:traceoff_mobile/l10n/app_localizations.dart';
 
 class SupportedPlatformsPanel extends StatelessWidget {
   const SupportedPlatformsPanel(
@@ -25,12 +26,14 @@ class SupportedPlatformsPanel extends StatelessWidget {
               children: [
                 Icon(Icons.verified_user, color: colorScheme.primary),
                 const SizedBox(width: 8),
-                const Expanded(
+                Expanded(
                   child: Text(
-                    'Supported Platforms & What We Clean',
+                    AppLocalizations.of(context)!
+                        .supportedPlatformsAndWhatWeClean,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 TextButton(
@@ -39,7 +42,7 @@ class SupportedPlatformsPanel extends StatelessWidget {
                       await onRequestHideDialog!.call();
                     }
                   },
-                  child: const Text('Hide'),
+                  child: Text(AppLocalizations.of(context)!.hide),
                 ),
               ],
             ),
@@ -61,7 +64,7 @@ class SupportedPlatformsPanel extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Why clean links? Short links and “share” links often carry identifiers that can profile you or expose secondary accounts. Examples: lnkd.in and pin.it can reveal what you opened; Instagram share links (like /share/...) include sender-derived codes (igshid, igsh, si) that can tie the link to you. We normalize to a direct, canonical URL — not just removing utm_* — to reduce fingerprinting and prompts like “X shared a reel with you.”',
+                      AppLocalizations.of(context)!.whyCleanLinksDescription,
                       style: TextStyle(
                         fontSize: 12,
                         color: colorScheme.onSurfaceVariant,
@@ -169,7 +172,7 @@ class SupportedPlatformsPanel extends StatelessWidget {
 
             const SizedBox(height: 8),
             Text(
-              'Privacy notes:\n• “Share” links can embed who shared to whom (e.g., Instagram /share, Reddit context, X s=20).\n• Shorteners (lnkd.in, pin.it) add interstitials that can log your click.\n• Platform params (igshid, fbclid, rdt, share_app_id) can link the action back to your account.\nWe promote direct, canonical URLs to minimize profiling and social prompts like “X shared a reel with you.”',
+              AppLocalizations.of(context)!.privacyNotesDescription,
               style:
                   TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
             ),
@@ -255,7 +258,7 @@ class _Example extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('e.g.,', style: faded),
+        Text(AppLocalizations.of(context)!.example, style: faded),
         const SizedBox(height: 2),
         Text(inText, maxLines: 1, overflow: TextOverflow.ellipsis, style: mono),
         const Icon(Icons.arrow_downward, size: 12),

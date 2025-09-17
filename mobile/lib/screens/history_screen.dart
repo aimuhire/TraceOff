@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:traceoff_mobile/providers/history_provider.dart';
 import 'package:traceoff_mobile/providers/url_cleaner_provider.dart';
 import 'package:traceoff_mobile/models/history_item.dart';
+import 'package:traceoff_mobile/l10n/app_localizations.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -35,7 +36,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   void _filterItems() {
     // ignore: avoid_print
-    print('[HistoryScreen] filter: query="${_searchController.text}" favoritesOnly=$_showFavoritesOnly');
+    print(
+        '[HistoryScreen] filter: query="${_searchController.text}" favoritesOnly=$_showFavoritesOnly');
     final historyProvider = context.read<HistoryProvider>();
     final query = _searchController.text.toLowerCase();
 
@@ -74,14 +76,16 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('History'),
+        title: Text(AppLocalizations.of(context)!.historyTitle),
         actions: [
           IconButton(
             icon: Icon(
               _showFavoritesOnly ? Icons.favorite : Icons.favorite_border,
             ),
             onPressed: _toggleFavoritesFilter,
-            tooltip: _showFavoritesOnly ? 'Show All' : 'Show Favorites Only',
+            tooltip: _showFavoritesOnly
+                ? AppLocalizations.of(context)!.historyShowAll
+                : AppLocalizations.of(context)!.historyShowFavoritesOnly,
           ),
           PopupMenuButton<String>(
             onSelected: (value) {
@@ -95,19 +99,19 @@ class _HistoryScreenState extends State<HistoryScreen> {
               }
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'export',
                 child: ListTile(
-                  leading: Icon(Icons.download),
-                  title: Text('Export History'),
+                  leading: const Icon(Icons.download),
+                  title: Text(AppLocalizations.of(context)!.historyExport),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'clear_all',
                 child: ListTile(
-                  leading: Icon(Icons.delete_forever),
-                  title: Text('Clear All History'),
+                  leading: const Icon(Icons.delete_forever),
+                  title: Text(AppLocalizations.of(context)!.historyClearAll),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
@@ -138,7 +142,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: 'Search history...',
+                    hintText: AppLocalizations.of(context)!.historySearchHint,
                     prefixIcon: const Icon(Icons.search),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
@@ -178,8 +182,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               const SizedBox(height: 16),
                               Text(
                                 _showFavoritesOnly
-                                    ? 'No favorite items yet'
-                                    : 'No history items yet',
+                                    ? AppLocalizations.of(context)!
+                                        .historyNoFavoritesYet
+                                    : AppLocalizations.of(context)!
+                                        .historyNoItemsYet,
                                 style: TextStyle(
                                   fontSize: 18,
                                   color: Theme.of(
@@ -193,8 +199,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               const SizedBox(height: 8),
                               Text(
                                 _showFavoritesOnly
-                                    ? 'Tap the heart icon on any item to add it to favorites'
-                                    : 'Clean some URLs to see them here',
+                                    ? AppLocalizations.of(context)!
+                                        .historyFavoritesHint
+                                    : AppLocalizations.of(context)!
+                                        .historyCleanSomeUrls,
                                 style: TextStyle(
                                   color: Theme.of(
                                     context,
@@ -239,7 +247,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
           children: [
             const SizedBox(height: 8),
             Text(
-              'Original: ${item.originalUrl}',
+              '${AppLocalizations.of(context)!.historyOriginal} ${item.originalUrl}',
               style: TextStyle(
                 fontSize: 12,
                 color: Theme.of(context)
@@ -253,7 +261,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ),
             const SizedBox(height: 4),
             Text(
-              'Cleaned: ${item.cleanedUrl}',
+              '${AppLocalizations.of(context)!.historyCleaned} ${item.cleanedUrl}',
               style: TextStyle(
                 fontSize: 12,
                 color: Theme.of(context).colorScheme.primary,
@@ -266,7 +274,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             Row(
               children: [
                 Text(
-                  '${(item.confidence * 100).toStringAsFixed(1)}% confidence',
+                  '${(item.confidence * 100).toStringAsFixed(1)}% ${AppLocalizations.of(context)!.historyConfidence}',
                   style: TextStyle(
                     fontSize: 12,
                     color: Theme.of(
@@ -291,43 +299,43 @@ class _HistoryScreenState extends State<HistoryScreen> {
         trailing: PopupMenuButton<String>(
           onSelected: (value) => _handleItemAction(value, item),
           itemBuilder: (context) => [
-            const PopupMenuItem(
+            PopupMenuItem(
               value: 'copy_original',
               child: ListTile(
-                leading: Icon(Icons.copy),
-                title: Text('Copy Original'),
+                leading: const Icon(Icons.copy),
+                title: Text(AppLocalizations.of(context)!.historyCopyOriginal),
                 contentPadding: EdgeInsets.zero,
               ),
             ),
-            const PopupMenuItem(
+            PopupMenuItem(
               value: 'copy_cleaned',
               child: ListTile(
-                leading: Icon(Icons.cleaning_services),
-                title: Text('Copy Cleaned'),
+                leading: const Icon(Icons.cleaning_services),
+                title: Text(AppLocalizations.of(context)!.historyCopyCleaned),
                 contentPadding: EdgeInsets.zero,
               ),
             ),
-            const PopupMenuItem(
+            PopupMenuItem(
               value: 'share',
               child: ListTile(
-                leading: Icon(Icons.share),
-                title: Text('Share'),
+                leading: const Icon(Icons.share),
+                title: Text(AppLocalizations.of(context)!.historyShare),
                 contentPadding: EdgeInsets.zero,
               ),
             ),
-            const PopupMenuItem(
+            PopupMenuItem(
               value: 'open',
               child: ListTile(
-                leading: Icon(Icons.open_in_browser),
-                title: Text('Open'),
+                leading: const Icon(Icons.open_in_browser),
+                title: Text(AppLocalizations.of(context)!.historyOpen),
                 contentPadding: EdgeInsets.zero,
               ),
             ),
-            const PopupMenuItem(
+            PopupMenuItem(
               value: 'reclean',
               child: ListTile(
-                leading: Icon(Icons.refresh),
-                title: Text('Re-clean'),
+                leading: const Icon(Icons.refresh),
+                title: Text(AppLocalizations.of(context)!.historyReclean),
                 contentPadding: EdgeInsets.zero,
               ),
             ),
@@ -339,17 +347,18 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 ),
                 title: Text(
                   item.isFavorite
-                      ? 'Remove from Favorites'
-                      : 'Add to Favorites',
+                      ? AppLocalizations.of(context)!.historyRemoveFromFavorites
+                      : AppLocalizations.of(context)!.historyAddToFavorites,
                 ),
                 contentPadding: EdgeInsets.zero,
               ),
             ),
-            const PopupMenuItem(
+            PopupMenuItem(
               value: 'delete',
               child: ListTile(
-                leading: Icon(Icons.delete, color: Colors.red),
-                title: Text('Delete', style: TextStyle(color: Colors.red)),
+                leading: const Icon(Icons.delete, color: Colors.red),
+                title: Text(AppLocalizations.of(context)!.historyDelete,
+                    style: const TextStyle(color: Colors.red)),
                 contentPadding: EdgeInsets.zero,
               ),
             ),
@@ -365,13 +374,17 @@ class _HistoryScreenState extends State<HistoryScreen> {
       case 'copy_original':
         Clipboard.setData(ClipboardData(text: item.originalUrl));
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Original URL copied to clipboard')),
+          SnackBar(
+              content:
+                  Text(AppLocalizations.of(context)!.historyOriginalCopied)),
         );
         break;
       case 'copy_cleaned':
         Clipboard.setData(ClipboardData(text: item.cleanedUrl));
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Cleaned URL copied to clipboard')),
+          SnackBar(
+              content:
+                  Text(AppLocalizations.of(context)!.historyCleanedCopied)),
         );
         break;
       case 'share':
@@ -399,14 +412,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Item'),
-        content: const Text(
-          'Are you sure you want to delete this history item?',
-        ),
+        title: Text(AppLocalizations.of(context)!.historyDeleteItem),
+        content: Text(AppLocalizations.of(context)!.historyDeleteConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -414,7 +425,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
               _filterItems(); // Refresh the filtered list
               Navigator.of(context).pop();
             },
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(AppLocalizations.of(context)!.historyDelete,
+                style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -425,14 +437,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Clear All History'),
-        content: const Text(
-          'Are you sure you want to delete all history items? This action cannot be undone.',
-        ),
+        title: Text(AppLocalizations.of(context)!.historyClearAllTitle),
+        content: Text(AppLocalizations.of(context)!.historyClearAllConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -440,7 +450,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
               _filterItems(); // Refresh the filtered list
               Navigator.of(context).pop();
             },
-            child: const Text('Clear All', style: TextStyle(color: Colors.red)),
+            child: Text(AppLocalizations.of(context)!.historyClearAllAction,
+                style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -462,7 +473,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
     Clipboard.setData(ClipboardData(text: exportText));
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('History exported to clipboard')),
+      SnackBar(content: Text(AppLocalizations.of(context)!.historyExported)),
     );
   }
 
@@ -471,13 +482,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
     final difference = now.difference(dateTime);
 
     if (difference.inDays > 0) {
-      return '${difference.inDays}d ago';
+      return '${difference.inDays}${AppLocalizations.of(context)!.historyDaysAgo}';
     } else if (difference.inHours > 0) {
-      return '${difference.inHours}h ago';
+      return '${difference.inHours}${AppLocalizations.of(context)!.historyHoursAgo}';
     } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes}m ago';
+      return '${difference.inMinutes}${AppLocalizations.of(context)!.historyMinutesAgo}';
     } else {
-      return 'Just now';
+      return AppLocalizations.of(context)!.historyJustNow;
     }
   }
 
@@ -490,14 +501,18 @@ class _HistoryScreenState extends State<HistoryScreen> {
         if (mounted) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text('Could not launch $url')));
+          ).showSnackBar(SnackBar(
+              content: Text(
+                  '${AppLocalizations.of(context)!.historyCouldNotLaunch} $url')));
         }
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Error launching URL: $e')));
+        ).showSnackBar(SnackBar(
+            content: Text(
+                '${AppLocalizations.of(context)!.historyErrorLaunching} $e')));
       }
     }
   }

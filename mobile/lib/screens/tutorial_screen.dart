@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:traceoff_mobile/l10n/app_localizations.dart';
 
 class TutorialScreen extends StatelessWidget {
   const TutorialScreen({super.key});
@@ -7,7 +8,7 @@ class TutorialScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Processing Modes'),
+        title: Text(AppLocalizations.of(context)!.tutorialProcessingModes),
         backgroundColor: Theme.of(context).colorScheme.surface,
         foregroundColor: Theme.of(context).colorScheme.onSurface,
       ),
@@ -19,24 +20,24 @@ class TutorialScreen extends StatelessWidget {
             // Local Processing Section
             _buildModeCard(
               context,
-              title: 'Local Processing',
+              title: AppLocalizations.of(context)!.tutorialLocalProcessing,
               icon: Icons.storage,
               color: Colors.blue,
-              description: 'URL cleaning happens entirely on your device',
+              description:
+                  AppLocalizations.of(context)!.tutorialLocalDescription,
               pros: [
-                'Complete privacy - no data leaves your device',
-                'Works offline - no internet required',
-                'No server dependency - always available',
-                'Perfect for sensitive links you\'re sending',
+                AppLocalizations.of(context)!.tutorialLocalPros1,
+                AppLocalizations.of(context)!.tutorialLocalPros2,
+                AppLocalizations.of(context)!.tutorialLocalPros3,
+                AppLocalizations.of(context)!.tutorialLocalPros4,
               ],
               cons: [
-                'Less sophisticated cleaning algorithms',
-                'May miss some tracking parameters',
-                'Limited to basic redirect following',
-                'No server-side intelligence',
+                AppLocalizations.of(context)!.tutorialLocalCons1,
+                AppLocalizations.of(context)!.tutorialLocalCons2,
+                AppLocalizations.of(context)!.tutorialLocalCons3,
+                AppLocalizations.of(context)!.tutorialLocalCons4,
               ],
-              whenToUse:
-                  'Use when you want maximum privacy and are sending links to others. Your IP address and the original URL never leave your device.',
+              whenToUse: AppLocalizations.of(context)!.tutorialLocalWhenToUse,
             ),
 
             const SizedBox(height: 24),
@@ -44,25 +45,25 @@ class TutorialScreen extends StatelessWidget {
             // Remote Processing Section
             _buildModeCard(
               context,
-              title: 'Remote Processing',
+              title: AppLocalizations.of(context)!.tutorialRemoteProcessing,
               icon: Icons.cloud,
               color: Colors.green,
-              description: 'URL cleaning happens on our secure servers',
+              description:
+                  AppLocalizations.of(context)!.tutorialRemoteDescription,
               pros: [
-                'Advanced cleaning algorithms',
-                'Comprehensive tracking parameter detection',
-                'Server-side intelligence and updates',
-                'Better redirect following capabilities',
-                'Regular algorithm improvements',
+                AppLocalizations.of(context)!.tutorialRemotePros1,
+                AppLocalizations.of(context)!.tutorialRemotePros2,
+                AppLocalizations.of(context)!.tutorialRemotePros3,
+                AppLocalizations.of(context)!.tutorialRemotePros4,
+                AppLocalizations.of(context)!.tutorialRemotePros5,
               ],
               cons: [
-                'Requires internet connection',
-                'URL is sent to our servers',
-                'Your IP address is visible to our servers',
-                'Depends on server availability',
+                AppLocalizations.of(context)!.tutorialRemoteCons1,
+                AppLocalizations.of(context)!.tutorialRemoteCons2,
+                AppLocalizations.of(context)!.tutorialRemoteCons3,
+                AppLocalizations.of(context)!.tutorialRemoteCons4,
               ],
-              whenToUse:
-                  'Use when you want the best cleaning results and are processing links you received from others. Our servers can detect more tracking parameters than local processing.',
+              whenToUse: AppLocalizations.of(context)!.tutorialRemoteWhenToUse,
             ),
 
             const SizedBox(height: 24),
@@ -70,15 +71,15 @@ class TutorialScreen extends StatelessWidget {
             // Security & Privacy Section
             _buildInfoCard(
               context,
-              title: 'Security & Privacy',
+              title: AppLocalizations.of(context)!.tutorialSecurityPrivacy,
               icon: Icons.security,
               color: Colors.orange,
               content: [
-                'We never store your URLs or personal data',
-                'All processing is done in real-time',
-                'No logs are kept of your cleaning requests',
-                'Our servers use industry-standard encryption',
-                'You can switch modes anytime without losing data',
+                AppLocalizations.of(context)!.tutorialSec1,
+                AppLocalizations.of(context)!.tutorialSec2,
+                AppLocalizations.of(context)!.tutorialSec3,
+                AppLocalizations.of(context)!.tutorialSec4,
+                AppLocalizations.of(context)!.tutorialSec5,
               ],
             ),
 
@@ -87,14 +88,14 @@ class TutorialScreen extends StatelessWidget {
             // Recommendations Section
             _buildInfoCard(
               context,
-              title: 'Our Recommendations',
+              title: AppLocalizations.of(context)!.tutorialRecommendations,
               icon: Icons.lightbulb,
               color: Colors.purple,
               content: [
-                'For links you\'re sending: Use Local Processing',
-                'For links you received: Use Remote Processing',
-                'For best results: Use Remote Processing when possible',
-                'When in doubt: Start with Remote, switch to Local if needed',
+                AppLocalizations.of(context)!.tutorialRec1,
+                AppLocalizations.of(context)!.tutorialRec2,
+                AppLocalizations.of(context)!.tutorialRec3,
+                AppLocalizations.of(context)!.tutorialRec4,
               ],
             ),
           ],
@@ -147,7 +148,7 @@ class TutorialScreen extends StatelessWidget {
             // Pros
             _buildListSection(
               context,
-              'Advantages',
+              AppLocalizations.of(context)!.tutorialAdvantages,
               Icons.check_circle,
               Colors.green,
               pros,
@@ -158,7 +159,7 @@ class TutorialScreen extends StatelessWidget {
             // Cons
             _buildListSection(
               context,
-              'Limitations',
+              AppLocalizations.of(context)!.tutorialLimitations,
               Icons.warning,
               Colors.orange,
               cons,
@@ -182,7 +183,7 @@ class TutorialScreen extends StatelessWidget {
                       Icon(Icons.info, color: color, size: 20),
                       const SizedBox(width: 8),
                       Text(
-                        'When to use:',
+                        AppLocalizations.of(context)!.tutorialWhenToUseLabel,
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                               color: color,
                               fontWeight: FontWeight.bold,

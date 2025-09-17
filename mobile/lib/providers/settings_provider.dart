@@ -14,6 +14,7 @@ class SettingsProvider with ChangeNotifier {
   static const String _showConfirmationKey = 'show_confirmation';
   static const String _defaultStrategyKey = 'default_strategy';
   static const String _themeModeKey = 'theme_mode';
+  static const String _localeCodeKey = 'locale_code';
   static const String _serverUrlKey = 'server_url';
   static const String _showPreviewsKey = 'show_clean_link_previews';
   static const String _autoSubmitClipboardKey = 'auto_submit_clipboard';
@@ -31,6 +32,7 @@ class SettingsProvider with ChangeNotifier {
   bool _offlineMode = false;
   String? _defaultStrategy;
   ThemeMode _themeMode = ThemeMode.system;
+  Locale? _locale;
   String _serverUrl = EnvironmentConfig.baseUrl;
   List<CleaningStrategy> _strategies = const [];
   String? _activeStrategyId;
@@ -44,6 +46,7 @@ class SettingsProvider with ChangeNotifier {
   bool get offlineMode => _offlineMode;
   String? get defaultStrategy => _defaultStrategy;
   ThemeMode get themeMode => _themeMode;
+  Locale? get locale => _locale;
   String get serverUrl => _serverUrl;
   List<CleaningStrategy> get strategies => _strategies;
   String? get activeStrategyId => _activeStrategyId;
@@ -64,6 +67,8 @@ class SettingsProvider with ChangeNotifier {
     _offlineMode = _prefs.getBool(_offlineModeKey) ?? false;
     _defaultStrategy = _prefs.getString(_defaultStrategyKey);
     _themeMode = ThemeMode.values[_prefs.getInt(_themeModeKey) ?? 0];
+    final code = _prefs.getString(_localeCodeKey);
+    _locale = (code == null || code.isEmpty) ? null : _tryParseLocale(code);
     _serverUrl = _prefs.getString(_serverUrlKey) ?? EnvironmentConfig.baseUrl;
     final strategiesRaw = _prefs.getString(_strategiesKey);
     if (strategiesRaw != null && strategiesRaw.isNotEmpty) {
@@ -131,6 +136,29 @@ class SettingsProvider with ChangeNotifier {
     _themeMode = value;
     await _prefs.setInt(_themeModeKey, value.index);
     notifyListeners();
+  }
+
+  Future<void> setLocale(Locale? value) async {
+    _locale = value;
+    if (value == null) {
+      await _prefs.remove(_localeCodeKey);
+    } else {
+      await _prefs.setString(_localeCodeKey, _localeToCode(value));
+    }
+    notifyListeners();
+  }
+
+  // Helpers
+  String _localeToCode(Locale locale) {
+    return locale.countryCode == null || locale.countryCode!.isEmpty
+        ? locale.languageCode
+        : '${locale.languageCode}_${locale.countryCode}';
+  }
+
+  Locale _tryParseLocale(String code) {
+    final parts = code.split('_');
+    if (parts.length == 1) return Locale(parts[0]);
+    return Locale(parts[0], parts[1]);
   }
 
   Future<void> setServerUrl(String value) async {

@@ -7,6 +7,7 @@ import 'package:traceoff_mobile/providers/settings_provider.dart';
 import 'package:traceoff_mobile/config/environment.dart';
 import 'package:traceoff_mobile/providers/history_provider.dart';
 import 'package:traceoff_mobile/models/cleaning_strategy.dart';
+import 'package:traceoff_mobile/l10n/app_localizations.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -35,7 +36,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.settings)),
       body: Consumer<SettingsProvider>(
         builder: (context, settings, child) {
           _serverUrlController.text = settings.serverUrl;
@@ -44,43 +45,48 @@ class _SettingsScreenState extends State<SettingsScreen> {
             padding: const EdgeInsets.all(16),
             children: [
               // General Settings
-              _buildSectionHeader('General'),
+              _buildSectionHeader(AppLocalizations.of(context)!.general),
               Card(
                 child: Column(
                   children: [
                     SwitchListTile(
-                      title: const Text('Auto-copy Primary Result'),
-                      subtitle: const Text(
-                        'Automatically copy the primary cleaned link to clipboard',
+                      title: Text(
+                          AppLocalizations.of(context)!.autoCopyPrimaryResult),
+                      subtitle: Text(
+                        AppLocalizations.of(context)!.autoCopyPrimaryResultDesc,
                       ),
                       value: settings.autoCopyPrimary,
                       onChanged: (value) => settings.setAutoCopyPrimary(value),
                     ),
                     const Divider(height: 1),
                     SwitchListTile(
-                      title: const Text('Show Confirmation'),
-                      subtitle: const Text(
-                        'Show confirmation dialogs for actions',
+                      title:
+                          Text(AppLocalizations.of(context)!.showConfirmation),
+                      subtitle: Text(
+                        AppLocalizations.of(context)!.showConfirmationDesc,
                       ),
                       value: settings.showConfirmation,
                       onChanged: (value) => settings.setShowConfirmation(value),
                     ),
                     const Divider(height: 1),
                     SwitchListTile(
-                      title: const Text('Show Clean Link Previews'),
-                      subtitle: const Text(
-                          'Render previews only for cleaned links (local only, can be disabled)'),
+                      title: Text(
+                          AppLocalizations.of(context)!.showCleanLinkPreviews),
+                      subtitle: Text(AppLocalizations.of(context)!
+                          .showCleanLinkPreviewsDesc),
                       value: settings.showCleanLinkPreviews,
                       onChanged: (value) =>
                           settings.setShowCleanLinkPreviews(value),
                     ),
                     const Divider(height: 1),
                     SwitchListTile(
-                      title: const Text('Local Processing'),
-                      subtitle: const Text(
+                      title:
+                          Text(AppLocalizations.of(context)!.localProcessing),
+                      subtitle: Text(
                         kIsWeb
-                            ? 'Not available on web. Use the mobile app for offline/local processing.'
-                            : 'Process links locally on device instead of using cloud API. When enabled, all cleaning happens on your device for better privacy.',
+                            ? AppLocalizations.of(context)!
+                                .localProcessingWebDesc
+                            : AppLocalizations.of(context)!.localProcessingDesc,
                       ),
                       value: kIsWeb ? false : settings.offlineMode,
                       onChanged: (value) {
@@ -108,17 +114,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 24),
 
               // Cleaning Strategies
-              _buildSectionHeader('Cleaning Strategies'),
+              _buildSectionHeader(
+                  AppLocalizations.of(context)!.localCleaningStrategies),
               Card(
                 child: Column(
                   children: [
                     ListTile(
                       leading: const Icon(Icons.tune),
-                      title: const Text('Manage Local Strategies'),
+                      title: Text(
+                          AppLocalizations.of(context)!.manageLocalStrategies),
                       subtitle: Text(
                         kIsWeb
-                            ? 'Not available on web. Download the app to customize offline strategies.'
-                            : 'Active: ${settings.activeStrategy?.name ?? 'Default offline cleaner'}',
+                            ? AppLocalizations.of(context)!
+                                .manageLocalStrategiesWebDesc
+                            : 'Active: ${settings.activeStrategy?.name ?? AppLocalizations.of(context)!.defaultOfflineCleaner}',
                       ),
                       trailing: const Icon(Icons.arrow_forward_ios),
                       onTap: () {
@@ -136,15 +145,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 24),
 
               // Appearance Settings
-              _buildSectionHeader('Appearance'),
+              _buildSectionHeader(AppLocalizations.of(context)!.theme),
               Card(
                 child: Column(
                   children: [
                     ListTile(
-                      title: const Text('Theme'),
+                      title: Text(AppLocalizations.of(context)!.theme),
                       subtitle: Text(_getThemeModeText(settings.themeMode)),
                       trailing: const Icon(Icons.arrow_forward_ios),
                       onTap: () => _showThemeDialog(settings),
+                    ),
+                    const Divider(height: 1),
+                    ListTile(
+                      title: Text(AppLocalizations.of(context)!.language),
+                      subtitle: Text(_getLanguageText(settings.locale)),
+                      trailing: const Icon(Icons.arrow_forward_ios),
+                      onTap: () => _showLanguageDialog(settings),
                     ),
                   ],
                 ),
@@ -153,16 +169,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 24),
 
               // Server Settings
-              _buildSectionHeader('Server'),
+              _buildSectionHeader(AppLocalizations.of(context)!.serverUrl),
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Server URL',
-                        style: TextStyle(
+                      Text(
+                        AppLocalizations.of(context)!.serverUrl,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -180,7 +196,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Enter the URL of your TraceOff server',
+                        AppLocalizations.of(context)!.serverUrlDesc,
                         style: TextStyle(
                           fontSize: 12,
                           color: Theme.of(
@@ -204,7 +220,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Debug Info:',
+                                AppLocalizations.of(context)!.debugInfo,
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -215,7 +231,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                'Environment: ${EnvironmentConfig.environment.name}',
+                                '${AppLocalizations.of(context)!.environment} ${EnvironmentConfig.environment.name}',
                                 style: TextStyle(
                                   fontSize: 11,
                                   color: Theme.of(context)
@@ -224,7 +240,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ),
                               ),
                               Text(
-                                'Base URL: ${EnvironmentConfig.baseUrl}',
+                                '${AppLocalizations.of(context)!.baseUrl} ${EnvironmentConfig.baseUrl}',
                                 style: TextStyle(
                                   fontSize: 11,
                                   color: Theme.of(context)
@@ -233,7 +249,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ),
                               ),
                               Text(
-                                'API URL: ${EnvironmentConfig.apiUrl}',
+                                '${AppLocalizations.of(context)!.apiUrl} ${EnvironmentConfig.apiUrl}',
                                 style: TextStyle(
                                   fontSize: 11,
                                   color: Theme.of(context)
@@ -252,14 +268,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 24),
 
               // Data Management
-              _buildSectionHeader('Data Management'),
+              _buildSectionHeader(AppLocalizations.of(context)!.dataManagement),
               Card(
                 child: Column(
                   children: [
                     ListTile(
                       leading: const Icon(Icons.history),
-                      title: const Text('Clear History'),
-                      subtitle: const Text('Remove all history items'),
+                      title: Text(AppLocalizations.of(context)!.clearHistory),
+                      subtitle:
+                          Text(AppLocalizations.of(context)!.clearHistoryDesc),
                       trailing: const Icon(Icons.arrow_forward_ios),
                       onTap: () => _showClearHistoryDialog(),
                     ),
@@ -399,6 +416,65 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  String _getLanguageText(Locale? locale) {
+    if (locale == null) {
+      return 'System Default';
+    }
+    final code = locale.languageCode;
+    switch (code) {
+      case 'en':
+        return 'English';
+      case 'es':
+        return 'Español';
+      case 'fr':
+        return 'Français';
+      case 'de':
+        return 'Deutsch';
+      case 'ar':
+        return 'العربية';
+      case 'hi':
+        return 'हिन्दी';
+      case 'pt':
+        return 'Português';
+      case 'ru':
+        return 'Русский';
+      case 'zh':
+        // Could differentiate script/region if added later
+        return '中文';
+      default:
+        return code;
+    }
+  }
+
+  Widget _getLanguageIcon(Locale? locale) {
+    if (locale == null) {
+      return const Icon(Icons.settings, size: 20);
+    }
+    final code = locale.languageCode;
+    switch (code) {
+      case 'en':
+        return const Text('🇺🇸', style: TextStyle(fontSize: 20));
+      case 'es':
+        return const Text('🇪🇸', style: TextStyle(fontSize: 20));
+      case 'fr':
+        return const Text('🇫🇷', style: TextStyle(fontSize: 20));
+      case 'de':
+        return const Text('🇩🇪', style: TextStyle(fontSize: 20));
+      case 'ar':
+        return const Text('🇸🇦', style: TextStyle(fontSize: 20));
+      case 'hi':
+        return const Text('🇮🇳', style: TextStyle(fontSize: 20));
+      case 'pt':
+        return const Text('🇵🇹', style: TextStyle(fontSize: 20));
+      case 'ru':
+        return const Text('🇷🇺', style: TextStyle(fontSize: 20));
+      case 'zh':
+        return const Text('🇨🇳', style: TextStyle(fontSize: 20));
+      default:
+        return const Icon(Icons.language, size: 20);
+    }
+  }
+
   void _showThemeDialog(SettingsProvider settings) {
     showDialog<void>(
       context: context,
@@ -426,6 +502,47 @@ class _SettingsScreenState extends State<SettingsScreen> {
               option(ThemeMode.light, 'Light'),
               option(ThemeMode.dark, 'Dark'),
             ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showLanguageDialog(SettingsProvider settings) {
+    showDialog<void>(
+      context: context,
+      builder: (dialogCtx) {
+        final Locale? current = settings.locale;
+
+        Widget option(Locale? locale, String label) {
+          final bool selected = (current == null && locale == null) ||
+              (current != null &&
+                  locale != null &&
+                  current.languageCode == locale.languageCode &&
+                  current.countryCode == locale.countryCode);
+          return ListTile(
+            leading: _getLanguageIcon(locale),
+            title: Text(label),
+            trailing: selected ? const Icon(Icons.check) : null,
+            onTap: () {
+              settings.setLocale(locale);
+              Navigator.of(dialogCtx).pop();
+            },
+          );
+        }
+
+        const locales = AppLocalizations.supportedLocales;
+        return AlertDialog(
+          title: const Text('Choose Language'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                option(null, 'System Default'),
+                const Divider(height: 1),
+                ...locales.map((l) => option(l, _getLanguageText(l))),
+              ],
+            ),
           ),
         );
       },

@@ -78,6 +78,44 @@ void main() {
       // Verify the text was entered
       expect(find.text('https://example.com?utm_source=test'), findsOneWidget);
     });
+
+    testWidgets('URL input field accepts text with URL extraction',
+        (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (_) => UrlCleanerProvider()),
+            ChangeNotifierProvider(create: (_) => HistoryProvider()),
+            ChangeNotifierProvider(create: (_) => SettingsProvider(prefs)),
+            ChangeNotifierProvider(create: (_) => ServerStatusProvider()),
+          ],
+          child: const MaterialApp(
+            home: HomeScreen(),
+          ),
+        ),
+      );
+
+      // Find the URL input field and enter text with a URL
+      final urlField = find.byType(TextField);
+      expect(urlField, findsOneWidget);
+
+      // Test with text containing a URL
+      const String textWithUrl = '''
+      I'm using Gboard to type in English (US) (QWERTY). You can try it at: 
+      https://gboard.app.goo.gl?utm_campaign=user_referral&amv=26830000&apn=com.google.android.inputmethod.latin
+      
+      This is a very long URL with many parameters.
+      ''';
+
+      await tester.enterText(urlField, textWithUrl);
+      await tester.pump();
+
+      // Verify the text was entered (the field should accept any text)
+      expect(find.text(textWithUrl), findsOneWidget);
+    });
   });
 
   group('UrlCleanerProvider Tests', () {
