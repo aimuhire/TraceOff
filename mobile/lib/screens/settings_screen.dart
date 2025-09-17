@@ -150,6 +150,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: Column(
                   children: [
                     ListTile(
+                      leading: const Icon(Icons.palette),
                       title: Text(AppLocalizations.of(context)!.theme),
                       subtitle: Text(_getThemeModeText(settings.themeMode)),
                       trailing: const Icon(Icons.arrow_forward_ios),
