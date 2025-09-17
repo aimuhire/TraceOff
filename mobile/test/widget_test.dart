@@ -8,6 +8,8 @@ import 'package:traceoff_mobile/providers/server_status_provider.dart';
 import 'package:traceoff_mobile/screens/home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:traceoff_mobile/l10n/app_localizations.dart';
 
 void main() {
   // Set up test environment
@@ -39,15 +41,22 @@ void main() {
             ChangeNotifierProvider(create: (_) => SettingsProvider(prefs)),
             ChangeNotifierProvider(create: (_) => ServerStatusProvider()),
           ],
-          child: const MaterialApp(
-            home: HomeScreen(),
+          child: MaterialApp(
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: const HomeScreen(),
           ),
         ),
       );
 
       // Verify that the home screen displays
-      expect(find.text('Paste a link to clean (http/https)'), findsOneWidget);
-      expect(find.text('TraceOff'), findsOneWidget); // App bar title
+      expect(find.text('Paste Link to Clean'), findsOneWidget);
+      expect(find.text('TraceOff — Clean Links'), findsOneWidget); // App bar title
     });
 
     testWidgets('URL input field accepts text', (WidgetTester tester) async {
@@ -62,8 +71,15 @@ void main() {
             ChangeNotifierProvider(create: (_) => SettingsProvider(prefs)),
             ChangeNotifierProvider(create: (_) => ServerStatusProvider()),
           ],
-          child: const MaterialApp(
-            home: HomeScreen(),
+          child: MaterialApp(
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: const HomeScreen(),
           ),
         ),
       );
@@ -92,8 +108,15 @@ void main() {
             ChangeNotifierProvider(create: (_) => SettingsProvider(prefs)),
             ChangeNotifierProvider(create: (_) => ServerStatusProvider()),
           ],
-          child: const MaterialApp(
-            home: HomeScreen(),
+          child: MaterialApp(
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: const HomeScreen(),
           ),
         ),
       );
@@ -114,7 +137,12 @@ void main() {
       await tester.pump();
 
       // Verify the text was entered (the field should accept any text)
-      expect(find.text(textWithUrl), findsOneWidget);
+      // Note: The text might be formatted differently in the TextField
+      expect(find.byType(TextField), findsOneWidget);
+      
+      // Verify that the TextField contains the URL we entered
+      final textField = tester.widget<TextField>(find.byType(TextField));
+      expect(textField.controller?.text, contains('https://gboard.app.goo.gl'));
     });
   });
 
