@@ -328,7 +328,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       subtitle: const Text('How we handle your data'),
                       trailing: const Icon(Icons.arrow_forward_ios),
                       onTap: () {
-                        Navigator.of(context).pushNamed('/privacy');
+                        if (kIsWeb) {
+                          SystemNavigator.routeInformationUpdated(
+                            uri: Uri.parse('/privacy'),
+                            replace: false,
+                          );
+                        }
+                        Navigator.of(context, rootNavigator: true)
+                            .pushNamed('/privacy');
                       },
                     ),
                   ],
