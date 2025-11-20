@@ -1,5 +1,8 @@
 {
   "version": 2,
+  "buildCommand": "",
+  "installCommand": "",
+  "outputDirectory": "build/web",
   "builds": [
     { "src": "build/web/**", "use": "@vercel/static" }
   ],
