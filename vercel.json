@@ -1,8 +1,8 @@
 {
   "version": 2,
   "framework": null,
-  "installCommand": "echo 'Skip'",
-  "buildCommand": "echo 'Skip'",
+  "buildCommand": "echo 'Skipping build — using prebuilt Flutter web output'",
+  "installCommand": "echo 'Skipping install — not a Node/Flutter build'",
   "outputDirectory": "mobile/build/web",
   "cleanUrls": true,
   "routes": [
