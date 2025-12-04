@@ -304,6 +304,46 @@ void main() {
             equals(
                 'https://example.com/post?utm_source=blog&utm_medium=markdown'));
       });
+
+      test('extracts URL without protocol prefix (bit.ly)', () {
+        const String input = 'Check this out: bit.ly/4rvJwRn';
+
+        final String? result = UrlExtractor.extractFirstHttpUrl(input);
+
+        expect(result, equals('https://bit.ly/4rvJwRn'));
+      });
+
+      test('extracts URL without protocol prefix (example.com)', () {
+        const String input = 'Visit example.com/path for more info';
+
+        final String? result = UrlExtractor.extractFirstHttpUrl(input);
+
+        expect(result, equals('https://example.com/path'));
+      });
+
+      test('prioritizes URLs with protocol over those without', () {
+        const String input = 'See https://example.com and bit.ly/abc';
+
+        final String? result = UrlExtractor.extractFirstHttpUrl(input);
+
+        expect(result, equals('https://example.com'));
+      });
+
+      test('does not extract email addresses as URLs', () {
+        const String input = 'Contact me at user@example.com';
+
+        final String? result = UrlExtractor.extractFirstHttpUrl(input);
+
+        expect(result, isNull);
+      });
+
+      test('extracts URL without protocol when no protocol URL exists', () {
+        const String input = 'Short link: t.co/xyz123';
+
+        final String? result = UrlExtractor.extractFirstHttpUrl(input);
+
+        expect(result, equals('https://t.co/xyz123'));
+      });
     });
   });
 }
