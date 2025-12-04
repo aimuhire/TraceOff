@@ -423,7 +423,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
- 
   Widget _buildModeToggle(SettingsProvider settings) {
     final theme = Theme.of(context);
     return Container(
@@ -442,11 +441,11 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () async {
                 if (settings.offlineMode) return;
                 if (!mounted) return;
-                final messenger = ScaffoldMessenger.of(context);
-                final localizations = AppLocalizations.of(context)!;
                 await settings.setOfflineMode(true);
                 _updateOfflineMode();
                 if (!mounted) return;
+                final messenger = ScaffoldMessenger.of(context);
+                final localizations = AppLocalizations.of(context)!;
                 messenger.showSnackBar(
                   SnackBar(
                     content: Text(localizations.switchedToLocal),
@@ -496,11 +495,11 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () async {
                 if (!settings.offlineMode) return;
                 if (!mounted) return;
-                final messenger = ScaffoldMessenger.of(context);
-                final localizations = AppLocalizations.of(context)!;
                 await settings.setOfflineMode(false);
                 _updateOfflineMode();
                 if (!mounted) return;
+                final messenger = ScaffoldMessenger.of(context);
+                final localizations = AppLocalizations.of(context)!;
                 messenger.showSnackBar(
                   SnackBar(
                     content: Text(localizations.switchedToRemote),
