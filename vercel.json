@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "framework": null,
+  "installCommand": "echo 'Skip'",
+  "buildCommand": "echo 'Skip'",
+  "outputDirectory": "mobile/build/web",
+  "cleanUrls": true,
+  "routes": [
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
