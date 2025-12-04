@@ -441,13 +441,15 @@ class _HomeScreenState extends State<HomeScreen> {
             child: GestureDetector(
               onTap: () async {
                 if (settings.offlineMode) return;
+                if (!mounted) return;
+                final messenger = ScaffoldMessenger.of(context);
+                final localizations = AppLocalizations.of(context)!;
                 await settings.setOfflineMode(true);
                 _updateOfflineMode();
-                if (!context.mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
+                if (!mounted) return;
+                messenger.showSnackBar(
                   SnackBar(
-                    content:
-                        Text(AppLocalizations.of(context)!.switchedToLocal),
+                    content: Text(localizations.switchedToLocal),
                     duration: const Duration(seconds: 2),
                   ),
                 );
@@ -493,13 +495,15 @@ class _HomeScreenState extends State<HomeScreen> {
             child: GestureDetector(
               onTap: () async {
                 if (!settings.offlineMode) return;
+                if (!mounted) return;
+                final messenger = ScaffoldMessenger.of(context);
+                final localizations = AppLocalizations.of(context)!;
                 await settings.setOfflineMode(false);
                 _updateOfflineMode();
-                if (!context.mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
+                if (!mounted) return;
+                messenger.showSnackBar(
                   SnackBar(
-                    content:
-                        Text(AppLocalizations.of(context)!.switchedToRemote),
+                    content: Text(localizations.switchedToRemote),
                     duration: const Duration(seconds: 2),
                   ),
                 );
@@ -557,7 +561,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
