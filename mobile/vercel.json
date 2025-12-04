@@ -4,6 +4,7 @@
   "installCommand": "echo 'Skip'",
   "buildCommand": "echo 'Skip'",
   "outputDirectory": "build/web",
+  "cleanUrls": true,
   "routes": [
     {
       "handle": "filesystem"
