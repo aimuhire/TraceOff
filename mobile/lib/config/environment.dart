@@ -59,9 +59,11 @@ class EnvironmentConfig {
       return explicit;
     }
 
-    // Web: never use dart:io Platform. Prefer explicit WEB_API_BASE_URL or fall back to current origin.
+    // Web: never use dart:io Platform. Prefer explicit WEB_API_BASE_URL, then PROD_API_BASE_URL, or fall back to current origin.
     if (kIsWeb) {
-      final webUrl = dotenv.env['WEB_API_BASE_URL'] ?? Uri.base.origin;
+      final webUrl = dotenv.env['WEB_API_BASE_URL'] ??
+          dotenv.env['PROD_API_BASE_URL'] ??
+          Uri.base.origin;
       if (enableDebugLogging) {
         print('🌐 Web URL: $webUrl');
       }
