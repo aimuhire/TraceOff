@@ -5,13 +5,7 @@
   "buildCommand": "echo 'Skip'",
   "outputDirectory": "build/web",
   "cleanUrls": true,
-  "routes": [
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
