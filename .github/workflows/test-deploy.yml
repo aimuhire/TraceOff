@@ -201,12 +201,15 @@ jobs:
       - name: Vercel pull (production)
         working-directory: mobile
         run: npx vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+      - name: Create prebuilt Vercel bundle
+        working-directory: mobile
+        run: npx vercel build --prod --token="$VERCEL_TOKEN"
       - name: Deploy to Vercel (prod)
         working-directory: mobile
         id: deploy-mobile
         run: |
           set -e
-          DEPLOY_OUTPUT=$(npx vercel deploy --prod --yes --token="$VERCEL_TOKEN")
+          DEPLOY_OUTPUT=$(npx vercel deploy --prebuilt --prod --yes --token="$VERCEL_TOKEN")
           echo "$DEPLOY_OUTPUT"
           DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | grep -E "Production:" | grep -Eo 'https://[^[:space:]]+' | head -1)
           if [ -z "$DEPLOY_URL" ]; then
