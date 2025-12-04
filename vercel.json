@@ -1,17 +1,14 @@
 {
   "version": 2,
   "framework": null,
-  "buildCommand": "echo 'Skipping build — using prebuilt Flutter web output'",
-  "installCommand": "echo 'Skipping install — not a Node/Flutter build'",
+  "installCommand": "echo Skipping install",
+  "buildCommand": "echo Skipping build",
   "outputDirectory": "mobile/build/web",
   "cleanUrls": true,
-  "routes": [
+  "rewrites": [
     {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
