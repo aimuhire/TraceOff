@@ -30,6 +30,8 @@ export class FacebookStrategy {
                 { name: 'gclid', action: 'deny', reason: 'Google click ID' },
                 { name: 'igshid', action: 'deny', reason: 'Instagram tracking parameter' },
                 { name: 'si', action: 'deny', reason: 'Session tracking' },
+                { name: 'rdid', action: 'deny', reason: 'Facebook redirect ID tracking' },
+                { name: 'share_url', action: 'deny', reason: 'Facebook share URL tracking' },
                 { name: 'locale', action: 'allow', reason: 'Locale setting' },
                 { name: 'language', action: 'allow', reason: 'Language preference' },
                 { name: 'hl', action: 'allow', reason: 'Language preference' },

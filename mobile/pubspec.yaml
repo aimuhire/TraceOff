@@ -1,6 +1,6 @@
 name: traceoff_mobile
 description: TraceOff Mobile App - Share links without trackers
-version: 1.0.0+1
+version: 1.0.2+4
 
 environment:
   sdk: ">=3.1.0 <4.0.0"
