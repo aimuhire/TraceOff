@@ -140,8 +140,8 @@
       }
     ],
     "notes": "Instagram strategy removes tracking parameters while preserving content identifiers",
-    "createdAt": "2025-09-16T08:07:14.742Z",
-    "updatedAt": "2025-09-16T08:07:14.742Z"
+    "createdAt": "2025-12-04T03:41:16.990Z",
+    "updatedAt": "2025-12-04T03:41:16.991Z"
   },
   {
     "id": "youtube",
@@ -372,8 +372,8 @@
       }
     ],
     "notes": "YouTube strategy preserves video/playlist identifiers and playback controls while removing tracking parameters",
-    "createdAt": "2025-09-16T08:07:14.743Z",
-    "updatedAt": "2025-09-16T08:07:14.743Z"
+    "createdAt": "2025-12-04T03:41:16.991Z",
+    "updatedAt": "2025-12-04T03:41:16.991Z"
   },
   {
     "id": "twitter",
@@ -543,8 +543,8 @@
       }
     ],
     "notes": "Twitter/X strategy removes tracking parameters while preserving tweet identifiers",
-    "createdAt": "2025-09-16T08:07:14.743Z",
-    "updatedAt": "2025-09-16T08:07:14.743Z"
+    "createdAt": "2025-12-04T03:41:16.991Z",
+    "updatedAt": "2025-12-04T03:41:16.991Z"
   },
   {
     "id": "tiktok",
@@ -687,8 +687,8 @@
       }
     ],
     "notes": "TikTok strategy removes tracking parameters while preserving video identifiers",
-    "createdAt": "2025-09-16T08:07:14.743Z",
-    "updatedAt": "2025-09-16T08:07:14.743Z"
+    "createdAt": "2025-12-04T03:41:16.991Z",
+    "updatedAt": "2025-12-04T03:41:16.991Z"
   },
   {
     "id": "facebook",
@@ -791,6 +791,16 @@
         "reason": "Session tracking"
       },
       {
+        "name": "rdid",
+        "action": "deny",
+        "reason": "Facebook redirect ID tracking"
+      },
+      {
+        "name": "share_url",
+        "action": "deny",
+        "reason": "Facebook share URL tracking"
+      },
+      {
         "name": "locale",
         "action": "allow",
         "reason": "Locale setting"
@@ -855,8 +865,8 @@
       }
     ],
     "notes": "Facebook strategy removes tracking parameters while preserving content identifiers",
-    "createdAt": "2025-09-16T08:07:14.743Z",
-    "updatedAt": "2025-09-16T08:07:14.743Z"
+    "createdAt": "2025-12-04T03:41:16.991Z",
+    "updatedAt": "2025-12-04T03:41:16.991Z"
   },
   {
     "id": "linkedin",
@@ -1024,8 +1034,8 @@
       }
     ],
     "notes": "LinkedIn strategy removes tracking parameters while preserving content identifiers",
-    "createdAt": "2025-09-16T08:07:14.743Z",
-    "updatedAt": "2025-09-16T08:07:14.743Z"
+    "createdAt": "2025-12-04T03:41:16.991Z",
+    "updatedAt": "2025-12-04T03:41:16.991Z"
   },
   {
     "id": "reddit",
@@ -1215,8 +1225,8 @@
       }
     ],
     "notes": "Reddit strategy removes tracking parameters while preserving subreddit and post identifiers",
-    "createdAt": "2025-09-16T08:07:14.743Z",
-    "updatedAt": "2025-09-16T08:07:14.743Z"
+    "createdAt": "2025-12-04T03:41:16.991Z",
+    "updatedAt": "2025-12-04T03:41:16.991Z"
   },
   {
     "id": "pinterest",
@@ -1323,6 +1333,21 @@
         "reason": "Pinterest session tracking"
       },
       {
+        "name": "invite_code",
+        "action": "deny",
+        "reason": "Pinterest invite code"
+      },
+      {
+        "name": "sender",
+        "action": "deny",
+        "reason": "Pinterest sender identifier"
+      },
+      {
+        "name": "sfo",
+        "action": "deny",
+        "reason": "Pinterest share flag"
+      },
+      {
         "name": "locale",
         "action": "allow",
         "reason": "Locale setting"
@@ -1340,18 +1365,23 @@
     ],
     "pathRules": [
       {
-        "pattern": "^/pin/\\d+",
-        "replacement": "/pin/",
+        "pattern": "^/pin/(\\d+)/sent/.*$",
+        "replacement": "/pin/$1/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/pin/.+--(\\d+)/?$",
+        "replacement": "/pin/$1/",
+        "type": "regex"
+      },
+      {
+        "pattern": "^/pin/(\\d+).*$",
+        "replacement": "/pin/$1/",
         "type": "regex"
       },
       {
         "pattern": "^/board/\\d+",
         "replacement": "/board/",
-        "type": "regex"
-      },
-      {
-        "pattern": "^/[^/]+/\\d+",
-        "replacement": "/",
         "type": "regex"
       }
     ],
@@ -1372,8 +1402,8 @@
       }
     ],
     "notes": "Pinterest strategy removes tracking parameters while preserving pin and board identifiers",
-    "createdAt": "2025-09-16T08:07:14.743Z",
-    "updatedAt": "2025-09-16T08:07:14.743Z"
+    "createdAt": "2025-12-04T03:41:16.991Z",
+    "updatedAt": "2025-12-04T03:41:16.991Z"
   },
   {
     "id": "github",
@@ -1601,8 +1631,8 @@
       }
     ],
     "notes": "GitHub strategy removes tracking parameters while preserving repository and content identifiers",
-    "createdAt": "2025-09-16T08:07:14.743Z",
-    "updatedAt": "2025-09-16T08:07:14.743Z"
+    "createdAt": "2025-12-04T03:41:16.991Z",
+    "updatedAt": "2025-12-04T03:41:16.991Z"
   },
   {
     "id": "medium",
@@ -1770,7 +1800,7 @@
       }
     ],
     "notes": "Medium strategy removes tracking parameters while preserving article and author identifiers",
-    "createdAt": "2025-09-16T08:07:14.743Z",
-    "updatedAt": "2025-09-16T08:07:14.743Z"
+    "createdAt": "2025-12-04T03:41:16.991Z",
+    "updatedAt": "2025-12-04T03:41:16.991Z"
   }
 ]

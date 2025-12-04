@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -120,15 +122,18 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Timer? _firstTimeMessageTimer;
+
   Future<void> _checkAndShowFirstTimeMessage() async {
     final prefs = await SharedPreferences.getInstance();
     final hasSeen = prefs.getBool('first_time_message_shown') ?? false;
     if (!hasSeen && mounted) {
       // Wait a bit for the UI to settle
-      await Future.delayed(const Duration(milliseconds: 500));
-      if (mounted) {
-        _showFirstTimeMessage();
-      }
+      _firstTimeMessageTimer = Timer(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          _showFirstTimeMessage();
+        }
+      });
     }
   }
 
@@ -219,6 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
+    _firstTimeMessageTimer?.cancel();
     _urlController.dispose();
     _urlFocusNode.dispose();
     super.dispose();

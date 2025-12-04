@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:traceoff_mobile/l10n/app_localizations.dart';
 
@@ -274,6 +276,8 @@ class _AnimatedPlatformCardState extends State<_AnimatedPlatformCard>
   late AnimationController _controller;
   bool _isHovered = false;
   bool _hasStopped = false;
+  Timer? _startTimer;
+  Timer? _stopTimer;
 
   @override
   void initState() {
@@ -283,13 +287,13 @@ class _AnimatedPlatformCardState extends State<_AnimatedPlatformCard>
       duration: const Duration(milliseconds: 2500), // Faster animation
     );
     // Start animation with delay based on index
-    Future.delayed(Duration(milliseconds: widget.index * 100), () {
+    _startTimer = Timer(Duration(milliseconds: widget.index * 100), () {
       if (mounted && !_hasStopped) {
         _controller.repeat(reverse: true);
       }
     });
     // Stop animation after 20 seconds
-    Future.delayed(const Duration(seconds: 20), () {
+    _stopTimer = Timer(const Duration(seconds: 20), () {
       if (mounted && !_hasStopped) {
         setState(() {
           _hasStopped = true;
@@ -303,6 +307,8 @@ class _AnimatedPlatformCardState extends State<_AnimatedPlatformCard>
 
   @override
   void dispose() {
+    _startTimer?.cancel();
+    _stopTimer?.cancel();
     _controller.dispose();
     super.dispose();
   }
